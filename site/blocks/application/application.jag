@@ -30,6 +30,8 @@ var log = new Log();
         return;
     }
     if(action == "uploadExistingArchive"){
+        var log = new Log("");
+        log.info("***** uploadExistingArchive");
         var uploadedArtifact = request.getFile("fileupload");
         var applicationName = request.getParameter("applicationName");
         var appTypeName = request.getParameter("appTypeName");
@@ -39,6 +41,8 @@ var log = new Log();
         response.message = "Artifact is successfully uploaded!";
 
     } else if (action == "createApplication") {
+        var log = new Log("");
+        log.info("***** createApplication");
         var applicationDescription = request.getParameter("applicationDescription");
         var replicas = 1;
         var runtimeId = request.getParameter("runtime");
@@ -193,6 +197,8 @@ var log = new Log();
         response.message = "Application starting requested is completed successfully.";
         print(stringify(versions));
     } else if (action == "getApplicationCreationEvents") {
+//        var log = new Log("");
+//        log.info("***getApplicationCreationEvents");
         var applicationName = request.getParameter("applicationName");
         var applicationRevision = request.getParameter("applicationRevision");
 

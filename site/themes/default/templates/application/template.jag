@@ -21,14 +21,17 @@ include("/jagg/constants.jag");
 include("/jagg/jagg.jag");
 
 jagg.template("application", function (inputs, outputs, jagg) {
+        var log = new Log("");
         var runtimes = outputs.runtimes;
         var appType = outputs.appType;
+        log.info("XXXX=" + runtimes + "-" + appType);
         var applicationCount = outputs.applicationCount;
         var appTypeName = appType.type;
         var notAllowedEnvVariables = outputs.notAllowedEnvVariables;
         var isAppTypeBuildable = appType.buildable;
         var applicationName = outputs.applicationName;
         var subscriptionPlanBaseURL = outputs.subscriptionPlanBaseURL;
+        log.info("runtimeID=" + runtimes[0].id);
 		var runtimeID = runtimes[0].id;
         var encodedLabels = request.getParameter("encodedLabels");
         var encodedEnvs = request.getParameter("encodedEnvs");
@@ -198,12 +201,10 @@ jagg.template("application", function (inputs, outputs, jagg) {
 
 
             $('#application-details').submit(function(e){
-
                 $("#app-creation-model-footer").html("");
                 $("#app-creation-model-body").html(modalBody);
 
-
-                 jagg.post("../blocks/application/application.jag", {
+                jagg.post("../blocks/application/application.jag", {
                     action:"generateApplicationHashId",
                     applicationName:$("#applicationName").val()
                 },function (result) {
@@ -224,15 +225,15 @@ jagg.template("application", function (inputs, outputs, jagg) {
                 formData.append('appTypeName', appTypeName);
                 formData.append('applicationName', $("#applicationName").val());
                 var optionRuntime = $("#runtime option:selected").val();
-                var optionSpec = $("#container option:selected").index();
-                var optionConSpecCpu = specCpu[optionSpec];
-                var optionConSpecMemory = specMemory[optionSpec];
-                var optionConSpecCost = specCost[optionSpec];
+//                var optionSpec = $("#container option:selected").index();
+//                var optionConSpecCpu = specCpu[optionSpec];
+//                var optionConSpecMemory = specMemory[optionSpec];
+//                var optionConSpecCost = specCost[optionSpec];
 
                 formData.append('runtime', optionRuntime);
-                formData.append('conSpecMemory', optionConSpecMemory);
-                formData.append('conSpecCost', optionConSpecCost);
-                formData.append('conSpecCpu', optionConSpecCpu);
+//                formData.append('conSpecMemory', optionConSpecMemory);
+//                formData.append('conSpecCost', optionConSpecCost);
+//                formData.append('conSpecCpu', optionConSpecCpu);
 
                 if(uploadMethod === "file"){
                     formData.append('uploadedFileName', $("#uploadedFileName").val());
@@ -321,6 +322,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
         function drawProgressWindow(){
             $('#app_creation_progress_modal').modal({ backdrop: 'static', keyboard: false});
             $("#app_creation_progress_modal").show();
+            //alert("test");
             setInterval(pollEvents, 2000);
         }
 
@@ -650,9 +652,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
     });
 
     function activateCreateApplication() {
-        if ($('#applicationName').val() && $('#applicationRevision').val() && $('#container option:selected').val()
-                        && $('#runtime').val() > 0 && ($("#uploadedFileName").val() || $("#artifactUrl").val() || ($("#gitRepoUrl").val()  && $("#gitRepoBranch").val()))) {// checks form for validity
-
+        if ($('#applicationName').val() && $('#applicationRevision').val() && $('#runtime').val() > 0 && ($("#uploadedFileName").val() || $("#artifactUrl").val() || ($("#gitRepoUrl").val()  && $("#gitRepoBranch").val()))) {// checks form for validity
             if($("#uploadedFileName").val()){
                 if(validateArtifactType($("#uploadedFileName").val())){
                     $("#add-application").prop("disabled", false);
