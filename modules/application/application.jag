@@ -52,11 +52,8 @@ var Arrays = Packages.java.util.Arrays;
  */
 var addApplication = function (applicationName, versionName, applicationDescription, replicas,
                                runtimeId, appTypeName, runtimePropertiesArray, tagArray, appIcon, uploadedFileName, isNewVersion, conSpecMemory, conSpecCpu, artifactUrl) {
-//    log.info("******************");
     log.info("Started creating App => name : " + applicationName + " Version : " + versionName + " Description " +
              ": " + applicationDescription + " runtimeId : " + runtimeId + " apptype : " + appTypeName );
-
-//    log.info("modManager :  " + modManager);
 
     var tenantId = modManager.getTenantId();
     var applicationHashId = Util.getApplicationHashId(applicationName, tenantId);
@@ -66,18 +63,13 @@ var addApplication = function (applicationName, versionName, applicationDescript
     }
 
     if(isNewVersion == 'true'){
-//        log.info("if new version :: createAppVersionInDataBase ");
         createAppVersionInDataBase(versionName, runtimeId, runtimePropertiesArray, tagArray, applicationHashId, versionHashId, conSpecMemory, conSpecCpu);
         stopOtherVersions(applicationHashId, versionName);
     }else{
-//        log.info("else not new version :: createAppInDataBase");
         createAppInDataBase(applicationName, versionName, applicationDescription, replicas, runtimeId, appTypeName,
                 runtimePropertiesArray, tagArray, appIcon, applicationHashId, versionHashId, conSpecMemory, conSpecCpu);
     }
-//    log.info("**Runtimeid= " + runtimeId);
     var applicationRuntime = ApplicationManager.getRuntimeById(runtimeId);
-//    log.info("**applicationRuntime" + applicationRuntime.getRuntimeName());
-//    log.info("**modManager" + modManager.getPropertyValue("ESBServerURL"));
     var tagName = applicationRuntime.getTag() +"-"+ versionHashId;
 
     var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;

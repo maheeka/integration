@@ -43,8 +43,6 @@ jagg.block("application", {
         var notAllowedEnvVariables = applicationModule.getNotAllowedEnvVariables();
         var maxAppCount = applicationModule.getMaxInstanceCount();
 
-        var log = new Log("");
-
         return {
             "runtimes" : runtimes,
             "appType" : appType,
