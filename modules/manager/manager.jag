@@ -27,8 +27,8 @@ var multitenancy = carbon.multitenancy;
 
 
 var getPropertyValue = function(propertyName){
-    var AppCloudUtil = Packages.org.wso2.appcloud.common.util.AppCloudUtil;
-    return AppCloudUtil.getPropertyValue(propertyName);
+    var IntCloudUtil = Packages.org.wso2.intcloud.common.util.IntCloudUtil;
+    return IntCloudUtil.getPropertyValue(propertyName);
 
 };
 var setAuthHeaders = function (options, httpHeaders, username) {

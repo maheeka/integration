@@ -52,11 +52,11 @@ var Arrays = Packages.java.util.Arrays;
  */
 var addApplication = function (applicationName, versionName, applicationDescription, replicas,
                                runtimeId, appTypeName, runtimePropertiesArray, tagArray, appIcon, uploadedFileName, isNewVersion, conSpecMemory, conSpecCpu, artifactUrl) {
-    log.info("******************");
+//    log.info("******************");
     log.info("Started creating App => name : " + applicationName + " Version : " + versionName + " Description " +
              ": " + applicationDescription + " runtimeId : " + runtimeId + " apptype : " + appTypeName );
 
-    log.info("modManager :  " + modManager);
+//    log.info("modManager :  " + modManager);
 
     var tenantId = modManager.getTenantId();
     var applicationHashId = Util.getApplicationHashId(applicationName, tenantId);
@@ -66,22 +66,28 @@ var addApplication = function (applicationName, versionName, applicationDescript
     }
 
     if(isNewVersion == 'true'){
-        log.info("if new version :: createAppVersionInDataBase ");
+//        log.info("if new version :: createAppVersionInDataBase ");
         createAppVersionInDataBase(versionName, runtimeId, runtimePropertiesArray, tagArray, applicationHashId, versionHashId, conSpecMemory, conSpecCpu);
         stopOtherVersions(applicationHashId, versionName);
     }else{
-        log.info("else not new version :: createAppInDataBase");
+//        log.info("else not new version :: createAppInDataBase");
         createAppInDataBase(applicationName, versionName, applicationDescription, replicas, runtimeId, appTypeName,
                 runtimePropertiesArray, tagArray, appIcon, applicationHashId, versionHashId, conSpecMemory, conSpecCpu);
     }
-    log.info("**Runtimeid= " + runtimeId);
+//    log.info("**Runtimeid= " + runtimeId);
     var applicationRuntime = ApplicationManager.getRuntimeById(runtimeId);
-    log.info("**applicationRuntime" + applicationRuntime.getRuntimeName());
-    log.info("**modManager" + modManager.getPropertyValue("DockerClientURL"));
+//    log.info("**applicationRuntime" + applicationRuntime.getRuntimeName());
+//    log.info("**modManager" + modManager.getPropertyValue("ESBServerURL"));
     var tagName = applicationRuntime.getTag() +"-"+ versionHashId;
 
-//    var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
-//    var esbClient = new ESBClient(modManager.getPropertyValue("ESBServerURL"));
+    var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
+    var esbClient = ESBClient.getInstance();
+    esbClient.deployCarbonApp("salesforce_gmail_car_1.0.0.car", "/Users/maheeka/ESB_WORK/CLOUD/APP_CLOUD/salesforce_gmail_car_1.0.0.car");
+
+//    var DockerOpClient = Packages.org.wso2.appcloud.core.docker.DockerOpClient;
+//        var dockerOpClient = new DockerOpClient(modManager.getPropertyValue("DockerClientURL"));
+//         var runtimeProperties = generateRuntimePropsList(runtimePropertiesArray);
+//        var hostName = constructAppLaunchURL(applicationName, versionName);
 //    var runtimeProperties = generateRuntimePropsList(runtimePropertiesArray);
 //    var hostName = constructAppLaunchURL(applicationName, versionName);
 //
