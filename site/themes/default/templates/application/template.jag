@@ -21,17 +21,14 @@ include("/jagg/constants.jag");
 include("/jagg/jagg.jag");
 
 jagg.template("application", function (inputs, outputs, jagg) {
-        var log = new Log("");
         var runtimes = outputs.runtimes;
         var appType = outputs.appType;
-        log.info("XXXX=" + runtimes + "-" + appType);
         var applicationCount = outputs.applicationCount;
         var appTypeName = appType.type;
         var notAllowedEnvVariables = outputs.notAllowedEnvVariables;
         var isAppTypeBuildable = appType.buildable;
         var applicationName = outputs.applicationName;
         var subscriptionPlanBaseURL = outputs.subscriptionPlanBaseURL;
-        log.info("runtimeID=" + runtimes[0].id);
 		var runtimeID = runtimes[0].id;
         var encodedLabels = request.getParameter("encodedLabels");
         var encodedEnvs = request.getParameter("encodedEnvs");
@@ -322,7 +319,6 @@ jagg.template("application", function (inputs, outputs, jagg) {
         function drawProgressWindow(){
             $('#app_creation_progress_modal').modal({ backdrop: 'static', keyboard: false});
             $("#app_creation_progress_modal").show();
-            //alert("test");
             setInterval(pollEvents, 2000);
         }
 
