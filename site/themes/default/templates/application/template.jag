@@ -202,8 +202,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
                 $("#app-creation-model-footer").html("");
                 $("#app-creation-model-body").html(modalBody);
 
-
-                 jagg.post("../blocks/application/application.jag", {
+                jagg.post("../blocks/application/application.jag", {
                     action:"generateApplicationHashId",
                     applicationName:$("#applicationName").val()
                 },function (result) {
@@ -224,15 +223,8 @@ jagg.template("application", function (inputs, outputs, jagg) {
                 formData.append('appTypeName', appTypeName);
                 formData.append('applicationName', $("#applicationName").val());
                 var optionRuntime = $("#runtime option:selected").val();
-                var optionSpec = $("#container option:selected").index();
-                var optionConSpecCpu = specCpu[optionSpec];
-                var optionConSpecMemory = specMemory[optionSpec];
-                var optionConSpecCost = specCost[optionSpec];
 
                 formData.append('runtime', optionRuntime);
-                formData.append('conSpecMemory', optionConSpecMemory);
-                formData.append('conSpecCost', optionConSpecCost);
-                formData.append('conSpecCpu', optionConSpecCpu);
 
                 if(uploadMethod === "file"){
                     formData.append('uploadedFileName', $("#uploadedFileName").val());
@@ -330,7 +322,8 @@ jagg.template("application", function (inputs, outputs, jagg) {
 
         function pollEvents() {
 
-            jagg.post("../blocks/application/application.jag", {
+
+             jagg.post("../blocks/application/application.jag", {
                 action:"getApplicationCreationEvents",
                 applicationName:$("#applicationName").val(),
                 applicationRevision:$("#applicationRevision").val(),
@@ -650,9 +643,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
     });
 
     function activateCreateApplication() {
-        if ($('#applicationName').val() && $('#applicationRevision').val() && $('#container option:selected').val()
-                        && $('#runtime').val() > 0 && ($("#uploadedFileName").val() || $("#artifactUrl").val() || ($("#gitRepoUrl").val()  && $("#gitRepoBranch").val()))) {// checks form for validity
-
+        if ($('#applicationName').val() && $('#applicationRevision').val() && $('#runtime').val() > 0 && ($("#uploadedFileName").val() || $("#artifactUrl").val() || ($("#gitRepoUrl").val()  && $("#gitRepoBranch").val()))) {// checks form for validity
             if($("#uploadedFileName").val()){
                 if(validateArtifactType($("#uploadedFileName").val())){
                     $("#add-application").prop("disabled", false);
