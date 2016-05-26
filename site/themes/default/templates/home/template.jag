@@ -67,7 +67,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
             </div>
             <div class="col-md-3 breadcrumb-secondary">
                 <a href="/appmgt/site/pages/index.jag"><i class="fa fa-cubes visible-xs visible-lg"></i></a>
-                <span class="hidden-xs"><a href="/appmgt/site/pages/index.jag">Application Cloud</a></span>
+                <span class="hidden-xs"><a href="/appmgt/site/pages/index.jag">Integration Cloud</a></span>
             </div>
         </div>
     </div>
@@ -215,7 +215,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
                           </a>
                       </div>
                         <div class="col-xs-12 col-md-9 col-lg-9">
-                            <div class="block-replica">
+                            <!--div class="block-replica">
                                 <h3>Replicas</h3>
                                 <div class="block-replicas">
                                     <figure class="node-cicle" data-percent="100">
@@ -243,9 +243,9 @@ jagg.template("home", function(inputs, outputs, jagg) {
                                         </figcaption>
                                     </figure>
                                 </div>
-                            </div>
+                            </div-->
                         </div>
-                        <div class="col-xs-12 col-md-3 col-lg-3" data-toggle="tooltip" title="HTTP Monitoring Dashboard is not supported in this release. It will be available soon!">
+                        <!--div class="col-xs-12 col-md-3 col-lg-3" data-toggle="tooltip" title="HTTP Monitoring Dashboard is not supported in this release. It will be available soon!">
                             <a class="block-anch" href="#" onclick="return false;" target="_blank">
                                 <div class="block-monitoring">
                                     <h3>HTTP Monitoring Dashboard</h3>
@@ -255,12 +255,12 @@ jagg.template("home", function(inputs, outputs, jagg) {
                                 <div class="clearfix"></div>
                                 </div>
                             </a>
-                        </div>
+                        </div-->
                       <div class="clearfix"></div>
                     </div>
 
                 </div>
-          <div class="col-xs-12 col-md-3 col-lg-3">
+          <!--div class="col-xs-12 col-md-3 col-lg-3">
               <div class="block-team pull-left">
                 <a class="block-anch" id="envVars" href="/appmgt/site/pages/envs.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>">
                   <h3>Env Variables</h3>
@@ -286,7 +286,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
                   <div class="clearfix"></div>
                 </a>
               </div>
-          </div>
+          </div-->
         </div>
     </div><!-- /.container -->
     </div>
