@@ -49,6 +49,7 @@ var POD_STATUS = "Status";
 var ESB_CONNECT = "Connecting to Integration Server";
 var ESB_DEPLOY = "Deploying Integration";
 var ESB_DEPLOY_COMPLETE = "Verifying Integration Deployment"
+var LOAD_PARAMETERS = "Loading Integration Parameters"
 
 var EVENT_SUCCEEDED = "success";
 var EVENT_PENDING = "pending";

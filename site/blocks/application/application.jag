@@ -41,7 +41,7 @@ var log = new Log();
     } else if (action == "createApplication") {
         var applicationDescription = request.getParameter("applicationDescription");
         var replicas = 1;
-        var runtimeId = request.getParameter("runtime");
+        var runtimeId = 6;//request.getParameter("runtime"); //TODO remove runtime
         var isNewVersion = request.getParameter("isNewVersion");
         if (!isNewVersion || isNewVersion == "false") {
             isNewVersion = false;

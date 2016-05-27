@@ -31,7 +31,7 @@ var Event = Packages.org.wso2.intcloud.core.dto.Event;
 var Deployment = Packages.org.wso2.appcloud.core.dto.Deployment;
 var Container = Packages.org.wso2.appcloud.core.dto.Container;
 var ServiceProxy = Packages.org.wso2.appcloud.core.dto.ContainerServiceProxy;
-var CloudUtil = Packages.org.wso2.appcloud.common.util.AppCloudUtil;
+var CloudUtil = Packages.org.wso2.intcloud.common.util.IntCloudUtil;
 var RuntimeProperty = Packages.org.wso2.appcloud.core.dto.RuntimeProperty;
 var CarbonUtils = Packages.org.wso2.carbon.utils.CarbonUtils;
 var Util = Packages.org.wso2.appcloud.core.Util;
@@ -51,7 +51,8 @@ var Arrays = Packages.java.util.Arrays;
  * @param runtimeId runtime id of the application
  */
 var addApplication = function (applicationName, versionName, applicationDescription, replicas,
-                               runtimeId, appTypeName, runtimePropertiesArray, tagArray, appIcon, uploadedFileName, isNewVersion, conSpecMemory, conSpecCpu, artifactUrl) {
+                               runtimeId, appTypeName, runtimePropertiesArray, tagArray, appIcon, uploadedFileName,
+                               isNewVersion, conSpecMemory, conSpecCpu, artifactUrl) {
     log.info("Started creating App => name : " + applicationName + " Version : " + versionName + " Description " +
              ": " + applicationDescription + " runtimeId : " + runtimeId + " apptype : " + appTypeName );
 
@@ -63,11 +64,11 @@ var addApplication = function (applicationName, versionName, applicationDescript
     }
 
     if(isNewVersion == 'true'){
-        createAppVersionInDataBase(versionName, runtimeId, runtimePropertiesArray, tagArray, applicationHashId, versionHashId, conSpecMemory, conSpecCpu);
+        createAppVersionInDataBase(versionName, runtimeId, runtimePropertiesArray, tagArray, applicationHashId, versionHashId, conSpecMemory, conSpecCpu, uploadedFileName);
         stopOtherVersions(applicationHashId, versionName);
     }else{
         createAppInDataBase(applicationName, versionName, applicationDescription, replicas, runtimeId, appTypeName,
-                runtimePropertiesArray, tagArray, appIcon, applicationHashId, versionHashId, conSpecMemory, conSpecCpu);
+                runtimePropertiesArray, tagArray, appIcon, applicationHashId, versionHashId, conSpecMemory, conSpecCpu, uploadedFileName);
     }
     var applicationRuntime = ApplicationManager.getRuntimeById(runtimeId);
     var tagName = applicationRuntime.getTag() +"-"+ versionHashId;
@@ -81,23 +82,42 @@ var addApplication = function (applicationName, versionName, applicationDescript
     var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
     var esbClient = ESBClient.getInstance();
 
-    msg = "Successfully connected to Integration Server";
-    addEvent(ESB_CONNECT, EVENT_SUCCEEDED, msg, versionHashId); //TODO : check whether server is up
+    addEvent(ESB_CONNECT, EVENT_SUCCEEDED, "Successfully connected to Integration Server", versionHashId); //TODO : check whether server is up
 
-    msg = "Deploying integration";
-    addEvent(ESB_DEPLOY, EVENT_PENDING, msg, versionHashId);
+    addEvent(ESB_DEPLOY, EVENT_PENDING, "Deploying integration", versionHashId);
 
     esbClient.deployCarbonApp(uploadedFileName, uploadedFilePath);
 
-    msg = "Deployed integration";
-    addEvent(ESB_DEPLOY, EVENT_SUCCEEDED, msg, versionHashId);
+    addEvent(ESB_DEPLOY, EVENT_SUCCEEDED, "Deployed integration", versionHashId);
 
-    msg = "Verifying integration deployment";
-    addEvent(ESB_DEPLOY_COMPLETE, EVENT_PENDING, msg, versionHashId); //TODO : verify deployment
+    addEvent(ESB_DEPLOY_COMPLETE, EVENT_PENDING, "Verifying integration deployment", versionHashId); //TODO : verify deployment
 
-    msg = "Verifying integration deployment";
-    addEvent(ESB_DEPLOY_COMPLETE, EVENT_SUCCEEDED, msg, versionHashId);
+    setTimeout(waitForDeploy, 10000);
+
+    addEvent(ESB_DEPLOY_COMPLETE, EVENT_SUCCEEDED, "Verifying integration deployment", versionHashId);
+
+    //TODO : load parameters and upload in database
+    addEvent(LOAD_PARAMETERS, EVENT_PENDING, "Loading configuration parameters from deployment", versionHashId);
+
+    var paramConfiguration = esbClient.getIntegrationParamConfiguration(uploadedFileName);
+
+    addEvent(LOAD_PARAMETERS, EVENT_PENDING, "Loading configuration parameters from deployment", versionHashId);
+
+    updateParamConfiguration(applicationHashId, paramConfiguration);
+
+    addEvent(LOAD_PARAMETERS, EVENT_SUCCEEDED, "Updated configuration parameters", versionHashId);
 };
+
+function waitForDeploy()
+{
+    var log = new Log();
+    log.info("Waiting for car deployment");
+}
+
+var updateParamConfiguration = function(applicationHashId, paramConfiguration) {
+    var application = getApplication(applicationHashId);
+    ApplicationManager.updateParamConfiguration(applicationHashId, paramConfiguration);
+}
 
 var stopOtherVersions = function(applicationHashId, selectedRevision) {
     var application = getApplication(applicationHashId);
@@ -225,7 +245,8 @@ var buildDockerImage = function (applicationName, versionName, runtimeId, absFil
 }
 
 var createAppInDataBase = function(applicationName, versionName, applicationDescription, replicas, runtimeId,
-                                   appTypeName, runtimePropertiesArray, tagArray, appIcon, applicationHashId, versionHashId, conSpecMemory, conSpecCpu){
+                                   appTypeName, runtimePropertiesArray, tagArray, appIcon, applicationHashId,
+                                   versionHashId, conSpecMemory, conSpecCpu, carbonApplicationName, paramConfiguration){
 
     //================================= Adding application to Database =========================================
     var application = new Application();
@@ -236,6 +257,8 @@ var createAppInDataBase = function(applicationName, versionName, applicationDesc
         application.setHashId(applicationHashId);
         application.setDescription(applicationDescription);
         application.setApplicationType(appTypeName);
+        application.setCarbonApplicationName(carbonApplicationName);
+        application.setParamConfiguration(paramConfiguration);
 
         var iconStream = null;
         var iconBlob = null;
@@ -804,6 +827,8 @@ var getApplication = function(applicationHashId){
         applicationObject.defaultVersion = application.versions.get(0).versionName;
         applicationObject.applicationType = application.applicationType;
         applicationObject.icon = getApplicationIconAsBase64String(application);
+        applicationObject.carbonApplicationName = application.carbonApplicationName;
+        applicationObject.paramConfiguration = application.paramConfiguration;
         applicationObject.defaultVersionName = application.defaultVersion;
         applicationObject.versions = generateVersionList(application.versions, application.applicationName, application.defaultVersion);
     } catch(e){
