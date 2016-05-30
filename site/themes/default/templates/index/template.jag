@@ -188,12 +188,12 @@ jagg.template("index", function(inputs, outputs, jagg) {
                 <i class="fw fw-add fw-stack-1x"></i>
             </span> <span class="hidden-xs">Upload integration</span>
         </a>
-        <!--a href="<%=jagg.getAbsoluteUrl("/site/pages/newdatabase.jag")%>?isEdit=false" class="btn-action" data-toggle="tooltip" data-placement="top" title="Add New Database">
+        <a href="<%=jagg.getAbsoluteUrl("/site/pages/newdatabase.jag")%>?isEdit=false" class="btn-action hide" data-toggle="tooltip" data-placement="top" title="Add New Database">
             <span class="fw-stack fw-lg btn-action-ico">
                 <i class="fw fw-circle-outline fw-stack-2x"></i>
                 <i class="fw fw-add fw-stack-1x"></i>
-            </span> <span class="hidden-xs">Create Database</span>
-        </a-->
+            </span> <span class="hidden-xs hide">Create Database</span>
+        </a>
     </div>
     <div class="container-fluid">
 
@@ -202,7 +202,7 @@ jagg.template("index", function(inputs, outputs, jagg) {
     <% if (applications.length > 0 ) { %>
         <div class="row row-centered app-sort-bar">
             <div class="col-centered col-md-5 search">
-                <input type="text" class="form-control" id="search-apps" placeholder="Search applications">
+                <input type="text" class="form-control" id="search-apps" placeholder="Search integrations">
                 <i class="fa fa-2x fa-search" ></i>
             </div>
         </div>

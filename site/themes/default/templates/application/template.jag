@@ -29,7 +29,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
         var isAppTypeBuildable = appType.buildable;
         var applicationName = outputs.applicationName;
         var subscriptionPlanBaseURL = outputs.subscriptionPlanBaseURL;
-		var runtimeID = runtimes[0].id;
+		var runtimeID = 6; //runtimes[0].id;
         var encodedLabels = request.getParameter("encodedLabels");
         var encodedEnvs = request.getParameter("encodedEnvs");
         var log = new Log();
@@ -198,7 +198,6 @@ jagg.template("application", function (inputs, outputs, jagg) {
 
 
             $('#application-details').submit(function(e){
-
                 $("#app-creation-model-footer").html("");
                 $("#app-creation-model-body").html(modalBody);
 
@@ -900,7 +899,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
             <label for="application-version">Integration Version:
                 <i class="fa fa-question-circle help-tips" data-toggle="tooltip" data-placement="left" title="Set the version in the form of <Major>.<Minor>.<Patch>"></i>
             </label>
-            <input id="applicationRevision" name="applicationRevision" type="text" class="form-control" value="1.0.0"/>
+            <input id="applicationRevision" name="applicationRevision" type="text" class="form-control" value="1.0.0" disabled/>
             </div>
         <% } %>
             <div class="form-group">
@@ -923,14 +922,14 @@ jagg.template("application", function (inputs, outputs, jagg) {
                     <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="upload-from-file"
                            checked="checked" class="custom-radio"> Upload from file system
                 </label>
-                <label class="radio-inline">
+                <label class="radio-inline hide">
                     <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="upload-from-url"
-                           class="custom-radio"> Upload from URL
+                           class="custom-radio hide"> Upload from URL
                 </label>
-		<!--label class="radio-inline">
+		<label class="radio-inline hide">
                     <input type="radio" name="inlineRadioOptions" id="inlineRadioSample" value="deploy-sample"
-                           class="custom-radio"> Deploy Sample App
-                </label-->
+                           class="custom-radio hide"> Deploy Sample App
+                </label>
                 <%  if(isAppTypeBuildable == 'false'){ %>
                     <label class="radio-inline">
                         <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="github-repo-url"
@@ -943,7 +942,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
                 <div class="input-group">
                     <input id="uploadedFileName" name="uploadedFileName" type="text" class="form-control" readonly>
                     <span class="input-group-btn">
-                       <span class="btn btn-primary btn-file" id="btn-artifact-upload" >
+                       <span class="btn btn-primary btn-file" id="btn-artifact-upload" disabled>
                            <input id="fileupload" type="file" name="fileupload">Browse
                        </span>
                     </span>
@@ -953,7 +952,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
                 </div>
             </div>
 
-            <!--div class="form-group" id="url-upload-block">
+            <div class="form-group hide" id="url-upload-block">
                 <div class="input-group">
                     <input id="artifactUrl" name="artifactUrl" type="text" class="form-control" placeholder="Enter artifact URL" />
                     <span class="input-group-btn">
@@ -961,9 +960,9 @@ jagg.template("application", function (inputs, outputs, jagg) {
                         <span id="url-upload-progress"><span></a>
                     </span>
                 </div>
-            </div-->
+            </div>
 
-            <!--div class="form-group" id="github-block">
+            <div class="form-group hide" id="github-block">
                 <div class="input-group">
                      <span class="input-group-addon">URL</span>
                     <input id="gitRepoUrl" name="gitRepoUrl" type="text" class="form-control" placeholder="Enter GitHub Repository URL" />
@@ -979,23 +978,23 @@ jagg.template("application", function (inputs, outputs, jagg) {
                     <input id="projectRoot" name="projectRoot" type="text" class="form-control" placeholder="Project Root" />
                 </div>
                 <br/>
-                <!--div class="input-group">
+                <div class="input-group">
                     <span class="input-group-addon">Token</span>
                     <input id="token" name="token" type="text" class="form-control" placeholder="Enter Personal access token" />
-                </div-->
-            </div-->
+                </div>
+            </div>
 
-            <!--div class="form-group">
+            <div class="form-group hide">
                 <label for="runtime">Runtime:
                     <i class="fa fa-question-circle help-tips" data-toggle="tooltip" data-placement="left" title="Select an appropriate runtime to run your application"></i>
                 </label>
                 <select name="runtime" id="runtime" class="form-control"></select>
-            </div-->
+            </div>
 
-			<!--div class="form-group">
+			<div class="form-group hide">
                 <label for="container">Container Specification: </label>
                 <select name="container" id="container" class="form-control" ></select>
-            </div-->
+            </div>
             <div class="form-group">
                 <label for="application-icon">Icon:
                     <i class="fa fa-question-circle help-tips" data-toggle="tooltip" data-placement="left"
@@ -1014,8 +1013,8 @@ jagg.template("application", function (inputs, outputs, jagg) {
                 </div>
             </div>
 
-            <!--div class="panel-group property-accordion" id="property-accordion">
-                    <div class="panel panel-default">
+            <div class="panel-group property-accordion" id="property-accordion">
+                    <div class="panel panel-default hide">
                         <div class="panel-heading">
                             <h4 class="panel-title">
                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
@@ -1049,7 +1048,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
                         </div>
                     </div>
 
-                    <div class="panel panel-default">
+                    <div class="panel panel-default hide">
                         <div class="panel-heading">
                             <h4 class="panel-title">
                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
@@ -1077,7 +1076,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
                             </div>
                         </div>
                     </div>
-            </div-->
+            </div>
             <div class="form-group">
                 <button class="cu-btn cu-btn-sm cu-btn-blue cu-btn-position" id="add-application">
                     <span class="fw-stack fw-lg btn-action-ico">
