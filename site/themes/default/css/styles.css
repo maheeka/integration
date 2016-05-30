@@ -2822,3 +2822,13 @@ ul#appVersionList {
 .form-control-config{
     width: 300px;
 }
+
+hr {
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px;
+}
