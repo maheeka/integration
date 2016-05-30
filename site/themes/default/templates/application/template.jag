@@ -20,19 +20,16 @@
 include("/jagg/constants.jag");
 include("/jagg/jagg.jag");
 
-jagg.template("application", function (inputs, outputs, jagg) {
-        var log = new Log("");
+jagg.template("application", function (inputs, outputs, jagg) {        var runtimes = outputs.runtimes;
         var runtimes = outputs.runtimes;
         var appType = outputs.appType;
-        log.info("XXXX=" + runtimes + "-" + appType);
         var applicationCount = outputs.applicationCount;
         var appTypeName = appType.type;
         var notAllowedEnvVariables = outputs.notAllowedEnvVariables;
         var isAppTypeBuildable = appType.buildable;
         var applicationName = outputs.applicationName;
         var subscriptionPlanBaseURL = outputs.subscriptionPlanBaseURL;
-        log.info("runtimeID=" + runtimes[0].id);
-		var runtimeID = runtimes[0].id;
+		var runtimeID = 6; //runtimes[0].id;
         var encodedLabels = request.getParameter("encodedLabels");
         var encodedEnvs = request.getParameter("encodedEnvs");
         var log = new Log();
@@ -225,15 +222,8 @@ jagg.template("application", function (inputs, outputs, jagg) {
                 formData.append('appTypeName', appTypeName);
                 formData.append('applicationName', $("#applicationName").val());
                 var optionRuntime = $("#runtime option:selected").val();
-//                var optionSpec = $("#container option:selected").index();
-//                var optionConSpecCpu = specCpu[optionSpec];
-//                var optionConSpecMemory = specMemory[optionSpec];
-//                var optionConSpecCost = specCost[optionSpec];
 
                 formData.append('runtime', optionRuntime);
-//                formData.append('conSpecMemory', optionConSpecMemory);
-//                formData.append('conSpecCost', optionConSpecCost);
-//                formData.append('conSpecCpu', optionConSpecCpu);
 
                 if(uploadMethod === "file"){
                     formData.append('uploadedFileName', $("#uploadedFileName").val());
@@ -322,7 +312,6 @@ jagg.template("application", function (inputs, outputs, jagg) {
         function drawProgressWindow(){
             $('#app_creation_progress_modal').modal({ backdrop: 'static', keyboard: false});
             $("#app_creation_progress_modal").show();
-            //alert("test");
             setInterval(pollEvents, 2000);
         }
 
@@ -332,7 +321,8 @@ jagg.template("application", function (inputs, outputs, jagg) {
 
         function pollEvents() {
 
-            jagg.post("../blocks/application/application.jag", {
+
+             jagg.post("../blocks/application/application.jag", {
                 action:"getApplicationCreationEvents",
                 applicationName:$("#applicationName").val(),
                 applicationRevision:$("#applicationRevision").val(),
@@ -396,7 +386,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
                     } else if(event.status == "failed"){
                         var alert = "<p>Application creation failed. </p><p>Reason: " + event.description + "</p>";
                         var retry_button = "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"redirectAppListing();\">cancel</button>" +
-                                           "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"retryAppCreation();\">Back to Application Creation</button>";
+                                           "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"retryAppCreation();\">Back to Integration Creation</button>";
                         setTimeout(showErrorPopup, 2000);
                         function showErrorPopup(){
                             $("#app-creation-model-body").html(alert);
@@ -407,7 +397,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
             },function (jqXHR, textStatus, errorThrown) {
                  var alert = "<p>Application creation failed. " + errorThrown + "</p>";
                  var retry_button = "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"redirectAppListing();\">Cancel</button>" +
-                                    "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"retryAppCreation();\">Back to Application Creation</button>";
+                                    "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"retryAppCreation();\">Back to Upload Integration</button>";
                  setTimeout(showErrorPopup, 1000);
                  function showErrorPopup(){
                      $("#app-creation-model-body").html(alert);
@@ -468,10 +458,10 @@ jagg.template("application", function (inputs, outputs, jagg) {
                 // Disable app creation button if the form is not valid
                 if (this.numberOfInvalids() > 0) {
                     $("#add-application").prop("disabled", true);
-                    if(Object.keys(event)[0] != "uploadedFileName"){
-                        $("#btn-artifact-upload").attr("disabled", true);
-                    }
-                    $("#url-upload").attr("disabled", true);
+                  //  if(Object.keys(event)[0] != "uploadedFileName"){
+                  //      $("#btn-artifact-upload").attr("disabled", true);
+                  //  }
+                  //  $("#url-upload").attr("disabled", true);
                 } else {
                     activateCreateApplication();
                 }
@@ -652,22 +642,26 @@ jagg.template("application", function (inputs, outputs, jagg) {
     });
 
     function activateCreateApplication() {
-        if ($('#applicationName').val() && $('#applicationRevision').val() && $('#runtime').val() > 0 && ($("#uploadedFileName").val() || $("#artifactUrl").val() || ($("#gitRepoUrl").val()  && $("#gitRepoBranch").val()))) {// checks form for validity
+        if ($('#applicationName').val() && $('#applicationRevision').val()
+                         && $("#uploadedFileName").val()) {// checks form for validity
+
             if($("#uploadedFileName").val()){
                 if(validateArtifactType($("#uploadedFileName").val())){
                     $("#add-application").prop("disabled", false);
                 }else{
                     $("#add-application").prop("disabled", true);
                 }
-            }else if ($("#artifactUrl").val()){
-                if(urlUploadComplete){
-                    $("#add-application").prop("disabled", false);
-                } else {
-                    $("#add-application").prop("disabled", true);
-                }
-            }else if($("#gitRepoUrl").val()  && $("#gitRepoBranch").val()){
-		        $("#add-application").prop("disabled", false);
-            }
+            }//else if ($("#artifactUrl").val()){
+
+             //   if(urlUploadComplete){
+             //       $("#add-application").prop("disabled", false);
+             //   } else {
+             //       $("#add-application").prop("disabled", true);
+             //   }
+            //}else if($("#gitRepoUrl").val()  && $("#gitRepoBranch").val()){
+
+		      //  $("#add-application").prop("disabled", false);
+           // }
         } else {
             $("#add-application").prop("disabled", true);      // enables button
         }
@@ -853,12 +847,12 @@ jagg.template("application", function (inputs, outputs, jagg) {
         <%
         } else {
         %>
-            <a href="<%=jagg.getAbsoluteUrl("/site/pages/select-apptype.jag")%>" class="btn-action">
+            <!--a href="<%=jagg.getAbsoluteUrl("/site/pages/select-apptype.jag")%>" class="btn-action">
                 <span class="fw-stack fw-lg btn-action-ico">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                     <i class="fw fw-left-arrow fw-stack-1x"></i>
-                </span> Back to app type selection
-            </a>
+                </span> Back to Integration selection
+            </a-->
             <a href="<%=jagg.getAbsoluteUrl("/site/pages/index.jag")%>" class="btn-action">
                 <span class="fw-stack fw-lg btn-action-ico">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>
@@ -889,20 +883,20 @@ jagg.template("application", function (inputs, outputs, jagg) {
 
       <form id="application-details" method="post" action='<%=jagg.getAbsoluteUrl("/site/blocks/application/application.jag")%>' enctype="multipart/form-data">
             <div class="form-group">
-                <label for="application-name">Application Name: </label>
-                <input id="applicationName" name="applicationName" type="text" class="form-control" placeholder="Enter Application Name" />
+                <label for="application-name">Integration Name: </label>
+                <input id="applicationName" name="applicationName" type="text" class="form-control" placeholder="Enter Integration Name" />
             </div>
 
         <% if(newVersion){ %>
             <div class="form-group">
-            <label for="application-version">Application Version:
+            <label for="application-version">Integration Version:
                 <i class="fa fa-question-circle help-tips" data-toggle="tooltip" data-placement="left" title="Set the version in the form of <Major>.<Minor>.<Patch>"></i>
             </label>
             <input id="applicationRevision" name="applicationRevision" type="text" class="form-control" value="<%=nextVersion%>"/>
             </div>
         <% } else { %>
             <div class="form-group">
-            <label for="application-version">Application Version:
+            <label for="application-version">Integration Version:
                 <i class="fa fa-question-circle help-tips" data-toggle="tooltip" data-placement="left" title="Set the version in the form of <Major>.<Minor>.<Patch>"></i>
             </label>
             <input id="applicationRevision" name="applicationRevision" type="text" class="form-control" value="1.0.0"/>
@@ -912,7 +906,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
             <label for="application-description" >Description:
                 <i class="fa fa-question-circle help-tips" data-toggle="tooltip" data-placement="left" title="Supported upto 1000 characters"></i>
             </label>
-            <textarea name="applicationDescription" class="form-control" rows="3" placeholder="Application description goes here. (Optional)"></textarea>
+            <textarea name="applicationDescription" class="form-control" rows="3" placeholder="Integration description goes here. (Optional)"></textarea>
             </div>
 
             <!--div class="form-group">
@@ -928,13 +922,13 @@ jagg.template("application", function (inputs, outputs, jagg) {
                     <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="upload-from-file"
                            checked="checked" class="custom-radio"> Upload from file system
                 </label>
-                <label class="radio-inline">
+                <label class="radio-inline hide">
                     <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="upload-from-url"
-                           class="custom-radio"> Upload from URL
+                           class="custom-radio hide"> Upload from URL
                 </label>
-		<label class="radio-inline">
+		<label class="radio-inline hide">
                     <input type="radio" name="inlineRadioOptions" id="inlineRadioSample" value="deploy-sample"
-                           class="custom-radio"> Deploy Sample App
+                           class="custom-radio hide"> Deploy Sample App
                 </label>
                 <%  if(isAppTypeBuildable == 'false'){ %>
                     <label class="radio-inline">
@@ -958,7 +952,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
                 </div>
             </div>
 
-            <div class="form-group" id="url-upload-block">
+            <div class="form-group hide" id="url-upload-block">
                 <div class="input-group">
                     <input id="artifactUrl" name="artifactUrl" type="text" class="form-control" placeholder="Enter artifact URL" />
                     <span class="input-group-btn">
@@ -968,7 +962,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
                 </div>
             </div>
 
-            <div class="form-group" id="github-block">
+            <div class="form-group hide" id="github-block">
                 <div class="input-group">
                      <span class="input-group-addon">URL</span>
                     <input id="gitRepoUrl" name="gitRepoUrl" type="text" class="form-control" placeholder="Enter GitHub Repository URL" />
@@ -984,20 +978,20 @@ jagg.template("application", function (inputs, outputs, jagg) {
                     <input id="projectRoot" name="projectRoot" type="text" class="form-control" placeholder="Project Root" />
                 </div>
                 <br/>
-                <!--div class="input-group">
+                <div class="input-group">
                     <span class="input-group-addon">Token</span>
                     <input id="token" name="token" type="text" class="form-control" placeholder="Enter Personal access token" />
-                </div-->
+                </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group hide">
                 <label for="runtime">Runtime:
                     <i class="fa fa-question-circle help-tips" data-toggle="tooltip" data-placement="left" title="Select an appropriate runtime to run your application"></i>
                 </label>
                 <select name="runtime" id="runtime" class="form-control"></select>
             </div>
 
-			<div class="form-group">
+			<div class="form-group hide">
                 <label for="container">Container Specification: </label>
                 <select name="container" id="container" class="form-control" ></select>
             </div>
@@ -1020,7 +1014,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
             </div>
 
             <div class="panel-group property-accordion" id="property-accordion">
-                    <div class="panel panel-default">
+                    <div class="panel panel-default hide">
                         <div class="panel-heading">
                             <h4 class="panel-title">
                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
@@ -1054,7 +1048,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
                         </div>
                     </div>
 
-                    <div class="panel panel-default">
+                    <div class="panel panel-default hide">
                         <div class="panel-heading">
                             <h4 class="panel-title">
                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
@@ -1089,7 +1083,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
                         <i class="fw fw-circle-outline fw-stack-2x"></i>
                         <i class="fw fw-add fw-stack-1x"></i>
                     </span>
-                        Create
+                        Upload
                 </button>
             </div>
         </form>
