@@ -899,7 +899,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
             <label for="application-version">Integration Version:
                 <i class="fa fa-question-circle help-tips" data-toggle="tooltip" data-placement="left" title="Set the version in the form of <Major>.<Minor>.<Patch>"></i>
             </label>
-            <input id="applicationRevision" name="applicationRevision" type="text" class="form-control" value="1.0.0" disabled/>
+            <input id="applicationRevision" name="applicationRevision" type="text" class="form-control" value="1.0.0"/>
             </div>
         <% } %>
             <div class="form-group">
