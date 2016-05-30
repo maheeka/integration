@@ -205,8 +205,8 @@ jagg.template("home", function(inputs, outputs, jagg) {
                                // }else if(selectedApplicationRevision.status=='stopped' || selectedApplicationRevision.status=='inactive'){
                                 }else if(true){
                                 %>
-                                    <!--button class="cu-btn cu-btn-md cu-btn-gr-dark btn-launch-app" id="btn-launchApp"
-                                    url="<%=selectedApplicationRevision.deploymentURL%>" disabled>Launch App</button-->
+                                    <button class="cu-btn cu-btn-md cu-btn-gr-dark btn-launch-app hide" id="btn-launchApp"
+                                    url="<%=selectedApplicationRevision.deploymentURL%>" disabled>Launch App</button>
                                     <div class="btn-group ctrl-edit-button btn-edit-code right">
                                       <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue right" onclick="startApplication();">Stop</a>
                                     </div>

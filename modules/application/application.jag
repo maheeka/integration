@@ -845,15 +845,14 @@ var generateVersionList = function (versions, applicationName, defaultVersionNam
         for (var i = 0; i < versions.size(); i++) {
             var versionObject = {};
             var version = versions.get(i);
-
-            if (version.versionName == defaultVersionName) {
-                versionObject.customtUrl = getCustomUrl(version.hashId);
-            }
+            //if (version.versionName == defaultVersionName) {
+            //    versionObject.customtUrl = getCustomUrl(version.hashId);
+            //}
 
             var deploymentUrl = getDeploymentURL(applicationName, version.versionName);
             versionObject.versionName = version.versionName;
             versionObject.hashId = version.hashId;
-            versionObject.runtimeId = version.runtimeId;
+            versionObject.runtimeId = 6;//version.runtimeId;
             versionObject.runtimeName = version.runtimeName;
             versionObject.status = version.status;
             versionObject.conSpecCpu = version.conSpecCpu;

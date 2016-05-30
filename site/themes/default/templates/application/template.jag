@@ -20,7 +20,7 @@
 include("/jagg/constants.jag");
 include("/jagg/jagg.jag");
 
-jagg.template("application", function (inputs, outputs, jagg) {        var runtimes = outputs.runtimes;
+jagg.template("application", function (inputs, outputs, jagg) {
         var runtimes = outputs.runtimes;
         var appType = outputs.appType;
         var applicationCount = outputs.applicationCount;
