@@ -186,7 +186,7 @@ jagg.template("index", function(inputs, outputs, jagg) {
             <span class="fw-stack fw-lg btn-action-ico">
                 <i class="fw fw-circle-outline fw-stack-2x"></i>
                 <i class="fw fw-add fw-stack-1x"></i>
-            </span> <span class="hidden-xs">Create Application</span>
+            </span> <span class="hidden-xs">Upload integration</span>
         </a>
         <a href="<%=jagg.getAbsoluteUrl("/site/pages/newdatabase.jag")%>?isEdit=false" class="btn-action hide" data-toggle="tooltip" data-placement="top" title="Add New Database">
             <span class="fw-stack fw-lg btn-action-ico">
@@ -212,7 +212,7 @@ jagg.template("index", function(inputs, outputs, jagg) {
                 <div class="cloud-new-content">
                     <h1>New to WSO2 Integration Cloud ?</h1>
                     <a id="app-create-button" class="cu-btn cu-btn-md cu-btn-blue" href="/appmgt/site/pages/select-apptype.jag">
-                      Upload your first application</a>
+                      upload your first integration application</a>
                     <!--div class="help">
                         <i class="fa fa-2x fa-book"></i> Need help ? Read App creation guide first..
                     </div-->
