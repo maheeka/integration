@@ -34,6 +34,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
     var revisions = outputs.revision;
     var applicationName = application.applicationName;
     var applicationKey = application.hashId;
+    var paramConfiguration = application.paramConfiguration;
     var appCreationPageBaseUrl = jagg.getAbsoluteUrl("/site/pages/application.jag");
     var dashboardBaseUrl = DASHBOARD_BASE_URL;
     var dashboardUrl = dashboardBaseUrl + applicationName + "-" + selectedRevision;
@@ -127,7 +128,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
                 <span class="fw-stack fw-lg btn-action-ico">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                     <i class="fw fw-left-arrow fw-stack-1x"></i>
-                </span> Back to Listing
+                </span> Back to Integration Listing
         </a>
     </div><!-- EOF App factory menu actionbar-->
 
