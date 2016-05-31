@@ -35,6 +35,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
     var applicationName = application.applicationName;
     var applicationKey = application.hashId;
     var paramConfiguration = application.paramConfiguration;
+    var taskConfiguration = stringify(application.taskConfiguration);
     var appCreationPageBaseUrl = jagg.getAbsoluteUrl("/site/pages/application.jag");
     var dashboardBaseUrl = DASHBOARD_BASE_URL;
     var dashboardUrl = dashboardBaseUrl + applicationName + "-" + selectedRevision;
@@ -48,6 +49,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
     var applicationName = "<%=applicationName%>";
     var applicationKey = "<%=applicationKey%>";
     var paramConfigurationJSON = JSON.parse('<%=paramConfiguration%>');
+    var taskConfiguration = <%=taskConfiguration%>;
     var conSpecCpu = "<%=conSpecCpu%>";
     var conSpecMemory = "<%=conSpecMemory%>";
     var application = jQuery.parseJSON('<%=application%>');
@@ -188,7 +190,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
                                     <button class="cu-btn cu-btn-md cu-btn-gr-dark btn-launch-app hide" id="btn-launchApp"
                                     url="<%=selectedApplicationRevision.deploymentURL%>" disabled>Launch App</button>
                                     <div class="btn-group ctrl-edit-button btn-edit-code right">
-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue right" onclick="startApplication();">Stop Integration</a>
+                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue right" onclick="stopIntegration();">Stop Integration</a>
                                     </div>
                           </div>
 
@@ -441,6 +443,24 @@ jagg.template("home", function(inputs, outputs, jagg) {
 
     function reloadAppHome(){
         location.reload();
+    }
+
+    // stop integration
+    function stopIntegration(){
+        jagg.post("../blocks/application/application.jag", {
+            action: "stopIntegration",
+            applicationName : applicationName,
+            applicationKey : applicationKey,
+            taskConfiguration : taskConfiguration
+
+        }, function(result) {
+            console.info("result " + result);
+            jagg.message({
+                 content: "Integration Schedule Stop",
+                 type: 'info',
+                 timeout: 3500
+            });
+        });
     }
 
     //deploy integration for testing

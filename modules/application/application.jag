@@ -105,13 +105,19 @@ var updateParamConfiguration = function(applicationHashId, paramConfiguration) {
     ApplicationManager.updateParamConfiguration(applicationHashId, paramConfiguration);
 }
 
+var updateTaskConfiguration = function(applicationHashId, taskConfiguration) {
+    var application = getApplication(applicationHashId);
+    ApplicationManager.updateTaskConfiguration(applicationHashId, taskConfiguration);
+}
+
 var scheduleIntegration = function (applicationName, applicationHashId, paramConfiguration) {
     var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
     var esbClient = ESBClient.getInstance();
 
-    esbClient.deployScheduleTask(applicationName, paramConfiguration);
+    var taskConfiguration = esbClient.deployScheduleTask(applicationName, paramConfiguration);
 
     ApplicationManager.updateParamConfiguration(applicationHashId, paramConfiguration);
+    ApplicationManager.updateTaskConfiguration(applicationHashId, taskConfiguration);
 }
 
 var testIntegration = function (applicationName, applicationHashId, paramConfiguration) {
@@ -119,6 +125,13 @@ var testIntegration = function (applicationName, applicationHashId, paramConfigu
     var esbClient = ESBClient.getInstance();
 
     esbClient.deployTestScheduleTask(applicationName, paramConfiguration);
+}
+
+var stopIntegration = function (applicationName, applicationHashId, taskConfiguration) {
+    var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
+    var esbClient = ESBClient.getInstance();
+
+    esbClient.stopScheduleTask(applicationName, taskConfiguration);
 }
 
 
@@ -249,7 +262,8 @@ var buildDockerImage = function (applicationName, versionName, runtimeId, absFil
 
 var createAppInDataBase = function(applicationName, versionName, applicationDescription, replicas, runtimeId,
                                    appTypeName, runtimePropertiesArray, tagArray, appIcon, applicationHashId,
-                                   versionHashId, conSpecMemory, conSpecCpu, carbonApplicationName, paramConfiguration){
+                                   versionHashId, conSpecMemory, conSpecCpu, carbonApplicationName, paramConfiguration,
+                                   taskConfiguration){
 
     //================================= Adding application to Database =========================================
     var application = new Application();
@@ -262,6 +276,7 @@ var createAppInDataBase = function(applicationName, versionName, applicationDesc
         application.setApplicationType(appTypeName);
         application.setCarbonApplicationName(carbonApplicationName);
         application.setParamConfiguration(paramConfiguration);
+        application.setTaskConfiguration(taskConfiguration);
 
         var iconStream = null;
         var iconBlob = null;
@@ -831,6 +846,7 @@ var getApplication = function(applicationHashId){
         applicationObject.icon = getApplicationIconAsBase64String(application);
         applicationObject.carbonApplicationName = application.carbonApplicationName;
         applicationObject.paramConfiguration = application.paramConfiguration;
+        applicationObject.taskConfiguration = application.taskConfiguration;
         applicationObject.defaultVersionName = application.defaultVersion;
         applicationObject.versions = generateVersionList(application.versions, application.applicationName, application.defaultVersion);
     } catch(e){

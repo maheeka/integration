@@ -73,6 +73,16 @@ var log = new Log();
         response.status = 200;
         response.message = "Integration is successfully executed for testing !";
 
+    } else if (action == "stopIntegration"){
+        var applicationName = request.getParameter("applicationName");
+        var applicationKey = request.getParameter("applicationKey");
+        var taskConfiguration = request.getParameter("taskConfiguration");
+
+        applicationModule.stopIntegration(applicationName, applicationKey, taskConfiguration);
+
+        response.status = 200;
+        response.message = "Integration is successfully executed for testing !";
+
     } else if (action == "createApplication") {
         var applicationDescription = request.getParameter("applicationDescription");
         var replicas = 1;
