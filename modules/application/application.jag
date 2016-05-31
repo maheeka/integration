@@ -119,11 +119,13 @@ var updateParamConfiguration = function(applicationHashId, paramConfiguration) {
     ApplicationManager.updateParamConfiguration(applicationHashId, paramConfiguration);
 }
 
-var scheduleIntegration = function (applicationName, applicationHashId, interval, count, parameters) {
-      var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
-      var esbClient = ESBClient.getInstance();
+var scheduleIntegration = function (applicationName, applicationHashId, paramConfiguration) {
+    var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
+    var esbClient = ESBClient.getInstance();
 
-      esbClient.deployScheduleTask(applicationName, interval, count, parameters);
+    esbClient.deployScheduleTask(applicationName, paramConfiguration);
+
+    ApplicationManager.updateParamConfiguration(applicationHashId, paramConfiguration);
 };
 var stopOtherVersions = function(applicationHashId, selectedRevision) {
     var application = getApplication(applicationHashId);

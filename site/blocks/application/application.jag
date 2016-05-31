@@ -44,9 +44,15 @@ var log = new Log();
         var applicationKey = request.getParameter("applicationKey");
         var interval =  request.getParameter("interval");
         var count =  request.getParameter("count");
-        var parameters = request.getParameter("configParams");
+        var configParams = request.getParameter("configParams");
+        var configParamsJSON = JSON.parse(configParams);
 
-        applicationModule.scheduleIntegration(applicationName, applicationKey, interval, count, parameters);
+        configParamsJSON.schedule.count = count;
+        configParamsJSON.schedule.interval = interval;
+
+        configParams = JSON.stringify(configParamsJSON);
+
+        applicationModule.scheduleIntegration(applicationName, applicationKey, configParams);
 
         response.status = 200;
         response.message = "Integration is successfully deployed!";
