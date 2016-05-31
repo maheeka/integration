@@ -136,15 +136,9 @@ var log = new Log();
                         applicationModule.addApplication(applicationName, applicationRevision, applicationDescription, replicas,
                                 runtimeId, appTypeName, runtimeProperties, tags, appIcon,
                                 uploadedFileName, isNewVersion, conSpecMemory, conSpecCpu, artifactUrl);
-                                var log = new Log();
-                                log.info("gggggggggggggggggggggggggggggggggggggggggggg");
-                                                    response.status = 200;
-                                                                                    log.info("gggggggggggggggggggggggggggggggggggggggggggg");
-
-                                                    response.message = uploadedFileName + "successfully deployed.";
-                                                                                    log.info("gggggggggggggggggggggggggggggggggggggggggggg");
-
-                                                    return(response);
+                                response.status = 200;
+                                response.message = uploadedFileName + "successfully deployed.";
+                                return(response);
                     } else {
                         var gitRepoUrl = request.getParameter("gitRepoUrl");
                         var gitRepoBranch = request.getParameter("gitRepoBranch");
