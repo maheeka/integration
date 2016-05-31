@@ -38,6 +38,19 @@ var log = new Log();
         response.status = 200;
         response.message = "Artifact is successfully uploaded!";
 
+    } else if (action == "scheduleIntegration"){
+        var count = request.getParameter("count");
+        var applicationName = request.getParameter("applicationName");
+        var applicationKey = request.getParameter("applicationKey");
+        var interval =  request.getParameter("interval");
+        var count =  request.getParameter("count");
+        var parameters = request.getParameter("configParams");
+
+        applicationModule.scheduleIntegration(applicationName, applicationKey, interval, count, parameters);
+
+        response.status = 200;
+        response.message = "Integration is successfully deployed!";
+        print('test');
     } else if (action == "createApplication") {
         var applicationDescription = request.getParameter("applicationDescription");
         var replicas = 1;
