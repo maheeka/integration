@@ -112,7 +112,16 @@ var scheduleIntegration = function (applicationName, applicationHashId, paramCon
     esbClient.deployScheduleTask(applicationName, paramConfiguration);
 
     ApplicationManager.updateParamConfiguration(applicationHashId, paramConfiguration);
-};
+}
+
+var testIntegration = function (applicationName, applicationHashId, paramConfiguration) {
+    var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
+    var esbClient = ESBClient.getInstance();
+
+    esbClient.deployTestScheduleTask(applicationName, paramConfiguration);
+}
+
+
 var stopOtherVersions = function(applicationHashId, selectedRevision) {
     var application = getApplication(applicationHashId);
     var applicationVersions = application.versions;

@@ -39,7 +39,6 @@ var log = new Log();
         response.message = "Artifact is successfully uploaded!";
 
     } else if (action == "scheduleIntegration"){
-        var count = request.getParameter("count");
         var applicationName = request.getParameter("applicationName");
         var applicationKey = request.getParameter("applicationKey");
         var interval =  request.getParameter("interval");
@@ -57,6 +56,23 @@ var log = new Log();
         response.status = 200;
         response.message = "Integration is successfully deployed!";
         print('test');
+
+    } else if (action == "testIntegration"){
+        var applicationName = request.getParameter("applicationName");
+        var applicationKey = request.getParameter("applicationKey");
+        var configParams = request.getParameter("configParams");
+        var configParamsJSON = JSON.parse(configParams);
+
+        configParamsJSON.schedule.count = "1";
+        configParamsJSON.schedule.interval = "1";
+
+        configParams = JSON.stringify(configParamsJSON);
+
+        applicationModule.testIntegration(applicationName, applicationKey, configParams);
+
+        response.status = 200;
+        response.message = "Integration is successfully executed for testing !";
+
     } else if (action == "createApplication") {
         var applicationDescription = request.getParameter("applicationDescription");
         var replicas = 1;

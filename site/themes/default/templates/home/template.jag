@@ -443,7 +443,33 @@ jagg.template("home", function(inputs, outputs, jagg) {
         location.reload();
     }
 
-    // redeploy application
+    //deploy integration for testing
+    function testIntegration(){
+
+        for (var i=0; i < paramConfigurationJSON.params.length; i++) {
+             var parameter = paramConfigurationJSON.params[i];
+             var value = document.getElementById('param-' + parameter.param).value;
+             parameter.value = value;
+        }
+
+        jagg.post("../blocks/application/application.jag", {
+            action: "testIntegration",
+            applicationName : applicationName,
+            applicationKey : applicationKey,
+            configParams : JSON.stringify(paramConfigurationJSON)
+
+        }, function(result) {
+            console.info("result " + result);
+             jagg.message({
+                    content: "Integration Executed for Testing",
+                    type: 'info',
+                    timeout: 3500
+             });
+        });
+    }
+
+
+    // schedule integration
     function scheduleIntegration(){
         var count = document.getElementById('count').value;
         var interval = document.getElementById('interval').value;
