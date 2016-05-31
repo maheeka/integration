@@ -40,28 +40,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
     var dashboardUrl = dashboardBaseUrl + applicationName + "-" + selectedRevision;
     var encodedLabels = encodeURIComponent(stringify(selectedApplicationRevision.tags), "UTF-8");
     var encodedEnvs = encodeURIComponent(stringify(selectedApplicationRevision.runtimeProperties), "UTF-8");
-    var configTemplate = {"AAA":"aaa", "BBB":"bbb","CCC":"ccc","ddd":5};
-    var configString = '{' +
-                        	'"params": [{' +
-                        		'"param": "AAA",' +
-                        		'"value": "aaa"' +
-                        	'}, {' +
-                        		'"param": "BBB",' +
-                        		'"value": "bbb"' +
-                        	'}, {'+
-                        		'"param": "CCC", '+
-                        		'"value": "ccc"'+
-                        '	}],'+
-
-                        	'"schedule": [{'+
-                        		'"schedule": "Interval",'+
-                        		'"value": "3600"'+
-                        	'}, {'+
-                        		'"schedule": "Count",'+
-                        		'"value": "3"           '+
-                        	'}]'+
-                        '}';
-    var configJSON = JSON.parse(configString);
+    var configJSON = JSON.parse(paramConfiguration);
 %>
 
 <script>
