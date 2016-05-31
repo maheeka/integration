@@ -29,7 +29,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
         var isAppTypeBuildable = appType.buildable;
         var applicationName = outputs.applicationName;
         var subscriptionPlanBaseURL = outputs.subscriptionPlanBaseURL;
-		var runtimeID = 6; //runtimes[0].id;
+		var runtimeID = runtimes[0].id;
         var encodedLabels = request.getParameter("encodedLabels");
         var encodedEnvs = request.getParameter("encodedEnvs");
         var log = new Log();
@@ -261,6 +261,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
                         data: formData,
                         async: true,
                         success: function(data) {
+
                             if (isNewVersion) {
                                 jagg.message({
                                     content: "You can start only one version of an application at a time on" +
@@ -269,6 +270,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
                                     timeout: 3500
                                 });
                             }
+                            window.location.replace("index.jag");
                         },
                         cache: false,
                         contentType: false,
@@ -888,18 +890,19 @@ jagg.template("application", function (inputs, outputs, jagg) {
             </div>
 
         <% if(newVersion){ %>
-            <div class="form-group">
+            <div class="form-group hide">
             <label for="application-version">Integration Version:
                 <i class="fa fa-question-circle help-tips" data-toggle="tooltip" data-placement="left" title="Set the version in the form of <Major>.<Minor>.<Patch>"></i>
             </label>
             <input id="applicationRevision" name="applicationRevision" type="text" class="form-control" value="<%=nextVersion%>"/>
             </div>
+            </div>des
         <% } else { %>
-            <div class="form-group">
+            <div class="form-group hide">
             <label for="application-version">Integration Version:
                 <i class="fa fa-question-circle help-tips" data-toggle="tooltip" data-placement="left" title="Set the version in the form of <Major>.<Minor>.<Patch>"></i>
             </label>
-            <input id="applicationRevision" name="applicationRevision" type="text" class="form-control" value="1.0.0" disabled/>
+            <input id="applicationRevision" name="applicationRevision" type="text" class="form-control" value="1.0.0"/>
             </div>
         <% } %>
             <div class="form-group">
@@ -908,6 +911,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
             </label>
             <textarea name="applicationDescription" class="form-control" rows="3" placeholder="Integration description goes here. (Optional)"></textarea>
             </div>
+            <label for="application-description" >Upload from file system:</label>
 
             <!--div class="form-group">
             <label>No Of Replicas: </label>
@@ -916,8 +920,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
                 <option value="1" >1</option>
             </select>
             </div-->
-
-            <div class="form-group col-md-12">
+            <div class="form-group col-md-12 hide">
                 <label class="radio-inline">
                     <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="upload-from-file"
                            checked="checked" class="custom-radio"> Upload from file system
@@ -1083,7 +1086,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
                         <i class="fw fw-circle-outline fw-stack-2x"></i>
                         <i class="fw fw-add fw-stack-1x"></i>
                     </span>
-                        Upload
+                        Schedule
                 </button>
             </div>
         </form>

@@ -2820,15 +2820,35 @@ ul#appVersionList {
 
 /* Set width of config param boxes*/
 .form-control-config{
-    width: 300px;
+    width: 400px;
 }
 
-hr {
-    display: block;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    margin-left: auto;
-    margin-right: auto;
-    border-style: inset;
-    border-width: 1px;
+.line {
+
+    margin-top: 65px;
+    margin-bottom: 50px;
+   // margin-left: 0px;
+   // margin-right: 0px;
+    border-style: none;
+    border-width: 0.5px;
+    color: #343434;
+    transparent transparent;
+}
+
+container-params {
+    margin-top: 1em;
+    background-color: #34495e;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    min-height: 33em;
+    padding-bottom: 2cm;
+}
+
+.block-logs {
+    margin-top: 1em;
+    min-height: 33em;
+    font-size: 12px;
+    background-color: #343434;
+    padding: .5em;
+    overflow: auto;
 }
