@@ -22,6 +22,10 @@ jagg.module("application", {
         return jagg.require(jagg.getModulesDir() + "application/application.jag").addApplication.apply(this, arguments);
     },
 
+    scheduleIntegration:function () {
+        return jagg.require(jagg.getModulesDir() + "application/application.jag").scheduleIntegration.apply(this, arguments);
+    },
+
     createAppInDataBase:function () {
         return jagg.require(jagg.getModulesDir() + "application/application.jag").createAppInDataBase.apply(this, arguments);
     },

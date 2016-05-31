@@ -47,6 +47,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
 
     var applicationName = "<%=applicationName%>";
     var applicationKey = "<%=applicationKey%>";
+    var paramConfigurationJSON = JSON.parse('<%=paramConfiguration%>');
     var conSpecCpu = "<%=conSpecCpu%>";
     var conSpecMemory = "<%=conSpecMemory%>";
     var application = jQuery.parseJSON('<%=application%>');
@@ -57,6 +58,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
     var dashboardBaseUrl = "<%=dashboardBaseUrl%>";
     var encodedLabels = "<%=encodedLabels%>";
     var encodedEnvs = "<%=encodedEnvs%>";
+
 
 
 
@@ -102,7 +104,6 @@ jagg.template("home", function(inputs, outputs, jagg) {
     <div class="right-pane">
     <!-- BOF App factory menu actionbar -->
     <div class="action-bar">
-        Configure Parameters
         <a href="<%=jagg.getAbsoluteUrl("/site/pages/index.jag")%>" class="btn-action"  title="Back to Integration listing">
                 <span class="fw-stack fw-lg btn-action-ico">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>
@@ -188,38 +189,47 @@ jagg.template("home", function(inputs, outputs, jagg) {
                                     <button class="cu-btn cu-btn-md cu-btn-gr-dark btn-launch-app hide" id="btn-launchApp"
                                     url="<%=selectedApplicationRevision.deploymentURL%>" disabled>Launch App</button>
                                     <div class="btn-group ctrl-edit-button btn-edit-code right">
-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue right" onclick="startApplication();">Stop</a>
+                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue right" onclick="startApplication();">Stop Integration</a>
                                     </div>
 
                           <div class="sec" id="scheduling-block">
 
-                               <form id="integration-params" method="post" action='<%=jagg.getAbsoluteUrl("/site/blocks/application/application.jag")%>' enctype="multipart/form-data">
+                               <form id="integration-params" method="post"  enctype="multipart/form-data">
 
                                <h4>Integration Parameters</h4>
                                <%
-                                   for(var i=0; i < configJSON.params.length; i++){%>
+                                   for(var i=0; i < configJSON.params.length; i++){
+                                       var parameter = configJSON.params[i];
+                                   %>
                                        <div class="form-group">
-                                           <label for="count"><%=configJSON.params[i].param%></label>
-                                           <input id="count" name="applicationName" type="text" class="form-control form-control-config" placeholder="Enter Loop Count" value = <%=configJSON.params[i].value %>></input>
+                                           <label for="param-<%=parameter.param%>"><%=parameter.param%></label>
+                                           <input id="param-<%=parameter.param%>" name="<%=parameter.param%>" type="text" class="form-control form-control-config" placeholder="Enter <%=parameter.param%> value" value ="<%=parameter.value%>" ></input>
                                        </div>
                                   <% } %>
                                     <div class="btn-group ctrl-edit-button btn-edit-code right">
-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue right" onclick="startApplication();">Stop</a>
+                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue right" onclick="testIntegration();">Test Integration</a>
                                     </div>
                                    <hr>
                                    </div>
-                                                                                     <h4 >Schedule Configurations</h4>
-                                                                           <div class="form-group">
-                                                                                <label for="interval">Interval </label>
-                                                                                <input id="interval" name="applicationName" type="text" class="form-control form-control-config" placeholder="Enter time interval in seconds" value = <%=configJSON.schedule.interval %>></input>
-                                                                           </div>
-                                                                           <div class="form-group">
-                                                                                <label for="count">Count </label>
-                                                                                <input id="count" name="applicationName" type="text" class="form-control form-control-config" placeholder value = ="Enter Loop Count" <%=configJSON.schedule.count %>></input>
-                                                                           </div>
-                                                                           <div class="btn-group ctrl-edit-button btn-edit-code right">
-                                                                                <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue right" onclick="startApplication();">Schedule</a>
-                                                                           </div>
+
+                                    <h4>Schedule Configurations</h4>
+
+                                    <div class="form-group">
+                                         <label for="interval">Interval</label>
+                                         <input id="interval" name="interval" type="text" class="form-control form-control-config" placeholder="Enter time interval in seconds" value ="<%=configJSON.schedule.interval%>"></input>
+                                    </div>
+
+                                    <div class="form-group">
+                                         <label for="count">Count </label>
+                                         <input id="count" name="count" type="text" class="form-control form-control-config" placeholder="Enter loop count" value="<%=configJSON.schedule.count%>"></input>
+                                    </div>
+
+                                    <div class="form-group">
+                                         <button class="cu-btn cu-btn-md cu-btn-blue right" id="schedule-integration" onclick="scheduleIntegration();" type="button">
+                                               Schedule Integration
+                                         </button>
+                                    </div>
+
 
                                </form>
                           </div>
@@ -419,30 +429,31 @@ jagg.template("home", function(inputs, outputs, jagg) {
     }
 
     // redeploy application
-    function startApplication(){
+    function scheduleIntegration(){
+        var count = document.getElementById('count').value;
+        var interval = document.getElementById('interval').value;
 
-        executeAsync(drawProgressWindow("Restarting..."));
+        for (var i=0; i < paramConfigurationJSON.params.length; i++) {
+             var parameter = paramConfigurationJSON.params[i];
+             var value = document.getElementById('param-' + parameter.param).value;
+             parameter.value = value;
+        }
 
         jagg.post("../blocks/application/application.jag", {
-            action: "startApplication",
-            applicationName: applicationName,
-            applicationRevision: selectedRevision,
-            versionKey: selectedApplicationRevision.hashId,
-            conSpecCpu: conSpecCpu,
-            conSpecMemory: conSpecMemory
+            action: "scheduleIntegration",
+            applicationName : applicationName,
+            applicationKey : applicationKey,
+            count : count,
+            interval : interval,
+            configParams : JSON.stringify(paramConfigurationJSON)
 
         }, function(result) {
-            var versions = jQuery.parseJSON(result);
-
-            //check if application has more than one version
-            if (versions.length > 1) {
-                jagg.message({
-                    content: "You can start only one version of an application at a time on a free subscription." +
-                        " Other versions have been stopped automatically.",
+            console.info("result " + result);
+             jagg.message({
+                    content: "Deployed Schedule",
                     type: 'info',
                     timeout: 3500
-                });
-            }
+             });
         });
     }
 
