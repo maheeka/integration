@@ -49,7 +49,7 @@ jagg.template("header/default", function(inputs, outputs, jagg) {
                 <li>
                     <a href="#" target="_parent"><i class="fa fa-bank"></i> <%=tenantDomain%></a>
                 </li>
-                <li><a href="<%=docUrl%>" target=_blank><i class="fa fa-book"></i> Documentation</a></li>
+                <!--li><a href="<%=docUrl%>" target=_blank><i class="fa fa-book"></i> Documentation</a></li-->
                 <li><a href="<%=supportUrl%>" target=_blank><i class="fa fa-envelope"></i> Support</a></li>
                 <li class="dropdown user-name">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <%=loggedInUserName%>
