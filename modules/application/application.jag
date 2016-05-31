@@ -72,39 +72,25 @@ var addApplication = function (applicationName, versionName, applicationDescript
     }
     var applicationRuntime = ApplicationManager.getRuntimeById(runtimeId);
     var tagName = applicationRuntime.getTag() +"-"+ versionHashId;
-
     var uploadedFilePath = modManager.getPropertyValue(PROPERTY_APPMGT_DEPLOYMENT_DIR_PATH)
                                    + constructFileUploadPath(versionHashId) + uploadedFileName;
-
     var msg = "Connecting to Integration Server";
     addEvent(ESB_CONNECT, EVENT_PENDING, msg, versionHashId);
-
     var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
     var esbClient = ESBClient.getInstance();
-
     addEvent(ESB_CONNECT, EVENT_SUCCEEDED, "Successfully connected to Integration Server", versionHashId); //TODO : check whether server is up
-
     addEvent(ESB_DEPLOY, EVENT_PENDING, "Deploying integration", versionHashId);
-
     esbClient.deployCarbonApp(uploadedFileName, uploadedFilePath);
-
     addEvent(ESB_DEPLOY, EVENT_SUCCEEDED, "Deployed integration", versionHashId);
-
     addEvent(ESB_DEPLOY_COMPLETE, EVENT_PENDING, "Verifying integration deployment", versionHashId); //TODO : verify deployment
-
-    setTimeout(waitForDeploy, 10000);
-
+    //setTimeout(waitForDeploy, 10000);
     addEvent(ESB_DEPLOY_COMPLETE, EVENT_SUCCEEDED, "Verifying integration deployment", versionHashId);
 
     //TODO : load parameters and upload in database
     addEvent(LOAD_PARAMETERS, EVENT_PENDING, "Loading configuration parameters from deployment", versionHashId);
-
     var paramConfiguration = esbClient.getIntegrationParamConfiguration(uploadedFileName);
-
     addEvent(LOAD_PARAMETERS, EVENT_PENDING, "Loading configuration parameters from deployment", versionHashId);
-
     updateParamConfiguration(applicationHashId, paramConfiguration);
-
     addEvent(LOAD_PARAMETERS, EVENT_SUCCEEDED, "Updated configuration parameters", versionHashId);
 };
 
@@ -119,6 +105,12 @@ var updateParamConfiguration = function(applicationHashId, paramConfiguration) {
     ApplicationManager.updateParamConfiguration(applicationHashId, paramConfiguration);
 }
 
+var scheduleIntegration = function (applicationName, applicationHashId, interval, count, parameters) {
+      var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
+      var esbClient = ESBClient.getInstance();
+
+      esbClient.deployScheduleTask(applicationName, interval, count, parameters);
+};
 var stopOtherVersions = function(applicationHashId, selectedRevision) {
     var application = getApplication(applicationHashId);
     var applicationVersions = application.versions;
@@ -288,7 +280,7 @@ var createAppInDataBase = function(applicationName, versionName, applicationDesc
         var versionList = new java.util.ArrayList();
         versionList.add(version);
         application.setVersions(versionList);
-
+        log.info("@@@@@@@@@@@@@  application " + stringify(application));
         ApplicationManager.addApplication(application);
 
     } catch (e){
@@ -334,6 +326,7 @@ var createAppVersionInDataBase = function( versionName,   runtimeId, runtimeProp
             var tagList = generateTagsList(tagArray);
             version.setTags(tagList);
         }
+        log.info("&&&&&&&&&&&&&&&&  version: " + stringify(version));
         ApplicationManager.addApplicationVersion(version, applicationHashId);
 
     } catch (e){
@@ -852,7 +845,7 @@ var generateVersionList = function (versions, applicationName, defaultVersionNam
             var deploymentUrl = getDeploymentURL(applicationName, version.versionName);
             versionObject.versionName = version.versionName;
             versionObject.hashId = version.hashId;
-            versionObject.runtimeId = 6;//version.runtimeId;
+//            versionObject.runtimeId = 6;//version.runtimeId;
             versionObject.runtimeName = version.runtimeName;
             versionObject.status = version.status;
             versionObject.conSpecCpu = version.conSpecCpu;
@@ -1510,7 +1503,7 @@ var getMaxInstanceCount = function () {
         var maxInstancesJson = get(subscriptionPlanURL , "" , "json");
         maxAppCount = parseInt(maxInstancesJson.data.maxApplications);
     }
-    return maxAppCount;
+    return 100;
 };
 
 var getApplicationRevisionStatus = function(applicationKey, selectedRevision) {
