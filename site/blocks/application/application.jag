@@ -136,6 +136,9 @@ var log = new Log();
                         applicationModule.addApplication(applicationName, applicationRevision, applicationDescription, replicas,
                                 runtimeId, appTypeName, runtimeProperties, tags, appIcon,
                                 uploadedFileName, isNewVersion, conSpecMemory, conSpecCpu, artifactUrl);
+                                response.status = 200;
+                                response.message = uploadedFileName + "successfully deployed.";
+                                return(response);
                     } else {
                         var gitRepoUrl = request.getParameter("gitRepoUrl");
                         var gitRepoBranch = request.getParameter("gitRepoBranch");
@@ -147,7 +150,7 @@ var log = new Log();
                                 isNewVersion, conSpecMemory, conSpecCpu);
                     }
                     response.status = 200;
-                    response.message = "Application creation is successfully submitted";
+                    response.message = uploadedFileName + "successfully deployed.";
                 } else {
                     if (conSpecMemory > 512) {
                         log.warn("Application creation request not accepted because the maximum memory limit of " +

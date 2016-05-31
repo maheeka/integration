@@ -78,7 +78,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
     </div>
     <div class="inner-wrapper">
    <!-- left pane wrapper -->
-    <div class="left-pane ">
+    <div class="left-pane hide">
         <ul>
             <li class="selected">
                 <a href="#"><i class="fa fa-laptop"></i> Overview</a>
@@ -140,11 +140,10 @@ jagg.template("home", function(inputs, outputs, jagg) {
               </div>
           </div>
         </div>
-        <div class="row padding-bottom">
+        <!--div class="row padding-bottom"-->
           <div class="col-xs-12 col-md-9 col-lg-6">
 
-
-              <div class="block-general" style="background-color: #303030;">
+              <div class="block-general " style="background-color: #303030;">
                       <div class="col-xs-12 col-md-12 col-lg-9">
                           <div class="btn-group pull-left version-number hide">
                               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -191,14 +190,15 @@ jagg.template("home", function(inputs, outputs, jagg) {
                                     <div class="btn-group ctrl-edit-button btn-edit-code right">
                                       <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue right" onclick="startApplication();">Stop Integration</a>
                                     </div>
+                          </div>
 
-                          <div class="sec" id="scheduling-block">
+                          <div class="container" id="scheduling-block">
 
                                <form id="integration-params" method="post"  enctype="multipart/form-data">
 
                                <h4>Integration Parameters</h4>
                                <%
-                                   for(var i=0; i < configJSON.params.length; i++){
+                                   for(var i=0; i < configJSON.params.length; i++) {
                                        var parameter = configJSON.params[i];
                                    %>
                                        <div class="form-group">
@@ -208,11 +208,14 @@ jagg.template("home", function(inputs, outputs, jagg) {
                                   <% } %>
                                     <div class="btn-group ctrl-edit-button btn-edit-code right">
                                       <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue right" onclick="testIntegration();">Test Integration</a>
-                                    </div>
-                                   <hr>
+                                  </div>
+                                  <div class="clearfix line"></div>
+                                  </p>
+                                   <div class="container padding-bottom">
+                                       <div class="col-xs-12 col-md-9 col-lg-6">
+                                       </div>
                                    </div>
-
-                                    <h4>Schedule Configurations</h4>
+                                   <h4 >Schedule Configurations</h4>
 
                                     <div class="form-group">
                                          <label for="interval">Interval</label>
@@ -232,7 +235,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
 
 
                                </form>
-                          </div>
+
                                 <%
 
                                 }else {
@@ -243,6 +246,8 @@ jagg.template("home", function(inputs, outputs, jagg) {
                                 <%
                                 }
                                %>
+                               <div class="line"></div>
+
                           </div>
                       </div>
                       <div class="col-xs-12 col-md-12 col-lg-3">
@@ -308,10 +313,19 @@ jagg.template("home", function(inputs, outputs, jagg) {
                       <div class="clearfix"></div>
                     </div>
 
-                </div>
-          <div class="col-xs-12 col-md-3 col-lg-3 hide">
-              <div class="block-team pull-left">
-                <a class="block-anch" id="envVars" href="/appmgt/site/pages/envs.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>">
+          </div>
+          <div class="col-xs-12 col-md-3 col-lg-6 ">
+              <div class="block-logs ">
+               <!-- Log Analyser goes here-->
+                  <div>
+                  dkfuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+                  sdukfiiiiiiiiiiiii
+                  kjkjnhkjk</p>
+                  '[pop
+                  </div>
+                  </div>
+                <!-- - EO Log analyser->
+                <a class="block-anch hide" id="envVars" href="/appmgt/site/pages/envs.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>">
                   <h3>Env Variables</h3>
                   <div class="block-icon pull-left">
                     <i class="fa fa-wrench fa-5x"></i>
@@ -322,7 +336,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
                   <div class="clearfix"></div>
                 </a>
               </div>
-              <div class="block-database pull-left">
+              <div class="block-database pull-left hide">
                 <a class="block-anch" id="tagSet" href="/appmgt/site/pages/tags.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>">
                   <h3>Tags</h3>
                   <div class="block-icon pull-left">
@@ -336,7 +350,8 @@ jagg.template("home", function(inputs, outputs, jagg) {
                 </a>
               </div>
           </div>
-        </div>
+
+        <!--/div-->
 <!-- /.container -->
 </div>
 
