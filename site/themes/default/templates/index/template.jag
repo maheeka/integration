@@ -212,7 +212,7 @@ jagg.template("index", function(inputs, outputs, jagg) {
                 <div class="cloud-new-content">
                     <h1>New to WSO2 Integration Cloud ?</h1>
                     <a id="app-create-button" class="cu-btn cu-btn-md cu-btn-blue" href="/appmgt/site/pages/select-apptype.jag">
-                      upload your first integration application</a>
+                      Upload Your First Integration Project</a>
                     <!--div class="help">
                         <i class="fa fa-2x fa-book"></i> Need help ? Read App creation guide first..
                     </div-->

@@ -1113,7 +1113,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
         <div class="modal-dialog modal-dialog-margin-top-md ">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="modal-title">Application Creation Progress</h4>
+                    <h4 class="modal-title" id="modal-title">Integration Template Creation Progress</h4>
                 </div>
                 <div class="modal-body" id="app-creation-model-body">
                 </div>
