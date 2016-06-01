@@ -1295,9 +1295,15 @@ var deleteApplication = function(applicationHashId) {
 
 var deleteCarbonApplicationFromServer = function(carbonApplicationName) {
     try{
-        var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
-        var esbClient = ESBClient.getInstance();
-        esbClient.unDeployCarbonApp(carbonApplicationName);
+        var allAppsUsingCapp = ApplicationManager.getAllApplicationsUsingCarbonApplication(carbonApplicationName);
+
+        if (allAppsUsingCapp.size()>1){
+             log.info("There are other integrations using the same carbon application. Hence, carbon application is not un-deployed " + carbonApplicationName);
+        } else {
+             var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
+             var esbClient = ESBClient.getInstance();
+             esbClient.unDeployCarbonApp(carbonApplicationName);
+        }
     } catch(e){
         log.error("Error while undeploying carbon application for the version with hash id : " + versionHashId);
         log.error(e);
