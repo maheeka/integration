@@ -63,6 +63,12 @@ var addApplication = function (applicationName, versionName, applicationDescript
         uploadedFileName = versionHashId + "." + uploadedFileName.split(".")[1];
     }
 
+    var allAppsUsingCapp = ApplicationManager.getAllApplicationsUsingCarbonApplication(uploadedFileName);
+
+    if (allAppsUsingCapp.size()>1){
+        log.warn("There are other integrations with carbon application name " + uploadedFileName + " same name. This might cause conflicts during deployment and execution.");
+    }
+
     if(isNewVersion == 'true'){
         createAppVersionInDataBase(versionName, runtimeId, runtimePropertiesArray, tagArray, applicationHashId, versionHashId, conSpecMemory, conSpecCpu, uploadedFileName);
         stopOtherVersions(applicationHashId, versionName);
@@ -74,6 +80,7 @@ var addApplication = function (applicationName, versionName, applicationDescript
     var tagName = applicationRuntime.getTag() +"-"+ versionHashId;
     var uploadedFilePath = modManager.getPropertyValue(PROPERTY_APPMGT_DEPLOYMENT_DIR_PATH)
                                    + constructFileUploadPath(versionHashId) + uploadedFileName;
+
     var msg = "Connecting to Integration Server";
     addEvent(ESB_CONNECT, EVENT_PENDING, msg, versionHashId);
     var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
