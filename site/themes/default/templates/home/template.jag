@@ -255,7 +255,7 @@ var log = new Log();
                           </div>
                       </div>
                       <div class="col-xs-12 col-md-12 col-lg-3">
-                          <a id="delete-version" onclick="deleteApplicationPopUp();">
+                          <a type="button" id="delete-version" onclick="deleteApplicationPopUp();">
                               <div class="btn-create-version">
                                   <span class="fw-stack fw-lg btn-action-ico">
                                     <i class="fw fw-circle-outline fw-stack-2x"></i>

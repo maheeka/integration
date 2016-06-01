@@ -299,12 +299,31 @@ function deleteApplication(){
     });
 }
 
+// Delete integration
+function deleteIntegration(){
+
+    $('#app_creation_progress_modal').modal({ backdrop: 'static', keyboard: false});
+    $("#app_creation_progress_modal").show();
+    $("#modal-title").text("Deleting...");
+
+    jagg.post("../blocks/application/application.jag", {
+        action:"deleteApplication",
+        applicationKey:applicationKey
+    },function (result) {
+        //TODO jagg.message({content: "Integration : " + applicationName + " deleted successfully", type: 'success', id:'view_log'});
+        setTimeout(redirectAppListing, 2000);
+    },function (jqXHR, textStatus, errorThrown) {
+        jagg.message({content: "Error occurred while deleting integration : " + appName, type: 'error', id:'view_log'});
+    });
+
+}
+
 function deleteApplicationPopUp(){
-    jagg.popMessage({type:'confirm', modalStatus: true, title:'Delete Application Version',content:'Are you sure you want to delete this version:' + selectedRevision + ' ?',
-                        okCallback:function(){
-                            deleteApplication();
-                        }, cancelCallback:function(){}
-                    });
+    jagg.popMessage({type:'confirm', modalStatus: true, title:'Delete Application Version',content:'Are you sure you want to delete this integration: ' + applicationName  + ' ?',
+        okCallback:function(){
+             deleteIntegration();
+        }, cancelCallback:function(){}
+    });
 }
 
 function redirectAppListing() {

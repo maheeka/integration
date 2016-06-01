@@ -63,6 +63,12 @@ var addApplication = function (applicationName, versionName, applicationDescript
         uploadedFileName = versionHashId + "." + uploadedFileName.split(".")[1];
     }
 
+    var allAppsUsingCapp = ApplicationManager.getAllApplicationsUsingCarbonApplication(uploadedFileName);
+
+    if (allAppsUsingCapp.size()>1){
+        log.warn("There are other integrations with carbon application name " + uploadedFileName + " same name. This might cause conflicts during deployment and execution.");
+    }
+
     if(isNewVersion == 'true'){
         createAppVersionInDataBase(versionName, runtimeId, runtimePropertiesArray, tagArray, applicationHashId, versionHashId, conSpecMemory, conSpecCpu, uploadedFileName);
         stopOtherVersions(applicationHashId, versionName);
@@ -74,9 +80,6 @@ var addApplication = function (applicationName, versionName, applicationDescript
     var tagName = applicationRuntime.getTag() +"-"+ versionHashId;
     var uploadedFilePath = modManager.getPropertyValue(PROPERTY_INTCLOUD_DEPLOYMENT_DIR_PATH)
                                    + constructFileUploadPath(versionHashId) + uploadedFileName;
-
-    log.info("uploadedFilePath : " + uploadedFilePath);
-
     var msg = "Connecting to Integration Server";
     addEvent(ESB_CONNECT, EVENT_PENDING, msg, versionHashId);
     var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
@@ -1219,10 +1222,9 @@ var isFileExtZIP = function (uploadedFileName) {
 
 var createDestinationDirsForUploadedApps = function (versionHashId) {
     var fileUtils = Packages.org.apache.commons.io.FileUtils;
-    var absFileUploadPath = modManager.getPropertyValue(PROPERTY_INTCLOUD_DEPLOYMENT_DIR_PATH) +
+    var absFileUploadPath = modManager.getPropertyValue(PROPERTY_APPMGT_DEPLOYMENT_DIR_PATH) +
                             constructFileUploadPath(versionHashId);
     var uploadedFilePath = new Packages.java.io.File(absFileUploadPath);
-    log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!creating if not found : " + uploadedFilePath);
     try {
         fileUtils.forceMkdir(uploadedFilePath);
     } catch (e) {
@@ -1301,7 +1303,8 @@ var deleteCarbonApplicationFromServer = function(carbonApplicationName) {
         var allAppsUsingCapp = ApplicationManager.getAllApplicationsUsingCarbonApplication(carbonApplicationName);
 
         if (allAppsUsingCapp.size()>1){
-             log.info("There are other integrations using the same carbon application. Hence, carbon application is not un-deployed " + carbonApplicationName);
+             log.info("There are other integrations using the same carbon application. Hence, carbon application "
+                  + carbonApplicationName + " is not un-deployed ");
         } else {
              var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
              var esbClient = ESBClient.getInstance();
@@ -1547,7 +1550,7 @@ var getMaxInstanceCount = function () {
         var maxInstancesJson = get(subscriptionPlanURL , "" , "json");
         maxAppCount = parseInt(maxInstancesJson.data.maxApplications);
     }
-    return 100;
+    return maxAppCount;
 };
 
 var getApplicationRevisionStatus = function(applicationKey, selectedRevision) {
