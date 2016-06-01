@@ -1305,7 +1305,8 @@ var deleteCarbonApplicationFromServer = function(carbonApplicationName) {
         var allAppsUsingCapp = ApplicationManager.getAllApplicationsUsingCarbonApplication(carbonApplicationName);
 
         if (allAppsUsingCapp.size()>1){
-             log.info("There are other integrations using the same carbon application. Hence, carbon application is not un-deployed " + carbonApplicationName);
+             log.info("There are other integrations using the same carbon application. Hence, carbon application "
+                  + carbonApplicationName + " is not un-deployed ");
         } else {
              var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
              var esbClient = ESBClient.getInstance();
