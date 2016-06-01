@@ -34,7 +34,7 @@ var ServiceProxy = Packages.org.wso2.appcloud.core.dto.ContainerServiceProxy;
 var CloudUtil = Packages.org.wso2.intcloud.common.util.IntCloudUtil;
 var RuntimeProperty = Packages.org.wso2.appcloud.core.dto.RuntimeProperty;
 var CarbonUtils = Packages.org.wso2.carbon.utils.CarbonUtils;
-var Util = Packages.org.wso2.appcloud.core.Util;
+var Util = Packages.org.wso2.intcloud.core.Util;
 var ResourceQuotaLimit = Packages.org.wso2.appcloud.provisioning.runtime.beans.ResourceQuotaLimit;
 var List = Packages.java.util.List;
 var Arrays = Packages.java.util.Arrays;
@@ -78,9 +78,8 @@ var addApplication = function (applicationName, versionName, applicationDescript
     }
     var applicationRuntime = ApplicationManager.getRuntimeById(runtimeId);
     var tagName = applicationRuntime.getTag() +"-"+ versionHashId;
-    var uploadedFilePath = modManager.getPropertyValue(PROPERTY_APPMGT_DEPLOYMENT_DIR_PATH)
+    var uploadedFilePath = modManager.getPropertyValue(PROPERTY_INTCLOUD_DEPLOYMENT_DIR_PATH)
                                    + constructFileUploadPath(versionHashId) + uploadedFileName;
-
     var msg = "Connecting to Integration Server";
     addEvent(ESB_CONNECT, EVENT_PENDING, msg, versionHashId);
     var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
@@ -390,10 +389,10 @@ var createDockerFile =  function(applicationName, versionName, runtimeId, upload
 
     try {
         var fileUploadPath = constructFileUploadPath(versionHashId);
-        var absFileUploadedPath = modManager.getPropertyValue(PROPERTY_APPMGT_DEPLOYMENT_DIR_PATH) + fileUploadPath;
+        var absFileUploadedPath = modManager.getPropertyValue(PROPERTY_INTCLOUD_DEPLOYMENT_DIR_PATH) + fileUploadPath;
         var dockerFilePath = absFileUploadedPath + DOCKER_FILE_NAME;
 
-        var dockerTemplateFilePath = modManager.getPropertyValue(PROPERTY_APPMGT_DEPLOYMENT_DIR_PATH) + "/" + "dockerfiles";
+        var dockerTemplateFilePath = modManager.getPropertyValue(PROPERTY_INTCLOUD_DEPLOYMENT_DIR_PATH) + "/" + "dockerfiles";
 
         var uploadArtifactTmpName;
         var checkFileExtZIP = isFileExtZIP(uploadedFileName);
@@ -1205,11 +1204,10 @@ var uploadExistingArchive = function (uploadedArtifact, appTypeName, application
     if (checkFileExtZIP) {
         var fileName = uploadedFileName.substring(0, uploadedFileName.lastIndexOf("."));
         uploadApplicationTmpPath = fileUploadPath + fileName + FILE_EXTENSTION_ALTER;
-        log.info(uploadApplicationTmpPath);
     } else {
         uploadApplicationTmpPath = fileUploadPath + uploadedFileName;
-        log.info(uploadApplicationTmpPath);
     }
+    log.info("Uploading integration from " + uploadApplicationTmpPath);
 
     uploadedArtifact.move(uploadApplicationTmpPath);
 };
@@ -1383,7 +1381,7 @@ var deleteApplicationFromDatabase = function (applicationHashId){
 
 var getVersionDirectoryPath = function(versionHashId){
 
-    return modManager.getPropertyValue(PROPERTY_APPMGT_DEPLOYMENT_DIR_PATH) + "/" + TMP_UPLOADED_APPLICATIONS_PATH + "/"
+    return modManager.getPropertyValue(PROPERTY_INTCLOUD_DEPLOYMENT_DIR_PATH) + "/" + TMP_UPLOADED_APPLICATIONS_PATH + "/"
                                         + modManager.getTenantDomain() + "/" + versionHashId + "/";
 }
 

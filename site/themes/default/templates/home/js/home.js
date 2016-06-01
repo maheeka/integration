@@ -70,7 +70,7 @@ function listTags(){
         tagString += tags[i].labelName + " : " + tags[i].labelValue + "</br>";
     }
     if(tagListLength > 3) {
-        tagString += "</br><a class='view-tag' href='/appmgt/site/pages/tags.jag?applicationKey=" + applicationKey
+        tagString += "</br><a class='view-tag' href='/intcloud/site/pages/tags.jag?applicationKey=" + applicationKey
                              + "&versionKey=" + selectedApplicationRevision.hashId + "'>View All Tags</a>";
     }
 
@@ -125,15 +125,15 @@ function changeSelectedRevision(newRevision){
     $("#tableStatus").html(selectedApplicationRevision.status);
 
     //Change Env Variables
-    $("#leftMenuEnvVars").attr('href',"/appmgt/site/pages/envs.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
-    $("#envVars").attr('href',"/appmgt/site/pages/envs.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
-    $("#envVarsAdd").attr('href',"/appmgt/site/pages/envs.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
+    $("#leftMenuEnvVars").attr('href',"/intcloud/site/pages/envs.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
+    $("#envVars").attr('href',"/intcloud/site/pages/envs.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
+    $("#envVarsAdd").attr('href',"/intcloud/site/pages/envs.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
     $("#runtimePropCount").text(selectedApplicationRevision.runtimeProperties.length.toString());
 
     //Change Tags
-    $("#leftMenuTagSet").attr('href',"/appmgt/site/pages/tags.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
-    $("#tagSet").attr('href',"/appmgt/site/pages/tags.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
-    $("#tagSetAdd").attr('href',"/appmgt/site/pages/tags.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
+    $("#leftMenuTagSet").attr('href',"/intcloud/site/pages/tags.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
+    $("#tagSet").attr('href',"/intcloud/site/pages/tags.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
+    $("#tagSetAdd").attr('href',"/intcloud/site/pages/tags.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
     $("#tagCount").text(selectedApplicationRevision.tags.length.toString());
     listTags();
 
@@ -153,7 +153,7 @@ function changeSelectedRevision(newRevision){
         $('.block-replica').html('<h3>Replicas</h3><div class="block-replicas"><figure class="node-cicle" ' +
                                  'data-percent="100"><figcaption>01</figcaption><svg width="200" height="200">' +
                                  '<circle class="outer" cx="95" cy="95" r="85" transform="rotate(-90, 95, 95)"/></svg>' +
-                                 '<a href="/appmgt/site/pages/runtimeLogs.jag?applicationKey=' + applicationKey + '&selectedRevision=' + newRevision +
+                                 '<a href="/intcloud/site/pages/runtimeLogs.jag?applicationKey=' + applicationKey + '&selectedRevision=' + newRevision +
                                  '"><span class="view-log">View Logs</span></a></figure></div><div class="block-replicas">' +
                                  '<figure class="node-cicle"><figcaption><span class="fw-stack fw-lg ">' +
                                  '<i class="fw fw-ring fw-stack-2x"></i><i class="fw fw-add fw-stack-1x" ' +

@@ -350,7 +350,7 @@ var log = new Log();
         var applicationKey = request.getParameter("applicationKey");
         var mod = jagg.module("application");
         mod.changeApplicationIcon(applicationKey, appIcon);
-        print("<html><script>window.location.replace('/appmgt/site/pages/home.jag?applicationKey=" + applicationKey + "');</script><body></body></html>");
+        print("<html><script>window.location.replace('/intcloud/site/pages/home.jag?applicationKey=" + applicationKey + "');</script><body></body></html>");
 
     } else if (action == "generateApplicationHashId"){
         var applicationName = request.getParameter("applicationName");
