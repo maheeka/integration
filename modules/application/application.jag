@@ -1278,11 +1278,12 @@ var deleteApplication = function(applicationHashId) {
 
         deleteSelectedVersionFromSession(applicationHashId);
         var versionHashIds = ApplicationManager.getVersionHashIdsOfApplication(applicationHashId);
+        var carbonApplicationName = ApplicationManager.getCarbonApplicationNameOfApplication(applicationHashId);
 
         for (var i = 0; i < versionHashIds.size(); i++) {
             var versionHashId = versionHashIds.get(i);
             deleteApplicationUploadedPath(versionHashId);
-            deleteApplicationFromKubernetes(versionHashId);
+            deleteCarbonApplicationFromServer(carbonApplicationName);
             deleteEventsOfAppVersions(versionHashId);
         }
         deleteApplicationFromDatabase(applicationHashId);
@@ -1292,6 +1293,16 @@ var deleteApplication = function(applicationHashId) {
     }
 };
 
+var deleteCarbonApplicationFromServer = function(carbonApplicationName) {
+    try{
+        var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
+        var esbClient = ESBClient.getInstance();
+        esbClient.unDeployCarbonApp(carbonApplicationName);
+    } catch(e){
+        log.error("Error while undeploying carbon application for the version with hash id : " + versionHashId);
+        log.error(e);
+    }
+};
 
 var deleteVersion = function(versionHashId, isAutoDelete, isDeployed){
     if(!isAutoDelete) {
