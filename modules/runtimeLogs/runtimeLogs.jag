@@ -21,7 +21,7 @@ include("/jagg/jagg.jag");
 
 var log = new Log("module/runtimeLogs/runtimeLogs.jag");
 var modManager = jagg.module("manager");
-var Util = Packages.org.wso2.appcloud.core.Util;
+var Util = Packages.org.wso2.intcloud.core.Util;
 var ApplicationManager = Packages.org.wso2.appcloud.core.ApplicationManager;
 
 var getRuntimeLogs = function (applicationKey, selectedRevision, applicationType) {

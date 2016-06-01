@@ -41,7 +41,7 @@ jagg.template("header/default", function(inputs, outputs, jagg) {
                class="hidden-md hidden-sm hidden-lg cloud-menu-popover">
                 <i class="fw fw-tiles"></i>
             </a>
-            <a class="navbar-brand" href="/appmgt/site/pages/index.jag">
+            <a class="navbar-brand" href="/intcloud/site/pages/index.jag">
             <img src="<%=jagg.getAbsoluteUrl(jagg.getThemeFile("images/logo.png"))%>" alt="wso2-logo" > Cloud</a>
         </div>
         <div class="collapse navbar-collapse">
@@ -90,7 +90,7 @@ jagg.template("header/default", function(inputs, outputs, jagg) {
                            <i class="fa fa-3x  fa-users"></i>
                            <div class="cloud-name">Members</div>
                        </a>
-                       <a class="cloud-block-invert" href="<%=jagg.getAbsoluteUrl("/site/pages/databases.jag")%>">
+                       <a class="cloud-block-invert hide" href="<%=jagg.getAbsoluteUrl("/site/pages/databases.jag")%>">
                             <i class="fa fa-3x  fa-database"></i>
                             <div class="cloud-name">Databases</div>
                         </a>
@@ -107,8 +107,8 @@ jagg.template("header/default", function(inputs, outputs, jagg) {
     <div class="container-fliud">
         <div class="row">
             <div class="col-md-3 breadcrumb-secondary">
-                <a href="/appmgt/site/pages/index.jag"><i class="fa fa-cubes visible-xs visible-lg"></i></a>
-                <span class="hidden-xs"><a href="/appmgt/site/pages/index.jag">integration Cloud</a></span>
+                <a href="/intcloud/site/pages/index.jag"><i class="fa fa-cubes visible-xs visible-lg"></i></a>
+                <span class="hidden-xs"><a href="/intcloud/site/pages/index.jag">integration Cloud</a></span>
             </div>
         </div>
     </div>
