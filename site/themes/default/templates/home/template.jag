@@ -54,7 +54,7 @@ var log = new Log();
     var taskConfiguration = <%=taskConfiguration%>;
     var conSpecCpu = "<%=conSpecCpu%>";
     var conSpecMemory = "<%=conSpecMemory%>";
-    var application = jQuery.parseJSON('<%=application%>');
+    var application = <%=application%>;
     var selectedRevision = "<%=selectedRevision%>";
     var revisions = jQuery.parseJSON('<%=revisions%>');
     var appCreationPageBaseUrl = "<%=appCreationPageBaseUrl%>";
