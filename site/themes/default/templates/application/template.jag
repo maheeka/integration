@@ -40,6 +40,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
         var subscriptionPlanURL = subscriptionPlanBaseURL + "/plans/1";
 		var runtimeContainerSpecURL = subscriptionPlanBaseURL + "/containerSpecs/allowedruntime/" + runtimeID;
         var data = null;
+        log.info("*****************  runtimeContainerSpecURL" + runtimeContainerSpecURL);
 		var allowedRuntimeContainerSpecJson = get(runtimeContainerSpecURL, "", "json");
 		var maxApplications = outputs.maxAppCount;
     %>

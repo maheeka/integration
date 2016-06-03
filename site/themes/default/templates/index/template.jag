@@ -106,7 +106,7 @@ jagg.template("index", function(inputs, outputs, jagg) {
         theLi  = '<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" id="' + application.applicationName + '">' +
 
                             '<div class="cloud-app-listing app-color-one">'+
-                                    '<a href="/appmgt/site/pages/home.jag?applicationKey=' + application.hashId + '">'+
+                                    '<a href="/integration/site/pages/home.jag?applicationKey=' + application.hashId + '">'+
                                     '<i class="fw '+application.appTypeIcon+' fw-2x app-type-icon" data-toggle="tooltip" data-placement="right" title=application.appTypeTitle></i>' +
                                      appIcon +
                                     '<div class="app-name">' + displayName + '</div>' +
@@ -182,7 +182,7 @@ jagg.template("index", function(inputs, outputs, jagg) {
     </script>
 
     <div class="action-bar">
-        <a href="/appmgt/site/pages/application.jag?appTypeName=car" class="btn-action" data-toggle="tooltip" data-placement="top" title="Add New Application">
+        <a href="/integration/site/pages/application.jag?appTypeName=car" class="btn-action" data-toggle="tooltip" data-placement="top" title="Add New Application">
             <span class="fw-stack fw-lg btn-action-ico">
                 <i class="fw fw-circle-outline fw-stack-2x"></i>
                 <i class="fw fw-add fw-stack-1x"></i>
@@ -211,7 +211,7 @@ jagg.template("index", function(inputs, outputs, jagg) {
             <div class="col-centered col-xs-10 col-sm-7  col-md-7 col-lg-6">
                 <div class="cloud-new-content">
                     <h1>New to WSO2 Integration Cloud ?</h1>
-                    <a id="app-create-button" class="cu-btn cu-btn-md cu-btn-blue" href="/appmgt/site/pages/select-apptype.jag">
+                    <a id="app-create-button" class="cu-btn cu-btn-md cu-btn-blue" href="/integration/site/pages/application.jag?appTypeName=car">
                       Upload Your First Integration Project</a>
                     <!--div class="help">
                         <i class="fa fa-2x fa-book"></i> Need help ? Read App creation guide first..
@@ -245,7 +245,7 @@ jagg.template("index", function(inputs, outputs, jagg) {
        </div><!-- /.modal-content -->
      </div><!-- /.modal -->
 
-    <script src="/appmgt/site/themes/default/js/app-listing-tile-icon.js"></script>
+    <script src="/integration/site/themes/default/js/app-listing-tile-icon.js"></script>
 
 <%
 }); %>
