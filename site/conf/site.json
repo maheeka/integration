@@ -2,7 +2,7 @@
   "theme" : {
     "base" : "default"
   },
-  "context" : "/intcloud",
+  "context" : "/integration",
   "cloudMgtContext" : "/cloudmgt",
   "dashboardContext" : "/dashboard",
   "recentAPIsCount" : 5,

@@ -1222,7 +1222,7 @@ var isFileExtZIP = function (uploadedFileName) {
 
 var createDestinationDirsForUploadedApps = function (versionHashId) {
     var fileUtils = Packages.org.apache.commons.io.FileUtils;
-    var absFileUploadPath = modManager.getPropertyValue(PROPERTY_APPMGT_DEPLOYMENT_DIR_PATH) +
+    var absFileUploadPath = modManager.getPropertyValue(PROPERTY_INTCLOUD_DEPLOYMENT_DIR_PATH) +
                             constructFileUploadPath(versionHashId);
     var uploadedFilePath = new Packages.java.io.File(absFileUploadPath);
     try {
