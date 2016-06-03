@@ -74,8 +74,8 @@ var log = new Log();
                 <i class="fa fa-reorder"></i>
             </div>
             <div class="col-md-3 breadcrumb-secondary">
-                <a href="/intcloud/site/pages/index.jag"><i class="fa fa-cubes visible-xs visible-lg"></i></a>
-                <span class="hidden-xs"><a href="/intcloud/site/pages/index.jag">Integration Cloud</a></span>
+                <a href="/integration/site/pages/index.jag"><i class="fa fa-cubes visible-xs visible-lg"></i></a>
+                <span class="hidden-xs"><a href="/integration/site/pages/index.jag">Integration Cloud</a></span>
             </div>
         </div>
     </div>
@@ -88,17 +88,17 @@ var log = new Log();
                 <a href="#"><i class="fa fa-laptop"></i> Overview</a>
             </li>
             <li>
-                <a id="leftMenuEnvVars" href="/intcloud/site/pages/envs.jag?versionKey=<%=selectedApplicationRevision.hashId%>&applicationKey=<%=applicationKey%>"><i class="fa fa-wrench"></i> Env Variables</a>
+                <a id="leftMenuEnvVars" href="/integration/site/pages/envs.jag?versionKey=<%=selectedApplicationRevision.hashId%>&applicationKey=<%=applicationKey%>"><i class="fa fa-wrench"></i> Env Variables</a>
             </li>
             <li>
-                <a id="leftMenuTagSet" href="/intcloud/site/pages/tags.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>"><i class="fa fa-tag"></i> Tags</a>
+                <a id="leftMenuTagSet" href="/integration/site/pages/tags.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>"><i class="fa fa-tag"></i> Tags</a>
             </li>
             <li>
-                <a href="/intcloud/site/pages/runtimeLogs.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><i class="fa
+                <a href="/integration/site/pages/runtimeLogs.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><i class="fa
                 fa-hdd-o"></i>Runtime Logs</a>
             </li>
             <li>
-                <a href="/intcloud/site/pages/customurl.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><i class="fa
+                <a href="/integration/site/pages/customurl.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><i class="fa
                 fa-link"></i>Custom URL</a>
             </li>
         </ul>
@@ -124,7 +124,7 @@ var log = new Log();
                   <div id="app-icon" class="home-app-icon">
                   </div>
                   <span class="app-thumb-edit"><i class="fa fa-pencil" onclick="document.getElementById('change_app_icon').click();"></i></span>
-                <form id="changeAppIcon" action="/intcloud/site/blocks/application/application.jag" method="post" enctype="multipart/form-data">
+                <form id="changeAppIcon" action="/integration/site/blocks/application/application.jag" method="post" enctype="multipart/form-data">
                     <input id="change_app_icon" type="file" style="display:none" name="changeIcon" />
                     <input id="action" type="hidden" name="action" value="changeAppIcon" />
                     <input id="applicationKey" type="hidden" name="applicationKey" value="<%=applicationKey%>"/>
@@ -137,7 +137,7 @@ var log = new Log();
                 <%if(defaultVersionName !== null && versions[defaultVersionName] != undefined) { %>
                 <div class="app-preview-action-bar" id="custom-url-block">
                     <div class="sec prod-url"><a href="<%=versions[defaultVersionName].customtUrl%>"><%=versions[defaultVersionName].customtUrl%></a>
-                    <a href="/intcloud/site/pages/customurl.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><i class="fw fw-settings"></i></a>
+                    <a href="/integration/site/pages/customurl.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><i class="fw fw-settings"></i></a>
                     </div>
                 </div>
                 <% } %>
@@ -283,7 +283,7 @@ var log = new Log();
                                                 <svg width="200" height="200">
                                                    <circle class="outer" cx="95" cy="95" r="85" transform="rotate(-90, 95, 95)"/>
                                                 </svg>
-                                                <a href="/intcloud/site/pages/runtimeLogs.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><span class="view-log">View Logs</span></a>
+                                                <a href="/integration/site/pages/runtimeLogs.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><span class="view-log">View Logs</span></a>
                                         <%  } else { %>
                                                 <svg width="200" height="200">
                                                     <circle class="outer" style="stroke: #ACAFAD;" cx="95" cy="95" r="85" transform="rotate(-90, 95, 95)"/>
@@ -319,7 +319,7 @@ var log = new Log();
 
           </div>
           <div class="col-xs-12 col-md-3 col-lg-6 ">
-              <div class="block-logs ">
+              <div class="block-logs " id="terminal">
                <!-- Log Analyser goes here-->
                   <div>
                   dkfuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
@@ -329,7 +329,7 @@ var log = new Log();
                   </div>
                   </div>
                 <!-- - EO Log analyser->
-                <a class="block-anch hide" id="envVars" href="/intcloud/site/pages/envs.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>">
+                <a class="block-anch hide" id="envVars" href="/integration/site/pages/envs.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>">
                   <h3>Env Variables</h3>
                   <div class="block-icon pull-left">
                     <i class="fa fa-wrench fa-5x"></i>
@@ -341,7 +341,7 @@ var log = new Log();
                 </a>
               </div>
               <div class="block-database pull-left hide">
-                <a class="block-anch" id="tagSet" href="/intcloud/site/pages/tags.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>">
+                <a class="block-anch" id="tagSet" href="/integration/site/pages/tags.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>">
                   <h3>Tags</h3>
                   <div class="block-icon pull-left">
                     <i class="fa fa-tags fa-5x"></i>
@@ -621,8 +621,15 @@ var log = new Log();
 
 </script>
 <script src="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('templates/home/js/home.js'))%>"></script>
-<script src="/intcloud/site/themes/default/js/app-listing-tile-icon.js"></script>
+<script src="/integration/site/themes/default/js/app-listing-tile-icon.js"></script>
+<script src="/integration/site/themes/default/js/loganalyser/jquery-1.10.2.js"></script>
+<script src="/integration/site/themes/default/js/loganalyser/topojson.js"></script>
+<script src="/integration/site/themes/default/js/loganalyser/carbon-analytics.js"></script>
+<script src="/integration/site/themes/default/js/loganalyser/ptty.jquery.min.js"></script>
+<script src="/integration/site/themes/default/js/loganalyser/Mustache.js"></script>
+<script src="/integration/site/themes/default/js/loganalyser/main.js"></script>
 
+<link rel="stylesheet" href="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('css/loganalyser/style.css'))%>">
 <%
 }); %>
 

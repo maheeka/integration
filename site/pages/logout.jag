@@ -32,7 +32,7 @@ var site = require("/site/conf/site.json");
             var relayState = ssoRelyingParty.getUUID();
             var idpURL = ssoRelyingParty.getProperty("identityProviderURL");
         } catch (e) {
-                response.sendRedirect("/intcloud/");
+                response.sendRedirect("/integration/");
         }
 
 %>

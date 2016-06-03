@@ -24,7 +24,7 @@ jagg.template("apptype/select", function(inputs, outputs, jagg) {
     %>
 
     <div class="action-bar">
-        <a href="/intcloud/site/pages/index.jag" class="btn-action">
+        <a href="/integration/site/pages/index.jag" class="btn-action">
                 <span class="fw-stack fw-lg btn-action-ico">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                     <i class="fw fw-left-arrow fw-stack-1x"></i>
