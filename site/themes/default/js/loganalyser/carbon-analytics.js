@@ -69,6 +69,8 @@ function AnalyticsClient() {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_LIST_TABLES,
                         type: HTTP_GET,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -87,6 +89,8 @@ function AnalyticsClient() {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_GET_RECORDSTORES,
                         type: HTTP_GET,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -105,6 +109,8 @@ function AnalyticsClient() {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_GET_RECORDSTORE_BY_TABLE + "&tableName=" + tableName,
                         type: HTTP_GET,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -145,6 +151,8 @@ function AnalyticsClient() {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_TABLE_EXISTS + "&tableName=" + tableName,
                         type: HTTP_GET,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -183,6 +191,8 @@ function AnalyticsClient() {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_CLEAR_INDEX_DATA + "&tableName=" + tableName,
                         type: HTTP_GET,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -213,6 +223,8 @@ function AnalyticsClient() {
                              "&start=" + rangeInfo["start"] + "&count=" + rangeInfo["count"],
                         data: JSON.stringify(rangeInfo["columns"]),
                         type: HTTP_POST,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -251,6 +263,8 @@ function AnalyticsClient() {
                                                 columns : recordInfo["columns"]
                                              }),
                         type: HTTP_POST,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -275,6 +289,8 @@ function AnalyticsClient() {
                         url: this.serverUrl + "?type=" + TYPE_GET_BY_ID + "&tableName=" + recordsInfo["tableName"],
                         data: JSON.stringify(recordsInfo["ids"]),
                         type: HTTP_POST,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -294,6 +310,8 @@ function AnalyticsClient() {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_GET_RECORD_COUNT + "&tableName=" + tableName,
                         type: HTTP_GET,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -448,6 +466,8 @@ function AnalyticsClient() {
                         url: this.serverUrl + "?type=" + TYPE_SEARCH_COUNT + "&tableName=" + queryInfo["tableName"],
                         data: JSON.stringify(queryInfo["searchParams"]),
                         type: HTTP_POST,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -484,6 +504,8 @@ function AnalyticsClient() {
                         url: this.serverUrl + "?type=" + TYPE_SEARCH + "&tableName=" + queryInfo["tableName"],
                         data: JSON.stringify(queryInfo["searchParams"]),
                         type: HTTP_POST,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -551,6 +573,8 @@ function AnalyticsClient() {
                             queryInfo["searchParams"]["tableName"],
                         data: JSON.stringify(queryInfo["searchParams"]),
                         type: HTTP_POST,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -619,6 +643,8 @@ function AnalyticsClient() {
                         url: this.serverUrl + "?type=" + TYPE_SEARCH_MULTI_TABLES_WITH_AGGREGATES,
                         data: JSON.stringify(queryInfo["searchParams"]),
                         type: HTTP_POST,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -639,6 +665,8 @@ function AnalyticsClient() {
                         url: this.serverUrl + "?type=" + TYPE_REINDEX + "&tableName=" + rangeInfo["tableName"] +
                              "&timeFrom=" + rangeInfo["timeFrom"] + "&timeTo=" + rangeInfo["timeTo"],
                         type: HTTP_GET,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -671,6 +699,8 @@ function AnalyticsClient() {
                         url: this.serverUrl + "?type=" + TYPE_SET_SCHEMA + "&tableName=" + schemaInfo["tableName"],
                         data: JSON.stringify(schemaInfo["schema"]),
                         type: HTTP_POST,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -690,6 +720,8 @@ function AnalyticsClient() {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_GET_SCHEMA + "&tableName=" + tableName,
                         type: HTTP_GET,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -708,6 +740,8 @@ function AnalyticsClient() {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_PAGINATION_SUPPORTED + "&recordStore=" + recordStore,
                         type: HTTP_GET,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -726,6 +760,8 @@ function AnalyticsClient() {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_WAIT_FOR_INDEXING,
                         type: HTTP_GET,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -745,6 +781,8 @@ function AnalyticsClient() {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_WAIT_FOR_INDEXING + "&tableName=" + tableName,
                         type: HTTP_GET,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -775,6 +813,8 @@ function AnalyticsClient() {
                                                                                drilldownReq["tableName"],
                         data: JSON.stringify(drilldownReq["drillDownInfo"]),
                         type: HTTP_POST,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -820,6 +860,8 @@ function AnalyticsClient() {
                                                                                drillDownReq["tableName"],
                         data: JSON.stringify(drillDownReq["drillDownInfo"]),
                         type: HTTP_POST,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -858,6 +900,8 @@ function AnalyticsClient() {
                                                                                   drillDownReq["tableName"],
                         data: JSON.stringify(drillDownReq["drillDownInfo"]),
                         type: HTTP_POST,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -896,6 +940,8 @@ function AnalyticsClient() {
                         url: this.serverUrl + "?type=" + TYPE_ADD_STREAM_DEFINITION,
                         data: JSON.stringify(streamDef),
                         type: HTTP_POST,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -929,6 +975,8 @@ function AnalyticsClient() {
                         url: this.serverUrl + "?type=" + TYPE_PUBLISH_EVENTS,
                         data: JSON.stringify(event),
                         type: HTTP_POST,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -953,6 +1001,8 @@ function AnalyticsClient() {
                         url: this.serverUrl + "?type=" + TYPE_GET_STREAM_DEFINITION,
                         data: JSON.stringify(requestData),
                         type: HTTP_POST,
+                        dataType: DATA_TYPE_JSON,
+                        contentType: CONTENT_TYPE_JSON,
                         success: function (data) {
                             callback(data);
                         },
@@ -979,8 +1029,8 @@ AnalyticsClient.prototype.init = function (username, password, svrUrl) {
     }
     var authHeader = generateBasicAuthHeader(username, password);
     jQuery.ajaxSetup({
-                         dataType: DATA_TYPE_JSON,
-                         contentType: CONTENT_TYPE_JSON,
+                         //dataType: DATA_TYPE_JSON,
+                         //contentType: CONTENT_TYPE_JSON,
                          beforeSend: function (request) {
                              if (authHeader != null) {
                                  request.setRequestHeader(AUTHORIZATION_HEADER, authHeader);

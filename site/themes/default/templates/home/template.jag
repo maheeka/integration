@@ -43,7 +43,6 @@ var log = new Log();
     var encodedLabels = encodeURIComponent(stringify(selectedApplicationRevision.tags), "UTF-8");
     var encodedEnvs = encodeURIComponent(stringify(selectedApplicationRevision.runtimeProperties), "UTF-8");
     var configJSON = JSON.parse(paramConfiguration);
-    log.info("configJSON ___________________________  " + configJSON + " " + stringify(application));
 %>
 
 <script>
@@ -622,7 +621,6 @@ var log = new Log();
 </script>
 <script src="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('templates/home/js/home.js'))%>"></script>
 <script src="/integration/site/themes/default/js/app-listing-tile-icon.js"></script>
-<script src="/integration/site/themes/default/js/loganalyser/jquery-1.10.2.js"></script>
 <script src="/integration/site/themes/default/js/loganalyser/topojson.js"></script>
 <script src="/integration/site/themes/default/js/loganalyser/carbon-analytics.js"></script>
 <script src="/integration/site/themes/default/js/loganalyser/ptty.jquery.min.js"></script>
