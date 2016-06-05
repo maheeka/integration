@@ -49,7 +49,7 @@ var log = new Log();
 
     var applicationName = "<%=applicationName%>";
     var applicationKey = "<%=applicationKey%>";
-    var paramConfigurationJSON = JSON.parse('<%=paramConfiguration%>');
+    var paramConfigurationJSON = <%=paramConfiguration%>;
     var taskConfiguration = <%=taskConfiguration%>;
     var conSpecCpu = "<%=conSpecCpu%>";
     var conSpecMemory = "<%=conSpecMemory%>";
