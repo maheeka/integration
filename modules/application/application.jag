@@ -57,6 +57,7 @@ var addApplication = function (applicationName, versionName, applicationDescript
              ": " + applicationDescription + " runtimeId : " + runtimeId + " apptype : " + appTypeName );
 
     var tenantId = modManager.getTenantId();
+    session.put("TENANT_ID", tenantId);
     var applicationHashId = Util.getApplicationHashId(applicationName, tenantId);
     var versionHashId = Util.getVersionHashId(applicationName, versionName, tenantId);
     if (artifactUrl) {

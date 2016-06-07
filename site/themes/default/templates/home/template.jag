@@ -31,6 +31,12 @@ var log = new Log();
     if (application.defaultVersionName != null && versions[defaultVersionName] != undefined) {
         versions[defaultVersionName].deploymentURL = versions[defaultVersionName].customtUrl;
     }
+    log.info("$$$$$$$  " + stringify(application));
+    log.info("########################## application.cAppName: " + application.carbonApplicationName);
+    var cAppName = application.carbonApplicationName.substring(0, application.carbonApplicationName.lastIndexOf("_"));
+    session.put("C_APP_NAME", cAppName);
+    log.info("*****  cAppName" + cAppName);
+    log.info("*****  session.get (C_APP_NAME)" + session.get("C_APP_NAME"));
     var selectedApplicationRevision = versions[selectedRevision];
     var revisions = outputs.revision;
     var applicationName = application.applicationName;
@@ -201,7 +207,7 @@ var log = new Log();
 
                                <h4>Integration Parameters</h4>
                                <%
-                                   if (configJSON.param != undefined) {
+                                   if (configJSON.params) {
                                        for(var i=0; i < configJSON.params.length; i++) {
                                            var parameter = configJSON.params[i];
                                %>
