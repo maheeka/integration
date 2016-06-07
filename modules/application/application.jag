@@ -86,7 +86,8 @@ var addApplication = function (applicationName, versionName, applicationDescript
     var esbClient = ESBClient.getInstance();
     addEvent(ESB_CONNECT, EVENT_SUCCEEDED, "Successfully connected to Integration Server", versionHashId); //TODO : check whether server is up
     addEvent(ESB_DEPLOY, EVENT_PENDING, "Deploying integration", versionHashId);
-    esbClient.deployCarbonApp(uploadedFileName, uploadedFilePath);
+    //esbClient.deployCarbonApp(uploadedFileName, uploadedFilePath);
+    esbClient.deployCarbonAppInTenant(uploadedFileName, uploadedFilePath, tenantId);
     addEvent(ESB_DEPLOY, EVENT_SUCCEEDED, "Deployed integration", versionHashId);
     addEvent(ESB_DEPLOY_COMPLETE, EVENT_PENDING, "Verifying integration deployment", versionHashId); //TODO : verify deployment
     //setTimeout(waitForDeploy, 10000);
