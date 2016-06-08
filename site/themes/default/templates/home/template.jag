@@ -31,6 +31,12 @@ var log = new Log();
     if (application.defaultVersionName != null && versions[defaultVersionName] != undefined) {
         versions[defaultVersionName].deploymentURL = versions[defaultVersionName].customtUrl;
     }
+    log.info("$$$$$$$  " + stringify(application));
+    log.info("########################## application.cAppName: " + application.carbonApplicationName);
+    var cAppName = application.carbonApplicationName.substring(0, application.carbonApplicationName.lastIndexOf("_"));
+    session.put("C_APP_NAME", cAppName);
+    log.info("*****  cAppName" + cAppName);
+    log.info("*****  session.get (C_APP_NAME)" + session.get("C_APP_NAME"));
     var selectedApplicationRevision = versions[selectedRevision];
     var revisions = outputs.revision;
     var applicationName = application.applicationName;
@@ -201,15 +207,24 @@ var log = new Log();
 
                                <h4>Integration Parameters</h4>
                                <%
-                                   for(var i=0; i < configJSON.params.length; i++) {
-                                       var parameter = configJSON.params[i];
+                                   if (configJSON.params) {
+                                       for(var i=0; i < configJSON.params.length; i++) {
+                                           var parameter = configJSON.params[i];
+                               %>
+                                           <div class="form-group">
+                                                <label for="param-<%=parameter.param%>"><%=parameter.param%></label>
+                                                <input id="param-<%=parameter.param%>" name="<%=parameter.param%>" type="text" class="form-control form-control-config" placeholder="Enter <%=parameter.param%> value" value ="<%=parameter.value%>" ></input>
+                                           </div>
+                                    <%
+                                       }
+                                   } else {
                                    %>
-                                       <div class="form-group">
-                                           <label for="param-<%=parameter.param%>"><%=parameter.param%></label>
-                                           <input id="param-<%=parameter.param%>" name="<%=parameter.param%>" type="text" class="form-control form-control-config" placeholder="Enter <%=parameter.param%> value" value ="<%=parameter.value%>" ></input>
-                                       </div>
-                                  <% } %>
-                                    <div class="btn-group ctrl-edit-button btn-edit-code right">
+                                        <p><i>Parameters not found</i></p>
+                                   <%
+                                   }
+                               %>
+
+                                  <div class="btn-group ctrl-edit-button btn-edit-code right">
                                       <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue right" onclick="testIntegration();">Test Integration</a>
                                   </div>
                                   <div class="clearfix line"></div>

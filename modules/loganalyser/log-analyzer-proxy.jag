@@ -21,7 +21,7 @@
         var log = new Log("log-analyzer-proxy.jag");
         var serviceInvokers = session.get("serviceInvokers");
 
-        log.info("*****************************************************");
+
         if(serviceInvokers == null) {
             serviceInvokers = require("../../site/themes/default/js/loganalyser/backend-service-invoker.js").backendServiceInvoker;
             session.put("serviceInvokers", serviceInvokers);
@@ -33,7 +33,6 @@
         var targetURL = "https://local.cloudmgt.wso2.com:9463" + "/portal/controllers/apis/analytics.jag";
         var payload = request.getContent();
 
-        log.info("***************************************************** payload: " + stringify(payload));
         if(method == undefined){
             log.error("Method Undefined. Target URL: " + targetURL);
             return;
@@ -53,17 +52,12 @@
                         });
                 break;
                 case constants.HTTP_POST:
-                    log.info("***************************************************** inside: POST");
                     var responseData = serviceInvokers.XMLHttp.post(
                         targetURL, payload, function (responsePayload) {
                             response.status = 200;
                             response.content =  responsePayload;
-                            log.info("***************************************************** responsePayload111: " + stringify(responsePayload));
-                            log.info("***************************************************** response: " + stringify(response));
-                            log.info("***************************************************** response.content: " + stringify(response.content));
                         },
                         function (responsePayload) {
-                            log.info("***************************************************** responsePayload: " + stringify(responsePayload));
                             response.status = responsePayload.status;
                             response.content =  responsePayload.responseText;
                         });
