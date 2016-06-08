@@ -24,6 +24,13 @@ var currentRecordCount;
 var $ptty;
 
 $(document).ready(function () {
+var _args = {}; // private
+
+//var cAppName = session.get("C_APP_NAME") ;
+//var tenantId = <%= session.get("TENANT_ID") %>;
+// tenantId = -1234;
+//console.log("***^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*********************** cAppName: " + cAppName);
+//console.log("************************** tenantId: " + tenantId);
     $ptty = $('#terminal').Ptty({
         theme : 'livelog',
         i18n : {
@@ -31,7 +38,6 @@ $(document).ready(function () {
             error_not_found : 'command not found'
         }
     });
-                           console.log("################### #############################################################################################   : " + initialRecordCount);
 
         fetchInitialRecordCount();
 
@@ -43,17 +49,15 @@ $(document).ready(function () {
  *
  */
 function fetchInitialRecordCount(){
-console.log("################### initialRecordCount: " + initialRecordCount);
     var countQueryInfo = {
         tableName: "LOGANALYZER",
         searchParams: {
-            query: "logstream:\"-1234\"",  //todo tenantId should be replaced by car id
+            query: "logstream:\"-1234\""
         }
     };
     client.searchCount(countQueryInfo, function(count) {
         if (count["status"] === "success"){
             initialRecordCount = count["message"];
-            console.log("################### initialRecordCount: " + initialRecordCount);
             if(initialRecordCount >= 0){
                 setInterval(fetchCurrentRecordCount, 5000);
             }
@@ -73,13 +77,12 @@ function fetchCurrentRecordCount() {
     var countQueryInfo = {
         tableName: "LOGANALYZER",
         searchParams: {
-            query: "logstream:\"-1234\"",
+            query: "logstream:\"-1234\""
         }
     };
 
     client.searchCount(countQueryInfo, function(count) {
         currentRecordCount = count["message"];
-        console.log("################### currentRecordCount: " + currentRecordCount);
         var logCountDifference = currentRecordCount - initialRecordCount;
         if(logCountDifference > 0){
             fetchRecords(logCountDifference);
@@ -101,9 +104,17 @@ function fetchRecords(logCountDifference){
         tableName: "LOGANALYZER",
         searchParams: {
             query:"logstream:\"-1234\"",
-            start: 0,
-            count: logCountDifference,
+            start: "0",
+            count: ""+logCountDifference,
+            sortBy : [
+            {
+            field : "_timestamp",
+            sortType : "DESC",
+            reversed : "true"
+            }
+            ]
         }
+
     };
 
     var lineItem = {time : 'Fri, 20 May 2016 12:30:21 GMT ',
@@ -121,7 +132,10 @@ function fetchRecords(logCountDifference){
                     time: tempDay,
                     className: obj[i].values._class,
                     content: obj[i].values._content,
-                    trace: obj[i].values._trace
+                    trace: obj[i].values._trace,
+                    appname :obj[i].values._appName,
+                    tenantId :obj[i].values.logstream,
+
                 };
                 writeToLogViewer(lineItem);
             }
