@@ -87,16 +87,14 @@ var addApplication = function (applicationName, versionName, applicationDescript
     var esbClient = ESBClient.getInstance();
     addEvent(ESB_CONNECT, EVENT_SUCCEEDED, "Successfully connected to Integration Server", versionHashId); //TODO : check whether server is up
     addEvent(ESB_DEPLOY, EVENT_PENDING, "Deploying integration", versionHashId);
-    //esbClient.deployCarbonApp(uploadedFileName, uploadedFilePath);
-    esbClient.deployCarbonAppInTenant(uploadedFileName, uploadedFilePath, tenantId);
+    esbClient.deployCarbonApp(tenantId, uploadedFileName, uploadedFilePath);
     addEvent(ESB_DEPLOY, EVENT_SUCCEEDED, "Deployed integration", versionHashId);
-    addEvent(ESB_DEPLOY_COMPLETE, EVENT_PENDING, "Verifying integration deployment", versionHashId); //TODO : verify deployment
+    addEvent(ESB_DEPLOY_COMPLETE, EVENT_PENDING, "Verifying integration deployment", versionHashId);
     //setTimeout(waitForDeploy, 10000);
     addEvent(ESB_DEPLOY_COMPLETE, EVENT_SUCCEEDED, "Verifying integration deployment", versionHashId);
 
-    //TODO : load parameters and upload in database
     addEvent(LOAD_PARAMETERS, EVENT_PENDING, "Loading configuration parameters from deployment", versionHashId);
-    var paramConfiguration = esbClient.getIntegrationParamConfiguration(uploadedFileName);
+    var paramConfiguration = esbClient.getIntegrationParamConfiguration(tenantId, uploadedFileName);
     addEvent(LOAD_PARAMETERS, EVENT_PENDING, "Loading configuration parameters from deployment", versionHashId);
     updateParamConfiguration(applicationHashId, paramConfiguration);
     addEvent(LOAD_PARAMETERS, EVENT_SUCCEEDED, "Updated configuration parameters", versionHashId);
@@ -119,27 +117,33 @@ var updateTaskConfiguration = function(applicationHashId, taskConfiguration) {
 }
 
 var scheduleIntegration = function (applicationName, applicationHashId, paramConfiguration) {
+    var tenantId = modManager.getTenantId();
+
     var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
     var esbClient = ESBClient.getInstance();
 
-    var taskConfiguration = esbClient.deployScheduleTask(applicationName, paramConfiguration);
+    var taskConfiguration = esbClient.deployScheduleTask(tenantId, applicationName, paramConfiguration);
 
     ApplicationManager.updateParamConfiguration(applicationHashId, paramConfiguration);
     ApplicationManager.updateTaskConfiguration(applicationHashId, taskConfiguration);
 }
 
 var testIntegration = function (applicationName, applicationHashId, paramConfiguration) {
+    var tenantId = modManager.getTenantId();
+
     var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
     var esbClient = ESBClient.getInstance();
 
-    esbClient.deployTestScheduleTask(applicationName, paramConfiguration);
+    esbClient.deployTestScheduleTask(tenantId, applicationName, paramConfiguration);
 }
 
 var stopIntegration = function (applicationName, applicationHashId, taskConfiguration) {
+    var tenantId = modManager.getTenantId();
+
     var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
     var esbClient = ESBClient.getInstance();
 
-    esbClient.stopScheduleTask(applicationName, taskConfiguration);
+    esbClient.stopScheduleTask(tenantId, applicationName, taskConfiguration);
 }
 
 
@@ -1280,9 +1284,7 @@ var addEvent = function(name, status, description, versionHashId) {
 };
 
 var deleteApplication = function(applicationHashId) {
-
     try{
-
         deleteSelectedVersionFromSession(applicationHashId);
         var versionHashIds = ApplicationManager.getVersionHashIdsOfApplication(applicationHashId);
         var carbonApplicationName = ApplicationManager.getCarbonApplicationNameOfApplication(applicationHashId);
@@ -1290,7 +1292,7 @@ var deleteApplication = function(applicationHashId) {
         for (var i = 0; i < versionHashIds.size(); i++) {
             var versionHashId = versionHashIds.get(i);
             deleteApplicationUploadedPath(versionHashId);
-            deleteCarbonApplicationFromServer(carbonApplicationName);
+            deleteCarbonApplicationFromServer(carbonApplicationName, versionHashId);
             deleteEventsOfAppVersions(versionHashId);
         }
         deleteApplicationFromDatabase(applicationHashId);
@@ -1300,9 +1302,12 @@ var deleteApplication = function(applicationHashId) {
     }
 };
 
-var deleteCarbonApplicationFromServer = function(carbonApplicationName) {
+var deleteCarbonApplicationFromServer = function(carbonApplicationName, versionHashId) {
+
+    var tenantId = modManager.getTenantId();
+
     try{
-        var allAppsUsingCapp = ApplicationManager.getAllApplicationsUsingCarbonApplication(carbonApplicationName);
+        var allAppsUsingCapp = ApplicationManager.getAllApplicationsUsingCarbonApplication(tenantId, carbonApplicationName);
 
         if (allAppsUsingCapp.size()>1){
              log.info("There are other integrations using the same carbon application. Hence, carbon application "
@@ -1310,7 +1315,7 @@ var deleteCarbonApplicationFromServer = function(carbonApplicationName) {
         } else {
              var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
              var esbClient = ESBClient.getInstance();
-             esbClient.unDeployCarbonApp(carbonApplicationName);
+             esbClient.unDeployCarbonApp(tenantId, carbonApplicationName);
         }
     } catch(e){
         log.error("Error while undeploying carbon application for the version with hash id : " + versionHashId);
