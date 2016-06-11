@@ -1288,12 +1288,15 @@ var deleteApplication = function(applicationHashId) {
         deleteSelectedVersionFromSession(applicationHashId);
         var versionHashIds = ApplicationManager.getVersionHashIdsOfApplication(applicationHashId);
         var carbonApplicationName = ApplicationManager.getCarbonApplicationNameOfApplication(applicationHashId);
+        var taskConfiguration = ApplicationManager.getTaskConfigurationOfApplication(applicationHashId);
+        var applicationName = ApplicationManager.getApplicationNameByHashId(applicationHashId);
 
         for (var i = 0; i < versionHashIds.size(); i++) {
             var versionHashId = versionHashIds.get(i);
             deleteApplicationUploadedPath(versionHashId);
             deleteCarbonApplicationFromServer(carbonApplicationName, versionHashId);
             deleteEventsOfAppVersions(versionHashId);
+            stopIntegration(applicationName, applicationHashId, taskConfiguration);
         }
         deleteApplicationFromDatabase(applicationHashId);
     } catch(e){
