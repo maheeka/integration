@@ -126,7 +126,7 @@ function fetchRecords(logCountDifference){
         var obj = JSON.parse(data["message"]);
         if (data["status"] === "success") {
             for (var i = 0; i < obj.length; i++) {
-                var tempDay = new Date(parseInt(obj[i].values._eventTimeStamp)).toUTCString();
+                var tempDay = new Date(parseInt(obj[i].values._eventTimeStamp)).toString();
 
                 var lineItem = {
                     time: tempDay,
@@ -134,7 +134,6 @@ function fetchRecords(logCountDifference){
                     content: obj[i].values._content,
                     trace: obj[i].values._trace,
                     appname :obj[i].values._appName,
-                    tenantId :obj[i].values.logstream,
 
                 };
                 writeToLogViewer(lineItem);
