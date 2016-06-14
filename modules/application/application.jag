@@ -138,6 +138,7 @@ var testIntegration = function (applicationName, applicationHashId, paramConfigu
 }
 
 var stopIntegration = function (applicationName, applicationHashId, taskConfiguration) {
+
     var tenantId = modManager.getTenantId();
 
     var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
@@ -1296,7 +1297,9 @@ var deleteApplication = function(applicationHashId) {
             deleteApplicationUploadedPath(versionHashId);
             deleteCarbonApplicationFromServer(carbonApplicationName, versionHashId);
             deleteEventsOfAppVersions(versionHashId);
-            stopIntegration(applicationName, applicationHashId, taskConfiguration);
+            if (taskConfiguration != null) {
+                stopIntegration(applicationName, applicationHashId, taskConfiguration);
+            }
         }
         deleteApplicationFromDatabase(applicationHashId);
     } catch(e){
