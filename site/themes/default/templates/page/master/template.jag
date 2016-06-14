@@ -21,7 +21,7 @@ jagg.template("page/master", function(inputs, outputs, jagg) {%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>WSO2 AppCloud</title>
+    <title>WSO2 Integration Cloud</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('css/bootstrap-3.2.0/bootstrap.min.css'))%>">
@@ -37,8 +37,8 @@ jagg.template("page/master", function(inputs, outputs, jagg) {%>
 
 <body class="top-notification-active">
     <div class="top-notification">
-        <span class="hidden-xs">This new version of WSO2 App Cloud still in beta stage. Click here for the <a href="https://apps.cloud.wso2.com">old</a> version.</span>
-        <span class="visible-xs">WSO2 App Cloud in beta stage. Click here for the <a href="https://apps.cloud.wso2.com">old</a> version.</span>
+        <span class="hidden-xs">This new version of WSO2 integration Cloud still in Pre-Alpha stage. </span>
+        <span class="visible-xs">WSO2 Integration Cloud in pre alpha stage.</span>
     </div>
     <div id="wrap">
         <div id="header"><% jagg.includeBlocks(outputs.header); %></div>

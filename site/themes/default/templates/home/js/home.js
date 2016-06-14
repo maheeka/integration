@@ -70,7 +70,7 @@ function listTags(){
         tagString += tags[i].labelName + " : " + tags[i].labelValue + "</br>";
     }
     if(tagListLength > 3) {
-        tagString += "</br><a class='view-tag' href='/appmgt/site/pages/tags.jag?applicationKey=" + applicationKey
+        tagString += "</br><a class='view-tag' href='/integration/site/pages/tags.jag?applicationKey=" + applicationKey
                              + "&versionKey=" + selectedApplicationRevision.hashId + "'>View All Tags</a>";
     }
 
@@ -125,15 +125,15 @@ function changeSelectedRevision(newRevision){
     $("#tableStatus").html(selectedApplicationRevision.status);
 
     //Change Env Variables
-    $("#leftMenuEnvVars").attr('href',"/appmgt/site/pages/envs.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
-    $("#envVars").attr('href',"/appmgt/site/pages/envs.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
-    $("#envVarsAdd").attr('href',"/appmgt/site/pages/envs.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
+    $("#leftMenuEnvVars").attr('href',"/integration/site/pages/envs.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
+    $("#envVars").attr('href',"/integration/site/pages/envs.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
+    $("#envVarsAdd").attr('href',"/integration/site/pages/envs.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
     $("#runtimePropCount").text(selectedApplicationRevision.runtimeProperties.length.toString());
 
     //Change Tags
-    $("#leftMenuTagSet").attr('href',"/appmgt/site/pages/tags.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
-    $("#tagSet").attr('href',"/appmgt/site/pages/tags.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
-    $("#tagSetAdd").attr('href',"/appmgt/site/pages/tags.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
+    $("#leftMenuTagSet").attr('href',"/integration/site/pages/tags.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
+    $("#tagSet").attr('href',"/integration/site/pages/tags.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
+    $("#tagSetAdd").attr('href',"/integration/site/pages/tags.jag?applicationKey=" + applicationKey + "&versionKey=" + selectedApplicationRevision.hashId);
     $("#tagCount").text(selectedApplicationRevision.tags.length.toString());
     listTags();
 
@@ -153,7 +153,7 @@ function changeSelectedRevision(newRevision){
         $('.block-replica').html('<h3>Replicas</h3><div class="block-replicas"><figure class="node-cicle" ' +
                                  'data-percent="100"><figcaption>01</figcaption><svg width="200" height="200">' +
                                  '<circle class="outer" cx="95" cy="95" r="85" transform="rotate(-90, 95, 95)"/></svg>' +
-                                 '<a href="/appmgt/site/pages/runtimeLogs.jag?applicationKey=' + applicationKey + '&selectedRevision=' + newRevision +
+                                 '<a href="/integration/site/pages/runtimeLogs.jag?applicationKey=' + applicationKey + '&selectedRevision=' + newRevision +
                                  '"><span class="view-log">View Logs</span></a></figure></div><div class="block-replicas">' +
                                  '<figure class="node-cicle"><figcaption><span class="fw-stack fw-lg ">' +
                                  '<i class="fw fw-ring fw-stack-2x"></i><i class="fw fw-add fw-stack-1x" ' +
@@ -299,12 +299,31 @@ function deleteApplication(){
     });
 }
 
+// Delete integration
+function deleteIntegration(){
+
+    $('#app_creation_progress_modal').modal({ backdrop: 'static', keyboard: false});
+    $("#app_creation_progress_modal").show();
+    $("#modal-title").text("Deleting...");
+
+    jagg.post("../blocks/application/application.jag", {
+        action:"deleteApplication",
+        applicationKey:applicationKey
+    },function (result) {
+        //TODO jagg.message({content: "Integration : " + applicationName + " deleted successfully", type: 'success', id:'view_log'});
+        setTimeout(redirectAppListing, 2000);
+    },function (jqXHR, textStatus, errorThrown) {
+        jagg.message({content: "Error occurred while deleting integration : " + appName, type: 'error', id:'view_log'});
+    });
+
+}
+
 function deleteApplicationPopUp(){
-    jagg.popMessage({type:'confirm', modalStatus: true, title:'Delete Application Version',content:'Are you sure you want to delete this version:' + selectedRevision + ' ?',
-                        okCallback:function(){
-                            deleteApplication();
-                        }, cancelCallback:function(){}
-                    });
+    jagg.popMessage({type:'confirm', modalStatus: true, title:'Delete Application Version',content:'Are you sure you want to delete this integration: ' + applicationName  + ' ?',
+        okCallback:function(){
+             deleteIntegration();
+        }, cancelCallback:function(){}
+    });
 }
 
 function redirectAppListing() {

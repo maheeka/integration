@@ -34,7 +34,7 @@ var ServiceProxy = Packages.org.wso2.appcloud.core.dto.ContainerServiceProxy;
 var CloudUtil = Packages.org.wso2.intcloud.common.util.IntCloudUtil;
 var RuntimeProperty = Packages.org.wso2.appcloud.core.dto.RuntimeProperty;
 var CarbonUtils = Packages.org.wso2.carbon.utils.CarbonUtils;
-var Util = Packages.org.wso2.appcloud.core.Util;
+var Util = Packages.org.wso2.intcloud.core.Util;
 var ResourceQuotaLimit = Packages.org.wso2.appcloud.provisioning.runtime.beans.ResourceQuotaLimit;
 var List = Packages.java.util.List;
 var Arrays = Packages.java.util.Arrays;
@@ -57,10 +57,17 @@ var addApplication = function (applicationName, versionName, applicationDescript
              ": " + applicationDescription + " runtimeId : " + runtimeId + " apptype : " + appTypeName );
 
     var tenantId = modManager.getTenantId();
+    session.put("TENANT_ID", tenantId);
     var applicationHashId = Util.getApplicationHashId(applicationName, tenantId);
     var versionHashId = Util.getVersionHashId(applicationName, versionName, tenantId);
     if (artifactUrl) {
         uploadedFileName = versionHashId + "." + uploadedFileName.split(".")[1];
+    }
+
+    var allAppsUsingCapp = ApplicationManager.getAllApplicationsUsingCarbonApplication(uploadedFileName);
+
+    if (allAppsUsingCapp.size()>1){
+        log.warn("There are other integrations with carbon application name " + uploadedFileName + " same name. This might cause conflicts during deployment and execution.");
     }
 
     if(isNewVersion == 'true'){
@@ -72,39 +79,24 @@ var addApplication = function (applicationName, versionName, applicationDescript
     }
     var applicationRuntime = ApplicationManager.getRuntimeById(runtimeId);
     var tagName = applicationRuntime.getTag() +"-"+ versionHashId;
-
-    var uploadedFilePath = modManager.getPropertyValue(PROPERTY_APPMGT_DEPLOYMENT_DIR_PATH)
+    var uploadedFilePath = modManager.getPropertyValue(PROPERTY_INTCLOUD_DEPLOYMENT_DIR_PATH)
                                    + constructFileUploadPath(versionHashId) + uploadedFileName;
-
     var msg = "Connecting to Integration Server";
     addEvent(ESB_CONNECT, EVENT_PENDING, msg, versionHashId);
-
     var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
     var esbClient = ESBClient.getInstance();
-
     addEvent(ESB_CONNECT, EVENT_SUCCEEDED, "Successfully connected to Integration Server", versionHashId); //TODO : check whether server is up
-
     addEvent(ESB_DEPLOY, EVENT_PENDING, "Deploying integration", versionHashId);
-
-    esbClient.deployCarbonApp(uploadedFileName, uploadedFilePath);
-
+    esbClient.deployCarbonApp(tenantId, uploadedFileName, uploadedFilePath);
     addEvent(ESB_DEPLOY, EVENT_SUCCEEDED, "Deployed integration", versionHashId);
-
-    addEvent(ESB_DEPLOY_COMPLETE, EVENT_PENDING, "Verifying integration deployment", versionHashId); //TODO : verify deployment
-
-    setTimeout(waitForDeploy, 10000);
-
+    addEvent(ESB_DEPLOY_COMPLETE, EVENT_PENDING, "Verifying integration deployment", versionHashId);
+    //setTimeout(waitForDeploy, 10000);
     addEvent(ESB_DEPLOY_COMPLETE, EVENT_SUCCEEDED, "Verifying integration deployment", versionHashId);
 
-    //TODO : load parameters and upload in database
     addEvent(LOAD_PARAMETERS, EVENT_PENDING, "Loading configuration parameters from deployment", versionHashId);
-
-    var paramConfiguration = esbClient.getIntegrationParamConfiguration(uploadedFileName);
-
+    var paramConfiguration = esbClient.getIntegrationParamConfiguration(tenantId, uploadedFileName);
     addEvent(LOAD_PARAMETERS, EVENT_PENDING, "Loading configuration parameters from deployment", versionHashId);
-
     updateParamConfiguration(applicationHashId, paramConfiguration);
-
     addEvent(LOAD_PARAMETERS, EVENT_SUCCEEDED, "Updated configuration parameters", versionHashId);
 };
 
@@ -118,6 +110,42 @@ var updateParamConfiguration = function(applicationHashId, paramConfiguration) {
     var application = getApplication(applicationHashId);
     ApplicationManager.updateParamConfiguration(applicationHashId, paramConfiguration);
 }
+
+var updateTaskConfiguration = function(applicationHashId, taskConfiguration) {
+    var application = getApplication(applicationHashId);
+    ApplicationManager.updateTaskConfiguration(applicationHashId, taskConfiguration);
+}
+
+var scheduleIntegration = function (applicationName, applicationHashId, paramConfiguration) {
+    var tenantId = modManager.getTenantId();
+
+    var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
+    var esbClient = ESBClient.getInstance();
+
+    var taskConfiguration = esbClient.deployScheduleTask(tenantId, applicationName, paramConfiguration);
+
+    ApplicationManager.updateParamConfiguration(applicationHashId, paramConfiguration);
+    ApplicationManager.updateTaskConfiguration(applicationHashId, taskConfiguration);
+}
+
+var testIntegration = function (applicationName, applicationHashId, paramConfiguration) {
+    var tenantId = modManager.getTenantId();
+
+    var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
+    var esbClient = ESBClient.getInstance();
+
+    esbClient.deployTestScheduleTask(tenantId, applicationName, paramConfiguration);
+}
+
+var stopIntegration = function (applicationName, applicationHashId, taskConfiguration) {
+    var tenantId = modManager.getTenantId();
+
+    var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
+    var esbClient = ESBClient.getInstance();
+
+    esbClient.stopScheduleTask(tenantId, applicationName, taskConfiguration);
+}
+
 
 var stopOtherVersions = function(applicationHashId, selectedRevision) {
     var application = getApplication(applicationHashId);
@@ -246,7 +274,8 @@ var buildDockerImage = function (applicationName, versionName, runtimeId, absFil
 
 var createAppInDataBase = function(applicationName, versionName, applicationDescription, replicas, runtimeId,
                                    appTypeName, runtimePropertiesArray, tagArray, appIcon, applicationHashId,
-                                   versionHashId, conSpecMemory, conSpecCpu, carbonApplicationName, paramConfiguration){
+                                   versionHashId, conSpecMemory, conSpecCpu, carbonApplicationName, paramConfiguration,
+                                   taskConfiguration){
 
     //================================= Adding application to Database =========================================
     var application = new Application();
@@ -259,6 +288,7 @@ var createAppInDataBase = function(applicationName, versionName, applicationDesc
         application.setApplicationType(appTypeName);
         application.setCarbonApplicationName(carbonApplicationName);
         application.setParamConfiguration(paramConfiguration);
+        application.setTaskConfiguration(taskConfiguration);
 
         var iconStream = null;
         var iconBlob = null;
@@ -288,7 +318,6 @@ var createAppInDataBase = function(applicationName, versionName, applicationDesc
         var versionList = new java.util.ArrayList();
         versionList.add(version);
         application.setVersions(versionList);
-
         ApplicationManager.addApplication(application);
 
     } catch (e){
@@ -366,10 +395,10 @@ var createDockerFile =  function(applicationName, versionName, runtimeId, upload
 
     try {
         var fileUploadPath = constructFileUploadPath(versionHashId);
-        var absFileUploadedPath = modManager.getPropertyValue(PROPERTY_APPMGT_DEPLOYMENT_DIR_PATH) + fileUploadPath;
+        var absFileUploadedPath = modManager.getPropertyValue(PROPERTY_INTCLOUD_DEPLOYMENT_DIR_PATH) + fileUploadPath;
         var dockerFilePath = absFileUploadedPath + DOCKER_FILE_NAME;
 
-        var dockerTemplateFilePath = modManager.getPropertyValue(PROPERTY_APPMGT_DEPLOYMENT_DIR_PATH) + "/" + "dockerfiles";
+        var dockerTemplateFilePath = modManager.getPropertyValue(PROPERTY_INTCLOUD_DEPLOYMENT_DIR_PATH) + "/" + "dockerfiles";
 
         var uploadArtifactTmpName;
         var checkFileExtZIP = isFileExtZIP(uploadedFileName);
@@ -829,6 +858,7 @@ var getApplication = function(applicationHashId){
         applicationObject.icon = getApplicationIconAsBase64String(application);
         applicationObject.carbonApplicationName = application.carbonApplicationName;
         applicationObject.paramConfiguration = application.paramConfiguration;
+        applicationObject.taskConfiguration = application.taskConfiguration;
         applicationObject.defaultVersionName = application.defaultVersion;
         applicationObject.versions = generateVersionList(application.versions, application.applicationName, application.defaultVersion);
     } catch(e){
@@ -845,15 +875,13 @@ var generateVersionList = function (versions, applicationName, defaultVersionNam
         for (var i = 0; i < versions.size(); i++) {
             var versionObject = {};
             var version = versions.get(i);
-
-            if (version.versionName == defaultVersionName) {
-                versionObject.customtUrl = getCustomUrl(version.hashId);
-            }
+            //if (version.versionName == defaultVersionName) {
+            //    versionObject.customtUrl = getCustomUrl(version.hashId);
+            //}
 
             var deploymentUrl = getDeploymentURL(applicationName, version.versionName);
             versionObject.versionName = version.versionName;
             versionObject.hashId = version.hashId;
-            versionObject.runtimeId = version.runtimeId;
             versionObject.runtimeName = version.runtimeName;
             versionObject.status = version.status;
             versionObject.conSpecCpu = version.conSpecCpu;
@@ -1182,11 +1210,10 @@ var uploadExistingArchive = function (uploadedArtifact, appTypeName, application
     if (checkFileExtZIP) {
         var fileName = uploadedFileName.substring(0, uploadedFileName.lastIndexOf("."));
         uploadApplicationTmpPath = fileUploadPath + fileName + FILE_EXTENSTION_ALTER;
-        log.info(uploadApplicationTmpPath);
     } else {
         uploadApplicationTmpPath = fileUploadPath + uploadedFileName;
-        log.info(uploadApplicationTmpPath);
     }
+    log.info("Uploading integration from " + uploadApplicationTmpPath);
 
     uploadedArtifact.move(uploadApplicationTmpPath);
 };
@@ -1201,7 +1228,7 @@ var isFileExtZIP = function (uploadedFileName) {
 
 var createDestinationDirsForUploadedApps = function (versionHashId) {
     var fileUtils = Packages.org.apache.commons.io.FileUtils;
-    var absFileUploadPath = modManager.getPropertyValue(PROPERTY_APPMGT_DEPLOYMENT_DIR_PATH) +
+    var absFileUploadPath = modManager.getPropertyValue(PROPERTY_INTCLOUD_DEPLOYMENT_DIR_PATH) +
                             constructFileUploadPath(versionHashId);
     var uploadedFilePath = new Packages.java.io.File(absFileUploadPath);
     try {
@@ -1257,17 +1284,19 @@ var addEvent = function(name, status, description, versionHashId) {
 };
 
 var deleteApplication = function(applicationHashId) {
-
     try{
-
         deleteSelectedVersionFromSession(applicationHashId);
         var versionHashIds = ApplicationManager.getVersionHashIdsOfApplication(applicationHashId);
+        var carbonApplicationName = ApplicationManager.getCarbonApplicationNameOfApplication(applicationHashId);
+        var taskConfiguration = ApplicationManager.getTaskConfigurationOfApplication(applicationHashId);
+        var applicationName = ApplicationManager.getApplicationNameByHashId(applicationHashId);
 
         for (var i = 0; i < versionHashIds.size(); i++) {
             var versionHashId = versionHashIds.get(i);
             deleteApplicationUploadedPath(versionHashId);
-            deleteApplicationFromKubernetes(versionHashId);
+            deleteCarbonApplicationFromServer(carbonApplicationName, versionHashId);
             deleteEventsOfAppVersions(versionHashId);
+            stopIntegration(applicationName, applicationHashId, taskConfiguration);
         }
         deleteApplicationFromDatabase(applicationHashId);
     } catch(e){
@@ -1276,6 +1305,26 @@ var deleteApplication = function(applicationHashId) {
     }
 };
 
+var deleteCarbonApplicationFromServer = function(carbonApplicationName, versionHashId) {
+
+    var tenantId = modManager.getTenantId();
+
+    try{
+        var allAppsUsingCapp = ApplicationManager.getAllApplicationsUsingCarbonApplication(tenantId, carbonApplicationName);
+
+        if (allAppsUsingCapp.size()>1){
+             log.info("There are other integrations using the same carbon application. Hence, carbon application "
+                  + carbonApplicationName + " is not un-deployed ");
+        } else {
+             var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
+             var esbClient = ESBClient.getInstance();
+             esbClient.unDeployCarbonApp(tenantId, carbonApplicationName);
+        }
+    } catch(e){
+        log.error("Error while undeploying carbon application for the version with hash id : " + versionHashId);
+        log.error(e);
+    }
+};
 
 var deleteVersion = function(versionHashId, isAutoDelete, isDeployed){
     if(!isAutoDelete) {
@@ -1342,7 +1391,7 @@ var deleteApplicationFromDatabase = function (applicationHashId){
 
 var getVersionDirectoryPath = function(versionHashId){
 
-    return modManager.getPropertyValue(PROPERTY_APPMGT_DEPLOYMENT_DIR_PATH) + "/" + TMP_UPLOADED_APPLICATIONS_PATH + "/"
+    return modManager.getPropertyValue(PROPERTY_INTCLOUD_DEPLOYMENT_DIR_PATH) + "/" + TMP_UPLOADED_APPLICATIONS_PATH + "/"
                                         + modManager.getTenantDomain() + "/" + versionHashId + "/";
 }
 

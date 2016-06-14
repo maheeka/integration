@@ -2,7 +2,7 @@
   "theme" : {
     "base" : "default"
   },
-  "context" : "/appmgt",
+  "context" : "/integration",
   "cloudMgtContext" : "/cloudmgt",
   "dashboardContext" : "/dashboard",
   "recentAPIsCount" : 5,
@@ -13,10 +13,10 @@
   },
   "distributable" : true,
   "ssoConfiguration" : {
-    "issuer" : "appmgt",
-    "identityProviderURL" : "https://localhost:9444/samlsso",
+    "issuer" : "intcloud",
+    "identityProviderURL" : "https://local.cloudmgt.wso2.com:9443/samlsso",
     "keyStorePassword": "wso2carbon",
     "identityAlias" : "wso2carbon",
-    "keyStoreName" : "/Users/maheeka/ESB_WORK/CLOUD/APP_CLOUD/test_app/setup/wso2as-5.2.1//repository/resources/security/wso2carbon.jks"
+    "keyStoreName" : "/media/ishara/Windows8_OS/MyData/cloud/November2015/CLOUD-MGT-LOCAL-SETUP/local-cloud-setup/wso2as-5.2.1/repository/resources/security/wso2carbon.jks"
   }
 }

@@ -38,6 +38,51 @@ var log = new Log();
         response.status = 200;
         response.message = "Artifact is successfully uploaded!";
 
+    } else if (action == "scheduleIntegration"){
+        var applicationName = request.getParameter("applicationName");
+        var applicationKey = request.getParameter("applicationKey");
+        var interval =  request.getParameter("interval");
+        var count =  request.getParameter("count");
+        var configParams = request.getParameter("configParams");
+        var configParamsJSON = JSON.parse(configParams);
+
+        configParamsJSON.schedule.count = count;
+        configParamsJSON.schedule.interval = interval;
+
+        configParams = JSON.stringify(configParamsJSON);
+
+        applicationModule.scheduleIntegration(applicationName, applicationKey, configParams);
+
+        response.status = 200;
+        response.message = "Integration is successfully deployed!";
+        print('test');
+
+    } else if (action == "testIntegration"){
+        var applicationName = request.getParameter("applicationName");
+        var applicationKey = request.getParameter("applicationKey");
+        var configParams = request.getParameter("configParams");
+        var configParamsJSON = JSON.parse(configParams);
+
+        configParamsJSON.schedule.count = "1";
+        configParamsJSON.schedule.interval = "1";
+
+        configParams = JSON.stringify(configParamsJSON);
+
+        applicationModule.testIntegration(applicationName, applicationKey, configParams);
+
+        response.status = 200;
+        response.message = "Integration is successfully executed for testing !";
+
+    } else if (action == "stopIntegration"){
+        var applicationName = request.getParameter("applicationName");
+        var applicationKey = request.getParameter("applicationKey");
+        var taskConfiguration = request.getParameter("taskConfiguration");
+
+        applicationModule.stopIntegration(applicationName, applicationKey, taskConfiguration);
+
+        response.status = 200;
+        response.message = "Integration is successfully executed for testing !";
+
     } else if (action == "createApplication") {
         var applicationDescription = request.getParameter("applicationDescription");
         var replicas = 1;
@@ -117,6 +162,9 @@ var log = new Log();
                         applicationModule.addApplication(applicationName, applicationRevision, applicationDescription, replicas,
                                 runtimeId, appTypeName, runtimeProperties, tags, appIcon,
                                 uploadedFileName, isNewVersion, conSpecMemory, conSpecCpu, artifactUrl);
+                                response.status = 200;
+                                response.message = uploadedFileName + "successfully deployed.";
+                                return(response);
                     } else {
                         var gitRepoUrl = request.getParameter("gitRepoUrl");
                         var gitRepoBranch = request.getParameter("gitRepoBranch");
@@ -128,7 +176,7 @@ var log = new Log();
                                 isNewVersion, conSpecMemory, conSpecCpu);
                     }
                     response.status = 200;
-                    response.message = "Application creation is successfully submitted";
+                    response.message = uploadedFileName + "successfully deployed.";
                 } else {
                     if (conSpecMemory > 512) {
                         log.warn("Application creation request not accepted because the maximum memory limit of " +
@@ -302,7 +350,7 @@ var log = new Log();
         var applicationKey = request.getParameter("applicationKey");
         var mod = jagg.module("application");
         mod.changeApplicationIcon(applicationKey, appIcon);
-        print("<html><script>window.location.replace('/appmgt/site/pages/home.jag?applicationKey=" + applicationKey + "');</script><body></body></html>");
+        print("<html><script>window.location.replace('/integration/site/pages/home.jag?applicationKey=" + applicationKey + "');</script><body></body></html>");
 
     } else if (action == "generateApplicationHashId"){
         var applicationName = request.getParameter("applicationName");

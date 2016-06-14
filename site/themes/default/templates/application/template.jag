@@ -20,7 +20,7 @@
 include("/jagg/constants.jag");
 include("/jagg/jagg.jag");
 
-jagg.template("application", function (inputs, outputs, jagg) {        var runtimes = outputs.runtimes;
+jagg.template("application", function (inputs, outputs, jagg) {
         var runtimes = outputs.runtimes;
         var appType = outputs.appType;
         var applicationCount = outputs.applicationCount;
@@ -29,7 +29,7 @@ jagg.template("application", function (inputs, outputs, jagg) {        var runti
         var isAppTypeBuildable = appType.buildable;
         var applicationName = outputs.applicationName;
         var subscriptionPlanBaseURL = outputs.subscriptionPlanBaseURL;
-		var runtimeID = 6; //runtimes[0].id;
+		var runtimeID = runtimes[0].id;
         var encodedLabels = request.getParameter("encodedLabels");
         var encodedEnvs = request.getParameter("encodedEnvs");
         var log = new Log();
@@ -40,6 +40,7 @@ jagg.template("application", function (inputs, outputs, jagg) {        var runti
         var subscriptionPlanURL = subscriptionPlanBaseURL + "/plans/1";
 		var runtimeContainerSpecURL = subscriptionPlanBaseURL + "/containerSpecs/allowedruntime/" + runtimeID;
         var data = null;
+        log.info("*****************  runtimeContainerSpecURL" + runtimeContainerSpecURL);
 		var allowedRuntimeContainerSpecJson = get(runtimeContainerSpecURL, "", "json");
 		var maxApplications = outputs.maxAppCount;
     %>
@@ -269,6 +270,7 @@ jagg.template("application", function (inputs, outputs, jagg) {        var runti
                                     timeout: 3500
                                 });
                             }
+                            window.location.replace("index.jag");
                         },
                         cache: false,
                         contentType: false,
@@ -888,14 +890,15 @@ jagg.template("application", function (inputs, outputs, jagg) {        var runti
             </div>
 
         <% if(newVersion){ %>
-            <div class="form-group">
+            <div class="form-group hide">
             <label for="application-version">Integration Version:
                 <i class="fa fa-question-circle help-tips" data-toggle="tooltip" data-placement="left" title="Set the version in the form of <Major>.<Minor>.<Patch>"></i>
             </label>
             <input id="applicationRevision" name="applicationRevision" type="text" class="form-control" value="<%=nextVersion%>"/>
             </div>
+            </div>des
         <% } else { %>
-            <div class="form-group">
+            <div class="form-group hide">
             <label for="application-version">Integration Version:
                 <i class="fa fa-question-circle help-tips" data-toggle="tooltip" data-placement="left" title="Set the version in the form of <Major>.<Minor>.<Patch>"></i>
             </label>
@@ -908,6 +911,7 @@ jagg.template("application", function (inputs, outputs, jagg) {        var runti
             </label>
             <textarea name="applicationDescription" class="form-control" rows="3" placeholder="Integration description goes here. (Optional)"></textarea>
             </div>
+            <label for="application-description" >Upload from file system:</label>
 
             <!--div class="form-group">
             <label>No Of Replicas: </label>
@@ -916,8 +920,7 @@ jagg.template("application", function (inputs, outputs, jagg) {        var runti
                 <option value="1" >1</option>
             </select>
             </div-->
-
-            <div class="form-group col-md-12">
+            <div class="form-group col-md-12 hide">
                 <label class="radio-inline">
                     <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="upload-from-file"
                            checked="checked" class="custom-radio"> Upload from file system
@@ -1111,7 +1114,7 @@ jagg.template("application", function (inputs, outputs, jagg) {        var runti
         <div class="modal-dialog modal-dialog-margin-top-md ">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="modal-title">Application Creation Progress</h4>
+                    <h4 class="modal-title" id="modal-title">Integration Template Creation Progress</h4>
                 </div>
                 <div class="modal-body" id="app-creation-model-body">
                 </div>

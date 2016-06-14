@@ -21,6 +21,7 @@ include("/jagg/jagg.jag");
 include("/jagg/constants.jag");
 
 jagg.template("home", function(inputs, outputs, jagg) {
+var log = new Log();
     var application = outputs.application;
     var selectedRevision = outputs.selectedRevision;
     var conSpecCpu = outputs.conSpecCpu;
@@ -30,46 +31,35 @@ jagg.template("home", function(inputs, outputs, jagg) {
     if (application.defaultVersionName != null && versions[defaultVersionName] != undefined) {
         versions[defaultVersionName].deploymentURL = versions[defaultVersionName].customtUrl;
     }
+    log.info("$$$$$$$  " + stringify(application));
+    log.info("########################## application.cAppName: " + application.carbonApplicationName);
+    var cAppName = application.carbonApplicationName.substring(0, application.carbonApplicationName.lastIndexOf("_"));
+    session.put("C_APP_NAME", cAppName);
+    log.info("*****  cAppName" + cAppName);
+    log.info("*****  session.get (C_APP_NAME)" + session.get("C_APP_NAME"));
     var selectedApplicationRevision = versions[selectedRevision];
     var revisions = outputs.revision;
     var applicationName = application.applicationName;
     var applicationKey = application.hashId;
+    var paramConfiguration = application.paramConfiguration;
+    var taskConfiguration = stringify(application.taskConfiguration);
     var appCreationPageBaseUrl = jagg.getAbsoluteUrl("/site/pages/application.jag");
     var dashboardBaseUrl = DASHBOARD_BASE_URL;
     var dashboardUrl = dashboardBaseUrl + applicationName + "-" + selectedRevision;
     var encodedLabels = encodeURIComponent(stringify(selectedApplicationRevision.tags), "UTF-8");
     var encodedEnvs = encodeURIComponent(stringify(selectedApplicationRevision.runtimeProperties), "UTF-8");
-    var configTemplate = {"AAA":"aaa", "BBB":"bbb","CCC":"ccc","ddd":5};
-    var configString = '{' +
-                        	'"params": [{' +
-                        		'"param": "AAA",' +
-                        		'"value": "aaa"' +
-                        	'}, {' +
-                        		'"param": "BBB",' +
-                        		'"value": "bbb"' +
-                        	'}, {'+
-                        		'"param": "CCC", '+
-                        		'"value": "ccc"'+
-                        '	}],'+
-
-                        	'"schedule": [{'+
-                        		'"schedule": "Interval",'+
-                        		'"value": "3600"'+
-                        	'}, {'+
-                        		'"schedule": "Count",'+
-                        		'"value": "3"           '+
-                        	'}]'+
-                        '}';
-    var configJSON = JSON.parse(configString);
+    var configJSON = JSON.parse(paramConfiguration);
 %>
 
 <script>
 
     var applicationName = "<%=applicationName%>";
     var applicationKey = "<%=applicationKey%>";
+    var paramConfigurationJSON = <%=paramConfiguration%>;
+    var taskConfiguration = <%=taskConfiguration%>;
     var conSpecCpu = "<%=conSpecCpu%>";
     var conSpecMemory = "<%=conSpecMemory%>";
-    var application = jQuery.parseJSON('<%=application%>');
+    var application = <%=application%>;
     var selectedRevision = "<%=selectedRevision%>";
     var revisions = jQuery.parseJSON('<%=revisions%>');
     var appCreationPageBaseUrl = "<%=appCreationPageBaseUrl%>";
@@ -77,6 +67,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
     var dashboardBaseUrl = "<%=dashboardBaseUrl%>";
     var encodedLabels = "<%=encodedLabels%>";
     var encodedEnvs = "<%=encodedEnvs%>";
+
 
 
 
@@ -88,46 +79,45 @@ jagg.template("home", function(inputs, outputs, jagg) {
                 <i class="fa fa-reorder"></i>
             </div>
             <div class="col-md-3 breadcrumb-secondary">
-                <a href="/appmgt/site/pages/index.jag"><i class="fa fa-cubes visible-xs visible-lg"></i></a>
-                <span class="hidden-xs"><a href="/appmgt/site/pages/index.jag">Integration Cloud</a></span>
+                <a href="/integration/site/pages/index.jag"><i class="fa fa-cubes visible-xs visible-lg"></i></a>
+                <span class="hidden-xs"><a href="/integration/site/pages/index.jag">Integration Cloud</a></span>
             </div>
         </div>
     </div>
     </div>
     <div class="inner-wrapper">
    <!-- left pane wrapper -->
-    <div class="left-pane ">
+    <div class="left-pane hide">
         <ul>
             <li class="selected">
                 <a href="#"><i class="fa fa-laptop"></i> Overview</a>
             </li>
             <li>
-                <a id="leftMenuEnvVars" href="/appmgt/site/pages/envs.jag?versionKey=<%=selectedApplicationRevision.hashId%>&applicationKey=<%=applicationKey%>"><i class="fa fa-wrench"></i> Env Variables</a>
+                <a id="leftMenuEnvVars" href="/integration/site/pages/envs.jag?versionKey=<%=selectedApplicationRevision.hashId%>&applicationKey=<%=applicationKey%>"><i class="fa fa-wrench"></i> Env Variables</a>
             </li>
             <li>
-                <a id="leftMenuTagSet" href="/appmgt/site/pages/tags.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>"><i class="fa fa-tag"></i> Tags</a>
+                <a id="leftMenuTagSet" href="/integration/site/pages/tags.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>"><i class="fa fa-tag"></i> Tags</a>
             </li>
             <li>
-                <a href="/appmgt/site/pages/runtimeLogs.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><i class="fa
+                <a href="/integration/site/pages/runtimeLogs.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><i class="fa
                 fa-hdd-o"></i>Runtime Logs</a>
             </li>
             <li>
-                <a href="/appmgt/site/pages/customurl.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><i class="fa
+                <a href="/integration/site/pages/customurl.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><i class="fa
                 fa-link"></i>Custom URL</a>
             </li>
         </ul>
     </div>
 
     <!-- left pane wrapper -->
-    <div class="right-pane">
+<div class="right-pane">
     <!-- BOF App factory menu actionbar -->
     <div class="action-bar">
-        Configure Parameters
         <a href="<%=jagg.getAbsoluteUrl("/site/pages/index.jag")%>" class="btn-action"  title="Back to Integration listing">
                 <span class="fw-stack fw-lg btn-action-ico">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                     <i class="fw fw-left-arrow fw-stack-1x"></i>
-                </span> Back to Listing
+                </span> Back to Integration Listing
         </a>
     </div><!-- EOF App factory menu actionbar-->
 
@@ -139,7 +129,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
                   <div id="app-icon" class="home-app-icon">
                   </div>
                   <span class="app-thumb-edit"><i class="fa fa-pencil" onclick="document.getElementById('change_app_icon').click();"></i></span>
-                <form id="changeAppIcon" action="/appmgt/site/blocks/application/application.jag" method="post" enctype="multipart/form-data">
+                <form id="changeAppIcon" action="/integration/site/blocks/application/application.jag" method="post" enctype="multipart/form-data">
                     <input id="change_app_icon" type="file" style="display:none" name="changeIcon" />
                     <input id="action" type="hidden" name="action" value="changeAppIcon" />
                     <input id="applicationKey" type="hidden" name="applicationKey" value="<%=applicationKey%>"/>
@@ -152,39 +142,44 @@ jagg.template("home", function(inputs, outputs, jagg) {
                 <%if(defaultVersionName !== null && versions[defaultVersionName] != undefined) { %>
                 <div class="app-preview-action-bar" id="custom-url-block">
                     <div class="sec prod-url"><a href="<%=versions[defaultVersionName].customtUrl%>"><%=versions[defaultVersionName].customtUrl%></a>
-                    <a href="/appmgt/site/pages/customurl.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><i class="fw fw-settings"></i></a>
+                    <a href="/integration/site/pages/customurl.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><i class="fw fw-settings"></i></a>
                     </div>
                 </div>
                 <% } %>
               </div>
           </div>
         </div>
+    </div>
+    <div class = "block-delete">
         <div class="row padding-bottom">
-        <h4>Task Parameters</h4>
-          <div class="col-xs-12 col-md-9 col-lg-4">
-              <div class="block-general" style="background-color: #303030;">
-                      <div class="col-xs-12 col-md-12 col-lg-9">
-                          <div class="btn-group pull-left version-number hide">
-                              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              <span id="selected-version"><%=selectedRevision%> </span><span class="caret"></span>
-                              </button>
-                              <ul id="appVersionList" class="dropdown-menu" >
-                              <%
-                                var versions = application.versions;
-                                var keyArray = Object.keys(versions);
-                                for (var x = 0; x < keyArray.length; x++) {
-                              %>
-                                  <li ><a href="#"><%=versions[keyArray[x]].versionName%></a></li>
-                              <%
-                              }
-                              %>
-                              </ul>
+                      <div class="col-xs-12 col-md-6 col-lg-6 ">
+
+
+                          <div class="col-xs-12 col-md-12 col-lg-12">
+                          <a type="button" id="delete-version" onclick="deleteApplicationPopUp();">
+                              <div class="btn-create-version">
+                                  <span class="fw-stack fw-lg btn-action-ico">
+                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                    <i class="fw fw-delete fw-stack-1x"></i>
+                                  </span> Delete
+                              </div>
+                          </a>
+                          <div class="btn-group ctrl-edit-button btn-edit-code">
+                             <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue cu-btn-fixed-width " onclick="stopIntegration();">Stop Integration
+                             <span id="stop-in-progress"><span>
+                             </a>
                           </div>
-                          <div id="version-url-link" class="version-url hide">
-                          <a href="<%=selectedApplicationRevision.deploymentURL%>" target="_blank"><span>
-                          <b>URL : </b><%=selectedApplicationRevision.deploymentURL%></span></a>
                           </div>
-                          <div class="sec" id="version-app-launch-block">
+                      </div>
+        </div>
+    </div>
+        <div class="row padding-bottom">
+          <div class="col-xs-12 col-md-12 col-lg-6">
+              <div class="block-general " style="background-color: #303030;">
+                  <div class="row padding-bottom ">
+                      <div class="col-xs-12 col-md-12 col-lg-12">
+                       <h4>Integration Parameters</h4>
+                          <div class="block-replica" id="task-parameters">
                               <%
                                 if(selectedApplicationRevision.status=='running'){
                                 %>
@@ -202,154 +197,83 @@ jagg.template("home", function(inputs, outputs, jagg) {
                                     </div>
                                 <%
                                // }else if(selectedApplicationRevision.status=='stopped' || selectedApplicationRevision.status=='inactive'){
-                                }else if(true){
+                                }else if(true) {
                                 %>
-                                    <!--button class="cu-btn cu-btn-md cu-btn-gr-dark btn-launch-app" id="btn-launchApp"
-                                    url="<%=selectedApplicationRevision.deploymentURL%>" disabled>Launch App</button-->
-                                    <div class="btn-group ctrl-edit-button btn-edit-code right">
-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue right" onclick="startApplication();">Stop</a>
-                                    </div>
 
-                          <div class="sec" id="scheduling-block">
-                               <form id="scheduling-params" method="post" action='<%=jagg.getAbsoluteUrl("/site/blocks/application/application.jag")%>' enctype="multipart/form-data">
+                          <!--div class="block-replica" id="scheduling-block"-->
+
+                               <form id="integration-params" method="post"  enctype="multipart/form-data">
+
+
                                <%
-                                   for(var i=0; i < configJSON.params.length; i++){%>
-                                       <div class="form-group">
-                                           <label for="count"><%=configJSON.params[i].param%></label>
-                                           <input id="count" name="applicationName" type="text" class="form-control form-control-config" placeholder="Enter Loop Count" value = <%=configJSON.params[i].value %>></input>
-                                       </div>
-                                  <% } %>
-
-                               </form>
+                                   if (configJSON.params) {
+                                       for(var i=0; i < configJSON.params.length; i++) {
+                                           var parameter = configJSON.params[i];
+                               %>
+                                           <div class="form-group">
+                                                <label for="param-<%=parameter.param%>"><%=parameter.param%></label>
+                                                <input id="param-<%=parameter.param%>" name="<%=parameter.param%>" type="text" class="form-control form-control-config" placeholder="Enter <%=parameter.param%> value" value ="<%=parameter.value%>" ></input>
+                                           </div>
+                                    <%
+                                       }
+                                   } else {
+                                   %>
+                                        <p><i>Parameters not found</i></p>
+                                   <%
+                                   }
+                               %>
+                                  <div class="btn-group ctrl-edit-button btn-edit-code ">
+                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue cu-btn-fixed-width right" onclick="testIntegration();">Test Integration</a>
+                                  </div>
                           </div>
-                                <%
 
-                                }else {
+                                   <div class="container padding-bottom ">
+                                   </div>
+                       <h4 >Schedule Configurations</h4>
+
+                          <div class="block-replica" id="scheduling-params">
+                              <div class="form-group">
+                                         <label for="interval">Interval</label>
+                                         <input id="interval" name="interval" type="text" class="form-control form-control-config" placeholder="Enter time interval in seconds" value ="<%=configJSON.schedule.interval%>"></input>
+                              </div>
+
+                              <div class="form-group">
+                                  <label for="count">Count </label>
+                                      <input id="count" name="count" type="text" class="form-control form-control-config" placeholder="Enter loop count" value="<%=configJSON.schedule.count%>"></input>
+                              </div>
+
+                              <div class="form-group">
+                                  <button class="cu-btn cu-btn-md cu-btn-blue cu-btn-fixed-width" id="schedule-integration" onclick="scheduleIntegration();" type="button">
+                                      Schedule Integration
+                                  </button>
+                              </div>
+                          </div>
+                          <%
+                            } else {
                                 %>
-                                    <div class="btn-group ctrl-edit-button btn-edit-code right">
-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-red" href="#yourlink">Error has occurred.</a>
-                                    </div>
+                                <div class="btn-group ctrl-edit-button btn-edit-code ">
+                                    <a type="button" class="btn cu-btn cu-btn-md cu-btn-red" href="#yourlink">Error has occurred.</a>
+                                </div>
                                 <%
                                 }
-                               %>
-                          </div>
-                      </div>
-                      <div class="col-xs-12 col-md-12 col-lg-3">
-                          <a id="delete-version" onclick="deleteApplicationPopUp();">
-                              <div class="btn-create-version">
-                                  <span class="fw-stack fw-lg btn-action-ico">
-                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                                    <i class="fw fw-delete fw-stack-1x"></i>
-                                  </span> Delete
-                              </div>
-                          </a>
-                          <a id="upload-revision" href="<%=appCreationPageBaseUrl%>?appTypeName=<%=application.applicationType%>&applicationKey=<%=applicationKey%>&encodedLabels=<%=encodedLabels%>&encodedEnvs=<%=encodedEnvs%>&newVersion=true&conSpecCpu=<%=conSpecCpu%>&conSpecMemory=<%=conSpecMemory%>">
-                              <div class="btn-create-version hide">
-                                  <span class="fw-stack fw-lg btn-action-ico">
-                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
-                                     <i class="fw fw-add fw-stack-1x"></i>
-                                  </span> Upload Version
-                              </div>
-                          </a>
-                      </div>
-                        <div class="col-xs-12 col-md-9 col-lg-9 hide">
-                            <div class="block-replica">
-                                <h3>Replicas</h3>
-                                <div class="block-replicas">
-                                    <figure class="node-cicle" data-percent="100">
-                                        <figcaption>01</figcaption>
-                                        <%  if(selectedApplicationRevision.status=='running'){ %>
+                          %>
+                                                     </form>
 
-                                                <svg width="200" height="200">
-                                                   <circle class="outer" cx="95" cy="95" r="85" transform="rotate(-90, 95, 95)"/>
-                                                </svg>
-                                                <a href="/appmgt/site/pages/runtimeLogs.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><span class="view-log">View Logs</span></a>
-                                        <%  } else { %>
-                                                <svg width="200" height="200">
-                                                    <circle class="outer" style="stroke: #ACAFAD;" cx="95" cy="95" r="85" transform="rotate(-90, 95, 95)"/>
-                                                </svg>
-                                        <%  } %>
-                                    </figure>
-                                </div>
-                                <div class="block-replicas">
-                                    <figure class="node-cicle">
-                                        <figcaption>
-                                          <span class="fw-stack fw-lg ">
-                                              <i class="fw fw-circle-outline fw-stack-2x"></i>
-                                              <i class="fw fw-add fw-stack-1x" data-toggle="tooltip" title="Adding replicas to your application will not support in this release."></i>
-                                          </span>
-                                        </figcaption>
-                                    </figure>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-md-3 col-lg-3 hide" data-toggle="tooltip" title="HTTP Monitoring Dashboard is not supported in this release. It will be available soon!">
-                            <a class="block-anch" href="#" onclick="return false;" target="_blank">
-                                <div class="block-monitoring">
-                                    <h3>HTTP Monitoring Dashboard</h3>
-                                    <div class="block-icon pull-left">
-                                        <i class="fw fw-dashboard demo-dashboard-block"></i>
-                                    </div>
-                                <div class="clearfix"></div>
-                                </div>
-                            </a>
-                        </div>
+                          <!--/div-->
+                      </div>
                       <div class="clearfix"></div>
-                    </div>
-
-                </div>
-          <div class="col-xs-12 col-md-3 col-lg-3 hide">
-              <div class="block-team pull-left">
-                <a class="block-anch" id="envVars" href="/appmgt/site/pages/envs.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>">
-                  <h3>Env Variables</h3>
-                  <div class="block-icon pull-left">
-                    <i class="fa fa-wrench fa-5x"></i>
                   </div>
-                  <div class="block-number pull-right">
-                   <span id="runtimePropCount"><%=selectedApplicationRevision.runtimeProperties.length.toString()%></span>
-                  </div>
-                  <div class="clearfix"></div>
-                </a>
-              </div>
-              <div class="block-database pull-left">
-                <a class="block-anch" id="tagSet" href="/appmgt/site/pages/tags.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>">
-                  <h3>Tags</h3>
-                  <div class="block-icon pull-left">
-                    <i class="fa fa-tags fa-5x"></i>
-                  </div>
-                  <div class="block-number pull-right">
-                   <span id="tagCount"><%=selectedApplicationRevision.tags.length.toString()%></span>
-                  </div>
-                  <div class="tag-list" id="tag-list"></div>
-                  <div class="clearfix"></div>
-                </a>
               </div>
           </div>
+          <div class="col-xs-12 col-md-3 col-lg-6 ">
+              <div class="block-logs " id="terminal">
+               <!-- Log Analyser goes here-->
+                  </div>
+              </div>
+          </div>
+
         </div>
-        <div class="row padding-bottom">
-            <h4 >Scheduling Parameter</h4>
-            <div class="col-xs-12 col-md-9 col-lg-4">
-                <div class="block-general" style="background-color: #303030;">
-                     <div class="col-xs-12 col-md-12 col-lg-9">
-                          <div class="sec" id="scheduling-block">
-                               <form id="scheduling-params" method="post" action='<%=jagg.getAbsoluteUrl("/site/blocks/application/application.jag")%>' enctype="multipart/form-data">
-                                    <div class="form-group">
-                                         <label for="count">Count </label>
-                                         <input id="count" name="applicationName" type="text" class="form-control form-control-config" placeholder value = ="Enter Loop Count" <%=configJSON.schedule.count %>></input>
-                                    </div>
-                                    <div class="form-group">
-                                         <label for="interval">Interval </label>
-                                         <input id="interval" name="applicationName" type="text" class="form-control form-control-config" placeholder="Enter time interval in seconds" value = <%=configJSON.schedule.interval %>></input>
-                                    </div>
-                                    <div class="btn-group ctrl-edit-button btn-edit-code right">
-                                         <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue right" onclick="startApplication();">Schedule</a>
-                                    </div>
-                               </form>
-                          </div>
-                     </div>
-                </div>
-            </div>
-        </div><!-- /.container -->
+<!-- /.container -->
 </div>
 
     <!-- --------------------------------------- Overlay ----------------------------------------- -->
@@ -440,31 +364,78 @@ jagg.template("home", function(inputs, outputs, jagg) {
         location.reload();
     }
 
-    // redeploy application
-    function startApplication(){
-
-        executeAsync(drawProgressWindow("Restarting..."));
+    // stop integration
+    function stopIntegration(){
+            $("#stop-in-progress").html("<i class=\"fa fa-circle-o-notch fa-spin\"></i>");
 
         jagg.post("../blocks/application/application.jag", {
-            action: "startApplication",
-            applicationName: applicationName,
-            applicationRevision: selectedRevision,
-            versionKey: selectedApplicationRevision.hashId,
-            conSpecCpu: conSpecCpu,
-            conSpecMemory: conSpecMemory
+            action: "stopIntegration",
+            applicationName : applicationName,
+            applicationKey : applicationKey,
+            taskConfiguration : taskConfiguration
 
         }, function(result) {
-            var versions = jQuery.parseJSON(result);
+            console.info("result " + result);
+            jagg.message({
+                 content: "Integration Schedule Stop",
+                 type: 'info',
+                 timeout: 3500
+            });
+        });
+    }
 
-            //check if application has more than one version
-            if (versions.length > 1) {
-                jagg.message({
-                    content: "You can start only one version of an application at a time on a free subscription." +
-                        " Other versions have been stopped automatically.",
+    //deploy integration for testing
+    function testIntegration(){
+
+        for (var i=0; i < paramConfigurationJSON.params.length; i++) {
+             var parameter = paramConfigurationJSON.params[i];
+             var value = document.getElementById('param-' + parameter.param).value;
+             parameter.value = value;
+        }
+
+        jagg.post("../blocks/application/application.jag", {
+            action: "testIntegration",
+            applicationName : applicationName,
+            applicationKey : applicationKey,
+            configParams : JSON.stringify(paramConfigurationJSON)
+
+        }, function(result) {
+            console.info("result " + result);
+             jagg.message({
+                    content: "Integration Executed for Testing",
                     type: 'info',
                     timeout: 3500
-                });
-            }
+             });
+        });
+    }
+
+
+    // schedule integration
+    function scheduleIntegration(){
+        var count = document.getElementById('count').value;
+        var interval = document.getElementById('interval').value;
+
+        for (var i=0; i < paramConfigurationJSON.params.length; i++) {
+             var parameter = paramConfigurationJSON.params[i];
+             var value = document.getElementById('param-' + parameter.param).value;
+             parameter.value = value;
+        }
+
+        jagg.post("../blocks/application/application.jag", {
+            action: "scheduleIntegration",
+            applicationName : applicationName,
+            applicationKey : applicationKey,
+            count : count,
+            interval : interval,
+            configParams : JSON.stringify(paramConfigurationJSON)
+
+        }, function(result) {
+            console.info("result " + result);
+             jagg.message({
+                    content: "Deployed Schedule",
+                    type: 'info',
+                    timeout: 3500
+             });
         });
     }
 
@@ -569,8 +540,14 @@ jagg.template("home", function(inputs, outputs, jagg) {
 
 </script>
 <script src="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('templates/home/js/home.js'))%>"></script>
-<script src="/appmgt/site/themes/default/js/app-listing-tile-icon.js"></script>
+<script src="/integration/site/themes/default/js/app-listing-tile-icon.js"></script>
+<script src="/integration/site/themes/default/js/loganalyser/topojson.js"></script>
+<script src="/integration/site/themes/default/js/loganalyser/carbon-analytics.js"></script>
+<script src="/integration/site/themes/default/js/loganalyser/ptty.jquery.min.js"></script>
+<script src="/integration/site/themes/default/js/loganalyser/Mustache.js"></script>
+<script src="/integration/site/themes/default/js/loganalyser/main.js"></script>
 
+<link rel="stylesheet" href="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('css/loganalyser/style.css'))%>">
 <%
 }); %>
 
