@@ -46,11 +46,18 @@ jagg.block("home", {
         var conSpecCpu = selectedVersion.conSpecCpu;
         var conSpecMemory = selectedVersion.conSpecMemory;
 
+        if(application.taskConfiguration != null) {
+            var taskStatus = applicationModule.getTaskStatus(application.taskConfiguration, application.applicationName);
+        } else {
+            var taskStatus = false;
+        }
+
         return {
             "application" : application,
             "selectedRevision":selectedRevision,
             "conSpecCpu" : conSpecCpu,
-            "conSpecMemory" : conSpecMemory
+            "conSpecMemory" : conSpecMemory,
+            "taskStatus" : taskStatus
         };
     }
 
