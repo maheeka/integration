@@ -147,6 +147,21 @@ var stopIntegration = function (applicationName, applicationHashId, taskConfigur
     esbClient.stopScheduleTask(tenantId, applicationName, taskConfiguration);
 }
 
+var getTaskStatus = function (taskConfiguration, applicationName) {
+
+    var tenantId = modManager.getTenantId();
+
+    var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
+    var esbClient = ESBClient.getInstance();
+
+    var taskStatus = esbClient.getTaskStatus(tenantId, applicationName, taskConfiguration);
+
+    var log = new Log();
+    log.info("************* task status = " + taskStatus);
+
+    return taskStatus;
+}
+
 
 var stopOtherVersions = function(applicationHashId, selectedRevision) {
     var application = getApplication(applicationHashId);

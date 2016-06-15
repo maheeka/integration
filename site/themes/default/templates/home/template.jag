@@ -21,7 +21,6 @@ include("/jagg/jagg.jag");
 include("/jagg/constants.jag");
 
 jagg.template("home", function(inputs, outputs, jagg) {
-var log = new Log();
     var application = outputs.application;
     var selectedRevision = outputs.selectedRevision;
     var conSpecCpu = outputs.conSpecCpu;
@@ -31,12 +30,8 @@ var log = new Log();
     if (application.defaultVersionName != null && versions[defaultVersionName] != undefined) {
         versions[defaultVersionName].deploymentURL = versions[defaultVersionName].customtUrl;
     }
-    log.info("$$$$$$$  " + stringify(application));
-    log.info("########################## application.cAppName: " + application.carbonApplicationName);
     var cAppName = application.carbonApplicationName.substring(0, application.carbonApplicationName.lastIndexOf("_"));
     session.put("C_APP_NAME", cAppName);
-    log.info("*****  cAppName" + cAppName);
-    log.info("*****  session.get (C_APP_NAME)" + session.get("C_APP_NAME"));
     var selectedApplicationRevision = versions[selectedRevision];
     var revisions = outputs.revision;
     var applicationName = application.applicationName;
@@ -49,6 +44,7 @@ var log = new Log();
     var encodedLabels = encodeURIComponent(stringify(selectedApplicationRevision.tags), "UTF-8");
     var encodedEnvs = encodeURIComponent(stringify(selectedApplicationRevision.runtimeProperties), "UTF-8");
     var configJSON = JSON.parse(paramConfiguration);
+    var taskStatus = outputs.taskStatus;
 %>
 
 <script>
@@ -67,9 +63,7 @@ var log = new Log();
     var dashboardBaseUrl = "<%=dashboardBaseUrl%>";
     var encodedLabels = "<%=encodedLabels%>";
     var encodedEnvs = "<%=encodedEnvs%>";
-
-
-
+    var taskStatus = <%=taskStatus%>;
 
 </script>
     <div class="navbar navbar-secondary">
@@ -152,10 +146,18 @@ var log = new Log();
     </div>
     <div class = "block-delete">
         <div class="row padding-bottom">
-                      <div class="col-xs-12 col-md-6 col-lg-6 ">
-
-
-                          <div class="col-xs-12 col-md-12 col-lg-12">
+                  <div class="col-xs-12 col-md-6 col-lg-6 ">
+                      <div class="col-xs-12 col-md-12 col-lg-12">
+                          <% if(taskStatus)
+                          { %>
+                          <a type="label" class="cu-btn cu-btn-md">Task Running
+                              <span id="stop-in-progress"><span>
+                          </a>
+                          <% } else { %>
+                          <a type="label" class="cu-btn cu-btn-md">Task Not Running
+                              <span id="stop-in-progress"><span>
+                          </a>
+                          <% } %>
                           <a type="button" id="delete-version" onclick="deleteApplicationPopUp();">
                               <div class="btn-create-version">
                                   <span class="fw-stack fw-lg btn-action-ico">
@@ -169,8 +171,8 @@ var log = new Log();
                              <span id="stop-in-progress"><span>
                              </a>
                           </div>
-                          </div>
                       </div>
+                  </div>
         </div>
     </div>
         <div class="row padding-bottom">
