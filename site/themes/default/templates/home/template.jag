@@ -174,7 +174,7 @@ var log = new Log();
         </div>
     </div>
         <div class="row padding-bottom">
-          <div class="col-xs-12 col-md-12 col-lg-6">
+          <div class="col-xs-12 col-md-6 col-lg-6">
               <div class="block-general " style="background-color: #303030;">
                   <div class="row padding-bottom ">
                       <div class="col-xs-12 col-md-12 col-lg-12">
@@ -265,7 +265,7 @@ var log = new Log();
                   </div>
               </div>
           </div>
-          <div class="col-xs-12 col-md-3 col-lg-6 ">
+          <div class="col-xs-12 col-md-6 col-lg-6 ">
               <div class="block-logs " id="terminal">
                <!-- Log Analyser goes here-->
                   </div>
