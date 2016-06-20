@@ -19,7 +19,7 @@
 
 include("/jagg/jagg.jag");
 include("/jagg/constants.jag");
-var log=new Log();
+var log=new Log('integration/site/blocks/user/logout/ajax/logout.jag');
 
 (function () {
 

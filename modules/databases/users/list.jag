@@ -20,7 +20,7 @@
 include("/jagg/jagg.jag");
 include("/jagg/constants.jag");
 
-var log = new Log('modules/databases/users/list.jag');
+var log = new Log('integration/modules/databases/users/list.jag');
 var modManager = jagg.module("manager");
 
 var wso2_rss_instanceName = 'SYSTEM';

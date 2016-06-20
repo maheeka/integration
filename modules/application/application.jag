@@ -56,8 +56,6 @@ var addApplication = function (applicationName, versionName, applicationDescript
     log.info("Started creating App => name : " + applicationName + " Version : " + versionName + " Description " +
              ": " + applicationDescription + " runtimeId : " + runtimeId + " apptype : " + appTypeName );
 
-    var tenantId = modManager.getTenantId();
-    session.put("TENANT_ID", tenantId);
     var applicationHashId = Util.getApplicationHashId(applicationName, tenantId);
     var versionHashId = Util.getVersionHashId(applicationName, versionName, tenantId);
     if (artifactUrl) {
@@ -1563,7 +1561,7 @@ var getMaxInstanceCount = function () {
         var maxInstancesJson = get(subscriptionPlanURL , "" , "json");
         maxAppCount = parseInt(maxInstancesJson.data.maxApplications);
     }
-    return maxAppCount;
+    return 30;
 };
 
 var getApplicationRevisionStatus = function(applicationKey, selectedRevision) {

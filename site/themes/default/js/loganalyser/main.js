@@ -15,22 +15,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-var serverUrl = "https://"+location.hostname +":"+ location.port +"/integration/modules/loganalyser/log-analyzer-proxy.jag";
+var serverUrl = "https://" + location.hostname + ":" + location.port + "/integration/modules/loganalyser/log-analyzer-proxy.jag";
 var client = new AnalyticsClient().init(null, null, serverUrl);
 var logLineArray = [];
 var template = '<span class="logLine"><div class="logTimeStamp">{{time}}</div><div class="logClassName">{{className}}</div><div class="logContent">{{content}}</div><div class="logTrace">{{trace}}</div></span>';
 var initialRecordCount = -1;
 var currentRecordCount;
 var $ptty;
-
+//query : query is taken from the global variable defined in the template that has the log viewer embedded in(in this case home template.jag).
 $(document).ready(function () {
 var _args = {}; // private
-
-//var cAppName = session.get("C_APP_NAME") ;
-//var tenantId = <%= session.get("TENANT_ID") %>;
-// tenantId = -1234;
-//console.log("***^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*********************** cAppName: " + cAppName);
-//console.log("************************** tenantId: " + tenantId);
     $ptty = $('#terminal').Ptty({
         theme : 'livelog',
         i18n : {
@@ -52,7 +46,7 @@ function fetchInitialRecordCount(){
     var countQueryInfo = {
         tableName: "LOGANALYZER",
         searchParams: {
-            query: "logstream:\"-1234\""
+            query: query
         }
     };
     client.searchCount(countQueryInfo, function(count) {
@@ -77,7 +71,7 @@ function fetchCurrentRecordCount() {
     var countQueryInfo = {
         tableName: "LOGANALYZER",
         searchParams: {
-            query: "logstream:\"-1234\""
+            query: query
         }
     };
 
@@ -103,9 +97,9 @@ function fetchRecords(logCountDifference){
     queryInfo = {
         tableName: "LOGANALYZER",
         searchParams: {
-            query:"logstream:\"-1234\"",
+            query: query,
             start: "0",
-            count: ""+logCountDifference,
+            count: "" + logCountDifference,
             sortBy : [
             {
             field : "_timestamp",

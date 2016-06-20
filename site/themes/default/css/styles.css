@@ -622,7 +622,7 @@ a.btn-action {
 }
 /* application landing */
 .cu-btn-fixed-width {
-    width: 175px;
+    width: 200px;
 
 }
 .app-preview {
@@ -748,6 +748,10 @@ a.btn-action {
 }
 .app-thumb span i {
     padding-left: 4px;
+}
+
+.int-params {
+    padding-left: 20px;
 }
 
 .home-app-icon{

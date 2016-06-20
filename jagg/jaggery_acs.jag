@@ -21,7 +21,7 @@
         <%
         include("/jagg/jagg.jag");
         include("/jagg/constants.jag");
-        var log = new Log();
+        var log = new Log("integration/jagg/");
 (function () {
 
     var samlResponse = request.getParameter("SAMLResponse");

@@ -22,7 +22,7 @@ include("/jagg/constants.jag");
 include("/jagg/config_reader.jag");
 
 var lifeCycleModule = jagg.module("lifecycle");
-var log=new Log();
+var log=new Log('integration/site/blocks/tenant/users/update/ajax/update.jag');
 var mod = jagg.module("urlmapper");
 var permissionMod = jagg.module("permission");
 var tenantMod = jagg.module("tenant");
