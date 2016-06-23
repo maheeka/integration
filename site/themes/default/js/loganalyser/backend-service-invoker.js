@@ -31,7 +31,7 @@ var backendServiceInvoker = function () {
     var authorizationHeader = null;
 
 
-        authorizationHeader = constants.BASIC_PREFIX + Base64.encode("admin" + ":" + "admin");
+        authorizationHeader = constants.BASIC_PREFIX + Base64.encode(constants.USERNAME + ":" + constants.PASSWORD);
 
     /**
      * This method add Oauth authentication header to outgoing XMLHTTP Requests if Oauth authentication is enabled.

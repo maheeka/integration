@@ -29,6 +29,7 @@
         var constants = require("../../site/themes/default/js/loganalyser/constants.js");
 
         var method = request.getMethod();
+        //todo move to constant
         var targetURL = "https://local.cloudmgt.wso2.com:9463" + "/portal/controllers/apis/analytics.jag";
         var payload = request.getContent();
 

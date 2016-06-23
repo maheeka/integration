@@ -401,8 +401,6 @@ jagg.template("home", function(inputs, outputs, jagg) {
 
         }, function(result) {
         $("#test-in-progress").html("");
-
-            console.info("result " + result);
              jagg.message({
                     content: "Integration Executed for Testing",
                     type: 'info',
