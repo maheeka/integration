@@ -1,7 +1,5 @@
 <% jagg.template("sso/filter", function(inputs, outputs, jagg) { %>
 <%
-    var log = new Log("sso/filter");
-
     var site = require("/site/conf/site.json");
     var security =require("sso");
 	var ssoRelyingParty = new security.SSORelyingParty(site.ssoConfiguration.issuer);

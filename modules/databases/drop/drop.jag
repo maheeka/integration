@@ -20,7 +20,7 @@
 include("/jagg/jagg.jag");
 include("/jagg/constants.jag");
 
-var log = new Log('modules/databases/drop/drop.jag');
+var log = new Log('integration/modules/databases/drop/drop.jag');
 var modManager = jagg.module("manager");
 var wso2_rss_instanceName = 'SYSTEM';
 var storageServerURL = modManager.getPropertyValue(PROPERTY_STORAGE_SERVER_URL);

@@ -20,7 +20,7 @@
 include("/jagg/jagg.jag");
 include("/jagg/constants.jag");
 include("/jagg/config_reader.jag");
-var log = new Log();
+var log = new Log('integration/site/blocks/tenant/users/get/ajax/get.jag');
 (function () {
     var mod, obj, result,
             action = request.getParameter("action"),

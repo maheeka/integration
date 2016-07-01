@@ -21,22 +21,16 @@ include("/jagg/jagg.jag");
 include("/jagg/constants.jag");
 
 jagg.template("home", function(inputs, outputs, jagg) {
-var log = new Log();
     var application = outputs.application;
     var selectedRevision = outputs.selectedRevision;
     var conSpecCpu = outputs.conSpecCpu;
     var conSpecMemory = outputs.conSpecMemory;
+    var tenantId = outputs.tenantId;
     var versions = application.versions;
     var defaultVersionName = application.defaultVersionName;
     if (application.defaultVersionName != null && versions[defaultVersionName] != undefined) {
         versions[defaultVersionName].deploymentURL = versions[defaultVersionName].customtUrl;
     }
-    log.info("$$$$$$$  " + stringify(application));
-    log.info("########################## application.cAppName: " + application.carbonApplicationName);
-    var cAppName = application.carbonApplicationName.substring(0, application.carbonApplicationName.lastIndexOf("_"));
-    session.put("C_APP_NAME", cAppName);
-    log.info("*****  cAppName" + cAppName);
-    log.info("*****  session.get (C_APP_NAME)" + session.get("C_APP_NAME"));
     var selectedApplicationRevision = versions[selectedRevision];
     var revisions = outputs.revision;
     var applicationName = application.applicationName;
@@ -67,9 +61,9 @@ var log = new Log();
     var dashboardBaseUrl = "<%=dashboardBaseUrl%>";
     var encodedLabels = "<%=encodedLabels%>";
     var encodedEnvs = "<%=encodedEnvs%>";
-
-
-
+    var cAppName =  application.carbonApplicationName.substring(0, application.carbonApplicationName.lastIndexOf("_"));
+    var tenantId = "<%=tenantId%>";
+    var query = "_appName:\"" + cAppName + "\" AND logstream:\"" + tenantId + "\"";
 
 </script>
     <div class="navbar navbar-secondary">
@@ -178,7 +172,7 @@ var log = new Log();
               <div class="block-general " style="background-color: #303030;">
                   <div class="row padding-bottom ">
                       <div class="col-xs-12 col-md-12 col-lg-12">
-                       <h4>Integration Parameters</h4>
+                       <h4 class="int-params"> Integration Parameters</h4>
                           <div class="block-replica" id="task-parameters">
                               <%
                                 if(selectedApplicationRevision.status=='running'){
@@ -186,7 +180,7 @@ var log = new Log();
                                     <button class="cu-btn cu-btn-md cu-btn-gr-dark btn-launch-app" id="btn-launchApp"
                                     url="<%=selectedApplicationRevision.deploymentURL%>">Launch App</button>
                                     <div class="btn-group ctrl-edit-button btn-edit-code">
-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-red" onclick="stopApplication();">Stop
+                                      <a type="button" id = "btn-stop" class="btn cu-btn cu-btn-md cu-btn-red" onclick="stopApplication();">Stop
                                         <span id="stop-in-progress"><span>
                                       </a>
                                     </div>
@@ -223,13 +217,15 @@ var log = new Log();
                                    }
                                %>
                                   <div class="btn-group ctrl-edit-button btn-edit-code ">
-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue cu-btn-fixed-width right" onclick="testIntegration();">Test Integration</a>
+                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue cu-btn-fixed-width right" onclick="testIntegration();">Test Integration
+                                          <span id="test-in-progress"><span>
+                                      </a>
                                   </div>
                           </div>
 
                                    <div class="container padding-bottom ">
                                    </div>
-                       <h4 >Schedule Configurations</h4>
+                       <h4 class="int-params">Schedule Configurations</h4>
 
                           <div class="block-replica" id="scheduling-params">
                               <div class="form-group">
@@ -245,6 +241,7 @@ var log = new Log();
                               <div class="form-group">
                                   <button class="cu-btn cu-btn-md cu-btn-blue cu-btn-fixed-width" id="schedule-integration" onclick="scheduleIntegration();" type="button">
                                       Schedule Integration
+                                      <span id="schedule-in-progress"><span>
                                   </button>
                               </div>
                           </div>
@@ -352,6 +349,7 @@ var log = new Log();
             versionKey: selectedApplicationRevision.hashId
 
         }, function (result) {
+            $("#stop-in-progress").html("");
             jagg.message({content: "Application stop request is submitted successfully.", type: 'info'});
         });
     }
@@ -367,7 +365,7 @@ var log = new Log();
     // stop integration
     function stopIntegration(){
             $("#stop-in-progress").html("<i class=\"fa fa-circle-o-notch fa-spin\"></i>");
-
+            $("#btn-stop").
         jagg.post("../blocks/application/application.jag", {
             action: "stopIntegration",
             applicationName : applicationName,
@@ -375,6 +373,7 @@ var log = new Log();
             taskConfiguration : taskConfiguration
 
         }, function(result) {
+            $("#stop-in-progress").html("");
             console.info("result " + result);
             jagg.message({
                  content: "Integration Schedule Stop",
@@ -386,6 +385,7 @@ var log = new Log();
 
     //deploy integration for testing
     function testIntegration(){
+        $("#test-in-progress").html("<i class=\"fa fa-circle-o-notch fa-spin\"></i>");
 
         for (var i=0; i < paramConfigurationJSON.params.length; i++) {
              var parameter = paramConfigurationJSON.params[i];
@@ -400,7 +400,7 @@ var log = new Log();
             configParams : JSON.stringify(paramConfigurationJSON)
 
         }, function(result) {
-            console.info("result " + result);
+        $("#test-in-progress").html("");
              jagg.message({
                     content: "Integration Executed for Testing",
                     type: 'info',
@@ -412,6 +412,8 @@ var log = new Log();
 
     // schedule integration
     function scheduleIntegration(){
+        $("#schedule-in-progress").html("<i class=\"fa fa-circle-o-notch fa-spin\"></i>");
+
         var count = document.getElementById('count').value;
         var interval = document.getElementById('interval').value;
 
@@ -430,6 +432,8 @@ var log = new Log();
             configParams : JSON.stringify(paramConfigurationJSON)
 
         }, function(result) {
+            $("#schedule-in-progress").html("");
+
             console.info("result " + result);
              jagg.message({
                     content: "Deployed Schedule",
@@ -545,6 +549,7 @@ var log = new Log();
 <script src="/integration/site/themes/default/js/loganalyser/carbon-analytics.js"></script>
 <script src="/integration/site/themes/default/js/loganalyser/ptty.jquery.min.js"></script>
 <script src="/integration/site/themes/default/js/loganalyser/Mustache.js"></script>
+
 <script src="/integration/site/themes/default/js/loganalyser/main.js"></script>
 
 <link rel="stylesheet" href="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('css/loganalyser/style.css'))%>">

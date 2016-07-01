@@ -30,7 +30,7 @@ jagg.block("home", {
         }
     },
     getOutputs:function (inputs) {
-        var log = new Log();
+        var log = new Log('integration/site/blocks/home/block.jag');
         var applicationModule = jagg.module("application");
         var appTypePropertyConfPath = jagg.getAppTypePropertyConfFilePath();
         var parsedObject = parse(appTypePropertyConfPath);
@@ -46,11 +46,15 @@ jagg.block("home", {
         var conSpecCpu = selectedVersion.conSpecCpu;
         var conSpecMemory = selectedVersion.conSpecMemory;
 
+        var modManager = jagg.module("manager");
+        var tenantId = modManager.getTenantId();
+
         return {
             "application" : application,
             "selectedRevision":selectedRevision,
             "conSpecCpu" : conSpecCpu,
-            "conSpecMemory" : conSpecMemory
+            "conSpecMemory" : conSpecMemory,
+            "tenantId" : tenantId
         };
     }
 

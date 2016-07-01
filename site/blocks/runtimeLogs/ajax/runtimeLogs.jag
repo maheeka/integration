@@ -25,7 +25,7 @@ include("/jagg/constants.jag");
         action = request.getParameter("action"),
         site = require("/site/conf/site.json");
 
-    var log = new Log();
+    var log = new Log('integration/site/blocks/runtimeLogs/ajax/runtimeLogs.jag');
 
     if (!jagg.getUser()) {
         print(UNAUTHORIZED_ERROR_RESPONSE);

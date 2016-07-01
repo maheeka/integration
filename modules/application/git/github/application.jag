@@ -20,7 +20,7 @@
 include("/jagg/jagg.jag");
 include("/jagg/constants.jag");
 
-var log = new Log("module/application/git/github/application.jag");
+var log = new Log("integration/module/application/git/github/application.jag");
 var modManager = jagg.module("manager");
 var appManager = jagg.module("application");
 var ApplicationManager = Packages.org.wso2.appcloud.core.ApplicationManager;

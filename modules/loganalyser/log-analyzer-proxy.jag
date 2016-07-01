@@ -18,10 +18,8 @@
  */
 
     (function () {
-        var log = new Log("log-analyzer-proxy.jag");
+        var log = new Log("integration/module/loganalyzer/log-analyzer-proxy.jag");
         var serviceInvokers = session.get("serviceInvokers");
-        //var cAppName = session.get("C_APP_NAME") ;
-       // var tenantId = session.get("TENANT_ID");
 
         if(serviceInvokers == null) {
             serviceInvokers = require("../../site/themes/default/js/loganalyser/backend-service-invoker.js").backendServiceInvoker;
@@ -31,6 +29,7 @@
         var constants = require("../../site/themes/default/js/loganalyser/constants.js");
 
         var method = request.getMethod();
+        //todo move to constant
         var targetURL = "https://local.cloudmgt.wso2.com:9463" + "/portal/controllers/apis/analytics.jag";
         var payload = request.getContent();
 
@@ -87,7 +86,8 @@
                 break;
             }
         } catch (e) {
-            log.error("Exception occurred while accessing sevices", e);
+            log.error("Exception occurred while accessing sevices");
+            log.error(e);
         }
     }());
 %>

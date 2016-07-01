@@ -20,7 +20,7 @@
 include("/jagg/jagg.jag");
 include("/jagg/constants.jag");
 
-var log = new Log("module/manager/manager.jag");
+var log = new Log("integration/module/manager/manager.jag");
 var carbon = require('carbon');
 var server = carbon.server;
 var multitenancy = carbon.multitenancy;

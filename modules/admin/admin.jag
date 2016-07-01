@@ -20,7 +20,7 @@
 include("/jagg/jagg.jag");
 include("/jagg/constants.jag");
 
-var log = new Log("module/admin/admin.jag");
+var log = new Log("integration/module/admin/admin.jag");
 var carbon = require('carbon');
 var context = carbon.multitenancy.getPrivilegedCarbonContext();
 var ApplicationManager = Packages.org.wso2.appcloud.core.ApplicationManager;

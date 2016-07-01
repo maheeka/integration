@@ -23,7 +23,7 @@ include('/jagg/constants.jag');
 var action = request.getParameter("action");
 var adminModule = jagg.module("admin");
 var managerModule = jagg.module("manager");
-var log = new Log('site/blocks/admin/admin.jag');
+var log = new Log('integration/site/blocks/admin/admin.jag');
 (function(){
 
     if (!jagg.getUser() && !(managerModule.getTenantDomain() == 'carbon.super')) {

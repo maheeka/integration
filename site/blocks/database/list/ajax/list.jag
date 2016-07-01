@@ -19,7 +19,7 @@
 
 include("/jagg/jagg.jag");
 
-var log= new Log();
+var log= new Log('integration/site/blocks/database/list/ajax/list.jag');
 
 (function () {
     var obj, result,

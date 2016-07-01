@@ -31,7 +31,7 @@ include("/jagg/jagg.jag");
     jagg.render({
         "name":"page/master",
         "inputs":{
-            "title":"WSO2 App Cloud",
+            "title":"WSO2 Integration Cloud",
             "pagePath":"/site/pages/home.jag",
             "header":{
                 "name":"header/default"
@@ -40,7 +40,7 @@ include("/jagg/jagg.jag");
                 {
                     "name":"layout/master",
                     "inputs":{
-                        "title":"WSO2 App Cloud",
+                        "title":"WSO2 Integration Cloud",
                         "middle":[
                             {
                                 "name":"home",

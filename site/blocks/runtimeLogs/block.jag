@@ -19,7 +19,7 @@
 
 include('/jagg/constants.jag');
 include('/jagg/jagg.jag');
-var log = new Log();
+var log = new Log('integration/site/blocks/runtimeLogs.jag');
 jagg.block("runtimeLogs", {
     initialize: function (data) {
 

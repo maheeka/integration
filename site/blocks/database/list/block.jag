@@ -28,7 +28,7 @@ jagg.block("database/list", {
     },
 
     getOutputs:function (inputs) {
-        var log = new Log();
+        var log = new Log('integration/site/blocks/database/list/block.jag');
         var hasDBs = true;
         var isSSRunning = true;
         try {

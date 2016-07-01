@@ -19,7 +19,7 @@
 
 include("/jagg/jagg.jag");
 var site = require("/site/conf/site.json");
-var log = new Log();
+var log = new Log('integration/site/pages/index.jag');
 (function () {
 
     var user = jagg.getUser();

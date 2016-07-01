@@ -21,7 +21,7 @@
  */
 var backendServiceInvoker = function () {
 
-    var log = new Log("js/backend-service-invoker.js")
+    var log = new Log("integration/site/themes/default/js/loganalyser/backend-service-invoker.js")
     var publicXMLHTTPInvokers = {};
     var privateMethods = {};
     var publicWSInvokers = {};
@@ -31,8 +31,7 @@ var backendServiceInvoker = function () {
     var authorizationHeader = null;
 
 
-        authorizationHeader = constants.BASIC_PREFIX + Base64.encode("admin" + ":" + "admin");
-
+        authorizationHeader = constants.BASIC_PREFIX + Base64.encode(constants.USERNAME + ":" + constants.PASSWORD);
 
     /**
      * This method add Oauth authentication header to outgoing XMLHTTP Requests if Oauth authentication is enabled.

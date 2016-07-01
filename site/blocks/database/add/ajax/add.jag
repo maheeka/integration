@@ -21,7 +21,7 @@ include("/jagg/jagg.jag");
 include("/jagg/constants.jag");
 
 
-var log= new Log();
+var log= new Log('integration/site/blocks/database/add/ajax/add.jag');
 var response = {};
 var DEFAULT_TEMPLATE = 'DEFAULT_ALL_PERMISSIONS';
 

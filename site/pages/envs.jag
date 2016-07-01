@@ -22,7 +22,7 @@ var site = require("/site/conf/site.json");
 
 (function () {
 
-	var log = new Log();
+	var log = new Log('integration/site/pages/envs.jag');
 
     var user = jagg.getUser();
     if (!user) {

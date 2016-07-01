@@ -21,7 +21,7 @@ include("/jagg/jagg.jag");
 include("/jagg/constants.jag");
 include("/jagg/config_reader.jag");
 
-var log = new Log('modules/tenant/users/add/add.jag');
+var log = new Log('integration/modules/tenant/users/add/add.jag');
 
 var modManager = jagg.module("manager");
 var carbon = require('carbon');

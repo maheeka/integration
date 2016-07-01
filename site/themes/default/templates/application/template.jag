@@ -32,7 +32,6 @@ jagg.template("application", function (inputs, outputs, jagg) {
 		var runtimeID = runtimes[0].id;
         var encodedLabels = request.getParameter("encodedLabels");
         var encodedEnvs = request.getParameter("encodedEnvs");
-        var log = new Log();
         var decodedLabels = parse(decodeURIComponent(encodedLabels, "UTF-8"));
         var decodedEnvs = parse(decodeURIComponent(encodedEnvs, "UTF-8"));
         var newVersion = request.getParameter("newVersion");
@@ -40,7 +39,6 @@ jagg.template("application", function (inputs, outputs, jagg) {
         var subscriptionPlanURL = subscriptionPlanBaseURL + "/plans/1";
 		var runtimeContainerSpecURL = subscriptionPlanBaseURL + "/containerSpecs/allowedruntime/" + runtimeID;
         var data = null;
-        log.info("*****************  runtimeContainerSpecURL" + runtimeContainerSpecURL);
 		var allowedRuntimeContainerSpecJson = get(runtimeContainerSpecURL, "", "json");
 		var maxApplications = outputs.maxAppCount;
     %>
@@ -594,7 +592,6 @@ jagg.template("application", function (inputs, outputs, jagg) {
         /** end application creation form validations */
 
         $('#url-upload').click(function(){
-        console.log("inside url upload click");
             $("#url-upload-progress").html("<i class=\"fa fa-circle-o-notch fa-spin\"></i>");
             isUploadUrlValid()
             activateCreateApplication();
