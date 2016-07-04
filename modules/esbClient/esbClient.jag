@@ -1,0 +1,177 @@
+<%
+/*
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *   WSO2 Inc. licenses this file to you under the Apache License,
+ *   Version 2.0 (the "License"); you may not use this file except
+ *   in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing,
+ *   software distributed under the License is distributed on an
+ *   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *   KIND, either express or implied.  See the License for the
+ *   specific language governing permissions and limitations
+ *   under the License.
+ */
+
+include("/jagg/jagg.jag");
+include("/jagg/constants.jag");
+
+var log = new Log("module/esbClient/esbClient.jag");
+var modManager = jagg.module("manager");
+var site = require("/site/conf/site.json");
+
+//var ApplicationManager = Packages.org.wso2.intcloud.core.ApplicationManager;
+//var Application = Packages.org.wso2.intcloud.core.dto.Application;
+//var Version = Packages.org.wso2.intcloud.core.dto.Version;
+//var KubernetesProvisioningUtils =  Packages.org.wso2.appcloud.provisioning.runtime.Utils.KubernetesProvisioningUtils;
+//var EventsManager = Packages.org.wso2.intcloud.core.EventsManager;
+//var Event = Packages.org.wso2.intcloud.core.dto.Event;
+//var Deployment = Packages.org.wso2.appcloud.core.dto.Deployment;
+//var Container = Packages.org.wso2.appcloud.core.dto.Container;
+//var ServiceProxy = Packages.org.wso2.appcloud.core.dto.ContainerServiceProxy;
+//var CloudUtil = Packages.org.wso2.intcloud.common.util.IntCloudUtil;
+//var RuntimeProperty = Packages.org.wso2.appcloud.core.dto.RuntimeProperty;
+//var CarbonUtils = Packages.org.wso2.carbon.utils.CarbonUtils;
+//var Util = Packages.org.wso2.intcloud.core.Util;
+//var ResourceQuotaLimit = Packages.org.wso2.appcloud.provisioning.runtime.beans.ResourceQuotaLimit;
+//var List = Packages.java.util.List;
+//var File = Packages.java.io.File;
+//var FileUtils = org.apache.commons.io.FileUtils;
+
+var deployCarbonApplication = function (uploadedFileName, uploadedFilePath) {
+    log.info("Started deploying carbon app => name : " + uploadedFileName + " file path : " + uploadedFilePath);
+
+    var tenantDomain = modManager.getTenantDomain();
+
+    var cAppUploaderUrl = site.esb.serverBaseURL + "t/" + tenantDomain + "/services/" + CAPP_DEPLOYER_SERVICE + "/";
+
+
+    // ======= DEPLOY CAPP ========
+    var stub = new org.wso2.carbon.application.mgt.stub.upload.CarbonAppUploaderStub(cAppUploaderUrl);
+    var client = stub._getServiceClient();
+    var client_options = client.getOptions();
+    client_options.setManageSession(true);
+    client_options.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, session.get("esb-auth-cookie"));
+
+    var cappFile = new java.io.File(uploadedFilePath);
+    var byteArray = org.apache.commons.io.FileUtils.readFileToByteArray(cappFile);
+    var dataHandler = new javax.activation.DataHandler(byteArray, "application/octet-stream");
+    var fileItemsArr = java.lang.reflect.Array.newInstance(
+                           org.wso2.carbon.application.mgt.stub.upload.types.carbon.UploadedFileItem, 1);
+    var fileItem = new org.wso2.carbon.application.mgt.stub.upload.types.carbon.UploadedFileItem();
+    fileItem.setDataHandler(dataHandler);
+    fileItem.setFileName(uploadedFileName);
+    fileItem.setFileType("jar");
+
+    fileItemsArr[0] = fileItem;
+
+    stub.uploadApp(fileItemsArr);
+
+    // ======= WAIT FOR CAPP DEPLOYMENT ========
+
+    log.info("Waiting " + CAPP_DEPLOYMENT_MAX_WAIT_TIME + " milliseconds for carbon application deployment : " + uploadedFileName);
+
+    var isCarFileDeployed = false;
+
+    var currentWaitTime = 0;
+
+    var xx = "car_project_1.0.0.car";
+
+    while (currentWaitTime < CAPP_DEPLOYMENT_MAX_WAIT_TIME) {
+        var carbonAppExists = isCarbonAppExists(xx);
+
+            if (carbonAppExists) {
+                log.info("Carbon application is deployed in " + currentWaitTime + " milliseconds");
+                isCarFileDeployed = true;
+                break;
+            }
+
+            java.lang.Thread.sleep(1000);
+            currentWaitTime = currentWaitTime + 1000;
+        }
+
+    if (isCarFileDeployed) {
+        log.info("Carbon application deployed successfully");
+    } else {
+        log.warn("Carbon application deployment failed");
+    }
+
+
+
+
+
+
+//    var requestPayload = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:upl=\"http://upload.application.carbon.wso2.org\">"
+//                             +"<soapenv:Header/>"
+//                             +"<soapenv:Body>"
+//                                +"<upl:uploadAppBytes>"
+//                                   +"<upl:fileName>" + uploadedFileName + "</upl:fileName>"
+//                                   +"<upl:fileType>jar</upl:fileType>"
+//                                   +"<upl:bytes>" + byteArray + "</upl:bytes>"
+//                                +"</upl:uploadAppBytes>"
+//                             +"</soapenv:Body>"
+//                          +"</soapenv:Envelope>";
+//
+////authenticate ESB
+//                var ws = require("ws");
+//                var requestESB = new ws.WSRequest();
+//                var options = new Array();
+//                options.useSOAP = 1.2;
+//                options.action = "urn:uploadAppBytes";
+//                options["HTTPHeaders"] = [{name: "cookie", value: session.get("esb-auth-cookie")}];
+////                var endPoint = "https://localhost:9453/services/SAML2SSOAuthenticationService";
+////                var payload = '<sso:login xmlns:sso="http://sso.saml2.authenticator.identity.carbon.wso2.org"><sso:authDto><xsd:response xmlns:xsd="http://dto.sso.saml2.authenticator.identity.carbon.wso2.org/xsd">' + samlResponse + '</xsd:response></sso:authDto></sso:login>';
+//                requestESB.open(options, cAppUploaderUrl, false);
+//
+//                requestESB.send(requestPayload);
+//                var responseESB = requestESB.responseE4X;
+
+    log.info("tenantDomain = " + tenantDomain + " cookie = " + session.get("esb-auth-cookie"));
+
+};
+
+
+var isCarbonAppExists = function (carbonApplicationName) {
+
+    if (carbonApplicationName.match(".car" + "$") == ".car") { //carfile name ends with .car
+        carbonApplicationName = carbonApplicationName.substring(0, carbonApplicationName.length - 4);
+    }
+    var appAdminUrl = site.esb.serverBaseURL + "t/" + tenantDomain + "/services/" + APP_ADMIN_SERVICE + "/";
+
+    var stub = new org.wso2.carbon.application.mgt.stub.ApplicationAdminStub(appAdminUrl);
+    var client = stub._getServiceClient();
+    var client_options = client.getOptions();
+    client_options.setManageSession(true);
+    client_options.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, session.get("esb-auth-cookie"));
+
+    var applicationList = stub.listAllApplications();
+
+    log.info(applicationList);
+
+    if (applicationList != null){
+         for (i = 0; i < applicationList.length; i++) {
+             if (applicationList[i] == carbonApplicationName){
+                 log.info("Carbon application " + carbonApplicationName + " exists");
+                 return true;
+             } else {
+                 log.info("Carbon application " + carbonApplicationName + " does not exists");
+                 return false;
+             }
+         }
+//         var index = applicationList.indexOf(carbonApplicationName);
+//         if (index != -1) {
+//             log.info("Carbon application " + carbonApplicationName + " exists");
+//             return true;
+//         } else {
+//             log.info("Carbon application " + carbonApplicationName + " does not exists");
+//             return false;
+//         }
+    }
+
+    return false;
+}
+%>
