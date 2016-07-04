@@ -22,6 +22,7 @@ include("/jagg/constants.jag");
 
 var log = new Log("module/application/application.jag");
 var modManager = jagg.module("manager");
+var esbClient = jagg.module("esbClient");
 var ApplicationManager = Packages.org.wso2.intcloud.core.ApplicationManager;
 var Application = Packages.org.wso2.intcloud.core.dto.Application;
 var Version = Packages.org.wso2.intcloud.core.dto.Version;
@@ -57,6 +58,8 @@ var addApplication = function (applicationName, versionName, applicationDescript
              ": " + applicationDescription + " runtimeId : " + runtimeId + " apptype : " + appTypeName );
 
     var tenantId = modManager.getTenantId();
+    var tenantDomain = modManager.getTenantDomain();
+    log.info("tenantId = " + tenantId + " tenantDomain = " + tenantDomain + " sessionId = " + session.get("esb-auth-cookie"));
     var applicationHashId = Util.getApplicationHashId(applicationName, tenantId);
     var versionHashId = Util.getVersionHashId(applicationName, versionName, tenantId);
     if (artifactUrl) {
@@ -72,7 +75,7 @@ var addApplication = function (applicationName, versionName, applicationDescript
     if(isNewVersion == 'true'){
         createAppVersionInDataBase(versionName, runtimeId, runtimePropertiesArray, tagArray, applicationHashId, versionHashId, conSpecMemory, conSpecCpu, uploadedFileName);
         stopOtherVersions(applicationHashId, versionName);
-    }else{
+    } else{
         createAppInDataBase(applicationName, versionName, applicationDescription, replicas, runtimeId, appTypeName,
                 runtimePropertiesArray, tagArray, appIcon, applicationHashId, versionHashId, conSpecMemory, conSpecCpu, uploadedFileName);
     }
@@ -82,21 +85,23 @@ var addApplication = function (applicationName, versionName, applicationDescript
                                    + constructFileUploadPath(versionHashId) + uploadedFileName;
     var msg = "Connecting to Integration Server";
     addEvent(ESB_CONNECT, EVENT_PENDING, msg, versionHashId);
-    var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
-    var esbClient = ESBClient.getInstance();
+
+//    var ESBClient = Packages.org.wso2.intcloud.core.client.ESBClient;
+//    var esbClient = ESBClient.getInstance();
     addEvent(ESB_CONNECT, EVENT_SUCCEEDED, "Successfully connected to Integration Server", versionHashId); //TODO : check whether server is up
     addEvent(ESB_DEPLOY, EVENT_PENDING, "Deploying integration", versionHashId);
-    esbClient.deployCarbonApp(tenantId, uploadedFileName, uploadedFilePath);
-    addEvent(ESB_DEPLOY, EVENT_SUCCEEDED, "Deployed integration", versionHashId);
-    addEvent(ESB_DEPLOY_COMPLETE, EVENT_PENDING, "Verifying integration deployment", versionHashId);
-    //setTimeout(waitForDeploy, 10000);
-    addEvent(ESB_DEPLOY_COMPLETE, EVENT_SUCCEEDED, "Verifying integration deployment", versionHashId);
-
-    addEvent(LOAD_PARAMETERS, EVENT_PENDING, "Loading configuration parameters from deployment", versionHashId);
-    var paramConfiguration = esbClient.getIntegrationParamConfiguration(tenantId, uploadedFileName);
-    addEvent(LOAD_PARAMETERS, EVENT_PENDING, "Loading configuration parameters from deployment", versionHashId);
-    updateParamConfiguration(applicationHashId, paramConfiguration);
-    addEvent(LOAD_PARAMETERS, EVENT_SUCCEEDED, "Updated configuration parameters", versionHashId);
+    esbClient.deployCarbonApplication(uploadedFileName, uploadedFilePath);
+//    esbClient.deployCarbonApp(tenantDomain, uploadedFileName, uploadedFilePath);
+//    addEvent(ESB_DEPLOY, EVENT_SUCCEEDED, "Deployed integration", versionHashId);
+//    addEvent(ESB_DEPLOY_COMPLETE, EVENT_PENDING, "Verifying integration deployment", versionHashId);
+//    //setTimeout(waitForDeploy, 10000);
+//    addEvent(ESB_DEPLOY_COMPLETE, EVENT_SUCCEEDED, "Verifying integration deployment", versionHashId);
+//
+//    addEvent(LOAD_PARAMETERS, EVENT_PENDING, "Loading configuration parameters from deployment", versionHashId);
+//    var paramConfiguration = esbClient.getIntegrationParamConfiguration(tenantId, uploadedFileName);
+//    addEvent(LOAD_PARAMETERS, EVENT_PENDING, "Loading configuration parameters from deployment", versionHashId);
+//    updateParamConfiguration(applicationHashId, paramConfiguration);
+//    addEvent(LOAD_PARAMETERS, EVENT_SUCCEEDED, "Updated configuration parameters", versionHashId);
 };
 
 function waitForDeploy()
@@ -1562,7 +1567,7 @@ var getMaxInstanceCount = function () {
         var maxInstancesJson = get(subscriptionPlanURL , "" , "json");
         maxAppCount = parseInt(maxInstancesJson.data.maxApplications);
     }
-    return 30;
+    return maxAppCount;
 };
 
 var getApplicationRevisionStatus = function(applicationKey, selectedRevision) {

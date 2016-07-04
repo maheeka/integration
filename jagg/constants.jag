@@ -69,4 +69,10 @@ var FILE_EXTENTION_ZIP = "zip";
 var PERMISSION_EXECUTE = "ui.execute";
 var LOGIN_PERMISSION = "AppCloud.Login.Permission"
 
+//esb admin service names
+var CAPP_DEPLOYER_SERVICE="CarbonAppUploader";
+var APP_ADMIN_SERVICE = "ApplicationAdmin";
+
+var CAPP_DEPLOYMENT_MAX_WAIT_TIME = 20000;
+
 %>

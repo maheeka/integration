@@ -14,17 +14,18 @@
   "distributable" : true,
   "ssoConfiguration" : {
     "issuer" : "intcloud",
-    "identityProviderURL" : "https://local.cloudmgt.wso2.com:9443/samlsso",
+    "identityProviderURL" : "https://localhost:9444/samlsso",
     "keyStorePassword": "wso2carbon",
     "identityAlias" : "wso2carbon",
     "keyStoreName" : "/media/ishara/Windows8_OS/MyData/cloud/November2015/CLOUD-MGT-LOCAL-SETUP/local-cloud-setup/wso2as-5.2.1/repository/resources/security/wso2carbon.jks"
   },
   "das" : {
-    "targetURL" : "https://local.cloudmgt.wso2.com:9463" + "/portal/controllers/apis/analytics.jag",
+    "targetURL" : "https://local.cloudmgt.wso2.com:9463/portal/controllers/apis/analytics.jag",
     "username" : "admin",
     "password" : "admin"
-
-
+  },
+  "esb" : {
+    "serverBaseURL" : "https://localhost:9453/"
   }
 
 }
