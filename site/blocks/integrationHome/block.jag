@@ -20,7 +20,7 @@
 include('/jagg/constants.jag');
 include("/jagg/jagg.jag");
 
-jagg.block("home", {
+jagg.block("integrationHome", {
     initialize:function (data) {
 
     },

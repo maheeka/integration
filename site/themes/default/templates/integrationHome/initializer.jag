@@ -17,7 +17,7 @@
  *   under the License.
  */
 
-jagg.initializer("home", {
+jagg.initializer("integrationHome", {
 
     preInitialize:function () {
 

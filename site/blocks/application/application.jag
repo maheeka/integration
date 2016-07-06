@@ -311,7 +311,7 @@ var log = new Log('integration/site/blocks/application/application.jag');
         var applicationKey = request.getParameter("applicationKey");
         var mod = jagg.module("application");
         mod.changeApplicationIcon(applicationKey, appIcon);
-        print("<html><script>window.location.replace('/integration/site/pages/home.jag?applicationKey=" + applicationKey + "');</script><body></body></html>");
+        print("<html><script>window.location.replace('/integration/site/pages/integrationHome.jag?applicationKey=" + applicationKey + "');</script><body></body></html>");
 
     } else if (action == "generateApplicationHashId"){
         var applicationName = request.getParameter("applicationName");

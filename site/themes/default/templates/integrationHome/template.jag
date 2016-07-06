@@ -20,7 +20,7 @@
 include("/jagg/jagg.jag");
 include("/jagg/constants.jag");
 
-jagg.template("home", function(inputs, outputs, jagg) {
+jagg.template("integrationHome", function(inputs, outputs, jagg) {
     var application = outputs.application;
     var selectedRevision = outputs.selectedRevision;
     var conSpecCpu = outputs.conSpecCpu;
