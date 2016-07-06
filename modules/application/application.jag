@@ -652,20 +652,11 @@ var generateVersionList = function (versions, applicationName, defaultVersionNam
         for (var i = 0; i < versions.size(); i++) {
             var versionObject = {};
             var version = versions.get(i);
-            //if (version.versionName == defaultVersionName) {
-            //    versionObject.customtUrl = getCustomUrl(version.hashId);
-            //}
 
-            var deploymentUrl = getDeploymentURL(applicationName, version.versionName);
             versionObject.versionName = version.versionName;
             versionObject.hashId = version.hashId;
             versionObject.runtimeName = version.runtimeName;
             versionObject.status = version.status;
-            versionObject.conSpecCpu = version.conSpecCpu;
-            versionObject.conSpecMemory = version.conSpecMemory;
-            versionObject.runtimeProperties = generateRuntimePropsArray(version.runtimeProperties);
-            versionObject.tags = generateTagsArray(version.tags);
-            versionObject.deploymentURL = deploymentUrl;
 
             versionList[version.versionName] = versionObject;
         }
@@ -853,38 +844,6 @@ var generateRuntimePropsList = function (runtimePropsArray) {
         throw e;
     }
 };
-
-var generateRuntimePropsArray=function(runtimeList){
-    var size = runtimeList.size();
-    var runtimePropsArray = [];
-    for (var i = 0; i < size; i++) {
-        var runtimePropObject = runtimeList.get(i);
-        var runtimeProperty = {
-            id: runtimePropObject.id,
-            propertyName: runtimePropObject.propertyName,
-            propertyValue: runtimePropObject.propertyValue,
-            description: runtimePropObject.propertyValue
-        };
-        runtimePropsArray.push(runtimeProperty);
-    }
-    return runtimePropsArray;
-};
-
-var generateTagsArray=function(labelsList){
-    var size = labelsList.size();
-    var labelsArray = [];
-    for (var i = 0; i < size; i++) {
-        var labelObject = labelsList.get(i);
-        var label = {
-            labelName: labelObject.tagName,
-            labelValue: labelObject.tagValue,
-            description: labelObject.description
-        };
-        labelsArray.push(label);
-    }
-    return labelsArray;
-};
-
 
 var getVersionListOfApplication = function(applicationHashId){
     var revisionArray = [];
