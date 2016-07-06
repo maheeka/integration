@@ -51,10 +51,9 @@ var Arrays = Packages.java.util.Arrays;
  * @param uploadedArtifact the uploaded artifact file
  * @param runtimeId runtime id of the application
  */
-var addApplication = function (applicationName, versionName, applicationDescription, replicas,
-                               runtimeId, appTypeName, runtimePropertiesArray, tagArray, appIcon, uploadedFileName,
-                               isNewVersion, conSpecMemory, conSpecCpu, artifactUrl) {
-    log.info("Started creating App => name : " + applicationName + " Version : " + versionName + " Description " +
+var addApplication = function (applicationName, versionName, applicationDescription, runtimeId, appTypeName,
+                                 appIcon, uploadedFileName, isNewVersion) {
+    log.info("Started creating Integration Project => name : " + applicationName + " Version : " + versionName + " Description " +
              ": " + applicationDescription + " runtimeId : " + runtimeId + " apptype : " + appTypeName );
 
     var tenantId = modManager.getTenantId();
@@ -62,9 +61,6 @@ var addApplication = function (applicationName, versionName, applicationDescript
     log.info("tenantId = " + tenantId + " tenantDomain = " + tenantDomain + " sessionId = " + session.get("esb-auth-cookie"));
     var applicationHashId = Util.getApplicationHashId(applicationName, tenantId);
     var versionHashId = Util.getVersionHashId(applicationName, versionName, tenantId);
-    if (artifactUrl) {
-        uploadedFileName = versionHashId + "." + uploadedFileName.split(".")[1];
-    }
 
     var allAppsUsingCapp = ApplicationManager.getAllApplicationsUsingCarbonApplication(uploadedFileName);
 
@@ -72,12 +68,12 @@ var addApplication = function (applicationName, versionName, applicationDescript
         log.warn("There are other integrations with carbon application name " + uploadedFileName + " same name. This might cause conflicts during deployment and execution.");
     }
 
-    if(isNewVersion == 'true'){
-        createAppVersionInDataBase(versionName, runtimeId, runtimePropertiesArray, tagArray, applicationHashId, versionHashId, conSpecMemory, conSpecCpu, uploadedFileName);
+    if (isNewVersion == 'true'){
+        createAppVersionInDataBase(versionName, runtimeId, applicationHashId, versionHashId, uploadedFileName);
         stopOtherVersions(applicationHashId, versionName);
     } else{
-        createAppInDataBase(applicationName, versionName, applicationDescription, replicas, runtimeId, appTypeName,
-                runtimePropertiesArray, tagArray, appIcon, applicationHashId, versionHashId, conSpecMemory, conSpecCpu, uploadedFileName);
+        createAppInDataBase(applicationName, versionName, applicationDescription, runtimeId, appTypeName,
+                             appIcon, applicationHashId, versionHashId, uploadedFileName);
     }
     var applicationRuntime = ApplicationManager.getRuntimeById(runtimeId);
     var tagName = applicationRuntime.getTag() +"-"+ versionHashId;
@@ -171,113 +167,8 @@ var stopOtherVersions = function(applicationHashId, selectedRevision) {
     }
 }
 
-var triggerKubernetesDeployment = function(runtimeProperties, applicationRuntime, tagName, applicationName, versionName, runtimeId, replicas, versionHashId, conSpecMemory, conSpecCpu){
-    var appHostURL = constructAppLaunchURL(applicationName, versionName);
-    var containers = getContainers(modManager.getPropertyValue(PROPERTY_DOCKER_REGISTRY_URL), applicationRuntime.getImageName(), tagName, versionHashId ,versionHashId, runtimeProperties, runtimeId, appHostURL);
-    var deploymentConfig = getDeploymentConfig(containers, versionHashId, replicas);
-
-    deployApplication(applicationName, versionName, deploymentConfig, false, versionHashId, "new", conSpecMemory, conSpecCpu);
-}
-
-var pushDockerImage = function (applicationName, versionName, applicationRuntime, tagName, versionHashId, dockerOpClient){
-
-    //Adding docker image push pending event
-    var msg = "Docker image push successfully triggered in triggered";
-    addEvent(DOCKER_REGISTRY_PUSH, EVENT_PENDING, msg, versionHashId);
-
-    try {
-
-        dockerOpClient.pushDockerImage(modManager.getPropertyValue(PROPERTY_DOCKER_REGISTRY_URL),applicationRuntime.getImageName(), tagName);
-
-    } catch (e) {
-
-        var msg = "Error uploading docker image to remote registry";
-        addEvent(DOCKER_REGISTRY_PUSH, EVENT_FAILED, msg, versionHashId);
-
-        try {
-            ApplicationManager.updateVersionStatus(versionHashId, APPLICATION_ERROR);
-        } catch(e1){
-            log.error("Error while updating Application Creation Failed event for application : " + applicationName
-                              + " version : " + versionName);
-            log.error(e1);
-            // not throwing the error, because it will hide the actual exception
-        }
-
-        log.error(msg);
-        log.error(e);
-        log.info("Application creation failed because docker image push failed and roll back process" +
-                 " is started for application : "+applicationName+" with revision : "+versionName);
-        deleteVersion(versionHashId, true, false);
-        throw e;
-    }
-
-    //Adding docker push success event
-    var msg = "Docker image push successfully completed";
-    addEvent(DOCKER_REGISTRY_PUSH, EVENT_SUCCEEDED, msg, versionHashId);
-}
-
-var buildDockerImage = function (applicationName, versionName, runtimeId, absFileUploadedPath, applicationRuntime, tagName, versionHashId, dockerOpClient){
-
-    //Adding docker build pending event
-    var msg = "Docker image build successfully triggered in appcloud";
-    addEvent(DOCKER_IMAGE_BUILD, EVENT_PENDING, msg, versionHashId);
-
-    var applicationRuntime = ApplicationManager.getRuntimeById(runtimeId);
-    var tenantDockerRegistryUrl = modManager.getPropertyValue(PROPERTY_DOCKER_REGISTRY_URL) + "/" + dockerRegTenantSpace;
-    var tagName = applicationRuntime.getTag() +"-"+ versionHashId;
-
-    try {
-
-        var dockerRegTenantSpace = modManager.getTenantDomain().replace(".","-");
-        dockerOpClient.buildDockerImage(modManager.getPropertyValue(PROPERTY_DOCKER_REGISTRY_URL) ,applicationRuntime.getImageName(), tagName, absFileUploadedPath);
-
-    } catch (e){
-
-        // Retrying to fix thread interrupted error temporarily. Has to find a proper fix from fabric8
-        for (var i = 0 ; i < 3 ; i++){
-            try{
-                log.info("Retrying docker build retry counter value : " + i);
-                var dockerRegTenantSpace = modManager.getTenantDomain().replace(".","-");
-                dockerOpClient.buildDockerImage(modManager.getPropertyValue(PROPERTY_DOCKER_REGISTRY_URL) ,applicationRuntime.getImageName(), tagName, absFileUploadedPath);
-                //Adding docker build success event
-                var msg = "Docker image build successfully built";
-                addEvent(DOCKER_IMAGE_BUILD, EVENT_SUCCEEDED, msg, versionHashId);
-                return;
-            } catch (e){
-                log.error("Error occured while building image, Hence retrying...");
-            }
-        }
-
-        var msg = "Error while building docker file";
-        addEvent(DOCKER_IMAGE_BUILD, EVENT_FAILED, msg, versionHashId);
-
-        try {
-            ApplicationManager.updateVersionStatus(versionHashId, APPLICATION_ERROR);
-        } catch(e1){
-            log.error("Error while updating Application Creation Failed event for application : " + applicationName
-                              + " version : " + versionName);
-            log.error(e1);
-            // not throwing the error, because it will hide the actual exception
-        }
-
-        log.error(msg);
-        log.error(e);
-        log.info("Application creation failed because dokcer image build failed and roll back process" +
-                 " is started for application : "+applicationName+" with revision : "+versionName);
-        deleteVersion(versionHashId, true, false);
-        throw e;
-
-    }
-
-    //Adding docker build success event
-    var msg = "Docker image build successfully built";
-    addEvent(DOCKER_IMAGE_BUILD, EVENT_SUCCEEDED, msg, versionHashId);
-}
-
-var createAppInDataBase = function(applicationName, versionName, applicationDescription, replicas, runtimeId,
-                                   appTypeName, runtimePropertiesArray, tagArray, appIcon, applicationHashId,
-                                   versionHashId, conSpecMemory, conSpecCpu, carbonApplicationName, paramConfiguration,
-                                   taskConfiguration){
+var createAppInDataBase = function (applicationName, versionName, applicationDescription, runtimeId,
+                                   appTypeName, appIcon, applicationHashId, versionHashId, carbonApplicationName){
 
     //================================= Adding application to Database =========================================
     var application = new Application();
@@ -288,9 +179,8 @@ var createAppInDataBase = function(applicationName, versionName, applicationDesc
         application.setHashId(applicationHashId);
         application.setDescription(applicationDescription);
         application.setApplicationType(appTypeName);
+        application.setDefaultVersion(versionName);
         application.setCarbonApplicationName(carbonApplicationName);
-        application.setParamConfiguration(paramConfiguration);
-        application.setTaskConfiguration(taskConfiguration);
 
         var iconStream = null;
         var iconBlob = null;
@@ -304,22 +194,11 @@ var createAppInDataBase = function(applicationName, versionName, applicationDesc
         version.setRuntimeId(runtimeId);
         version.setStatus(APPLICATION_CREATED);
         version.setHashId(versionHashId);
-        version.setConSpecCpu(conSpecCpu);
-        version.setConSpecMemory(conSpecMemory);
-
-        if(runtimePropertiesArray.length > 0) {
-            var runtimePropertyList = generateRuntimePropsList(runtimePropertiesArray);
-            version.setRuntimeProperties(runtimePropertyList);
-        }
-
-        if(tagArray.length > 0){
-            var tagList = generateTagsList(tagArray);
-            version.setTags(tagList);
-        }
 
         var versionList = new java.util.ArrayList();
         versionList.add(version);
         application.setVersions(versionList);
+
         ApplicationManager.addApplication(application);
 
     } catch (e){
@@ -387,56 +266,6 @@ var createAppVersionInDataBase = function( versionName,   runtimeId, runtimeProp
         throw e;
     }
     return version;
-}
-
-
-var createDockerFile =  function(applicationName, versionName, runtimeId, uploadedFileName, versionHashId, dockerOpClient, artifactUrl, hostName){
-    var msg = "Docker file creation successfully triggered in appcloud";
-    addEvent(DOCKER_FILE_CREATE, EVENT_PENDING, msg, versionHashId);
-    var absFileUploadedPath;
-
-    try {
-        var fileUploadPath = constructFileUploadPath(versionHashId);
-        var absFileUploadedPath = modManager.getPropertyValue(PROPERTY_INTCLOUD_DEPLOYMENT_DIR_PATH) + fileUploadPath;
-        var dockerFilePath = absFileUploadedPath + DOCKER_FILE_NAME;
-
-        var dockerTemplateFilePath = modManager.getPropertyValue(PROPERTY_INTCLOUD_DEPLOYMENT_DIR_PATH) + "/" + "dockerfiles";
-
-        var uploadArtifactTmpName;
-        var checkFileExtZIP = isFileExtZIP(uploadedFileName);
-        if (checkFileExtZIP && !artifactUrl) {
-            var fileName = uploadedFileName.substring(0, uploadedFileName.lastIndexOf("."));
-            uploadArtifactTmpName = fileName + FILE_EXTENSTION_ALTER;
-        } else {
-            uploadArtifactTmpName = uploadedFileName;
-        }
-        dockerOpClient.createDockerFile(runtimeId, uploadArtifactTmpName, dockerFilePath,dockerTemplateFilePath, artifactUrl, hostName);
-
-    } catch(e){
-        var msg = "Error while creating docker file";
-        addEvent(DOCKER_FILE_CREATE, EVENT_FAILED, msg, versionHashId);
-
-        try {
-            ApplicationManager.updateVersionStatus(versionHashId, APPLICATION_ERROR);
-        } catch(e1){
-            log.error("Error while updating Application Creation Failed event for application : " + applicationName
-                              + " version : " + versionName);
-            log.error(e1);
-            // not throwing the error, because it will hide the actual exception
-        }
-
-        log.error(msg);
-        log.error(e);
-        log.info("Application creation failed because docker file creation failed and roll back process" +
-                 " is started for application : "+applicationName+" with revision : "+versionName);
-        deleteVersion(versionHashId, true, false);
-        throw e;
-    }
-
-    //Adding docker file create success event
-    var msg = "Docker file successfully created for application";
-    addEvent(DOCKER_FILE_CREATE, EVENT_SUCCEEDED, msg, versionHashId);
-    return absFileUploadedPath;
 }
 
 var deployApplication = function(applicationName, versionName, deploymentConfig, isRedeploy, versionHashId, status, conSpecMemory, conSpecCpu){
@@ -652,60 +481,6 @@ var buildDeploymentConfigFromDB = function(versionHashId){
     return deploymentConfig;
 
 };
-
-/**
- * Method for getting all the available application types. e.g : war, mss, car
- */
-function getContainers(tenantDockerRegistryUrl, baseImageName, tag, versionHashId, appServiceName, runtimeProperties, runtimeId, appHostURL){
-    var containerList = new java.util.ArrayList();
-    var container = new Packages.org.wso2.appcloud.provisioning.runtime.beans.Container();
-    var appBaseImageName = tenantDockerRegistryUrl + "/" + baseImageName;
-    container.setContainerName(versionHashId);
-    container.setBaseImageName(appBaseImageName);
-    container.setBaseImageVersion(tag);
-    var envs = getRuntimeProperties(runtimeProperties);
-    container.setEnvVariables(envs);
-    var serviceProxyList = new java.util.ArrayList();
-    var services = ApplicationManager.getTransportsForRuntime(runtimeId);
-
-    for(var i = 0; i < services.length; i++){
-        var serviceProxy = new Packages.org.wso2.appcloud.provisioning.runtime.beans.ServiceProxy();
-        var service = services[i];
-        serviceProxy.setServiceName(service.getServiceNamePrefix() + "-" + appServiceName);
-        serviceProxy.setAppHostURL(appHostURL);
-        serviceProxy.setServiceProtocol(service.getServiceProtocol());
-        serviceProxy.setServicePort(getIngressPort(service.getServiceName()));
-        serviceProxy.setServiceBackendPort(service.getServicePort());
-        serviceProxyList.add(serviceProxy);
-    }
-    container.setServiceProxies(serviceProxyList);
-    containerList.add(container);
-
-    return containerList;
-};
-
-function getRuntimeProperties(runtimeProperties){
-    //setting runtime properties to the container
-    var envs = new java.util.HashMap();
-    if(runtimeProperties) {
-        var runtimePropertyIterator = runtimeProperties.iterator();
-        while (runtimePropertyIterator.hasNext()) {
-            var runtimeProperty = runtimePropertyIterator.next();
-            envs.put(runtimeProperty.getPropertyName(), runtimeProperty.getPropertyValue());
-        }
-    }
-    return envs;
-}
-
-function getDeploymentConfig(containersList, versionHashId, replicas){
-
-    var deploymentConfig = new Packages.org.wso2.appcloud.provisioning.runtime.beans.DeploymentConfig();
-    deploymentConfig.setDeploymentName(versionHashId);
-    deploymentConfig.setReplicas(parseInt(replicas));
-    deploymentConfig.setContainers(containersList);
-
-    return deploymentConfig;
-}
 
 /**
  * Method for getting all the available application types e.g : war, mss, car
@@ -1242,31 +1017,6 @@ var createDestinationDirsForUploadedApps = function (versionHashId) {
 
 };
 
-var downloadFromUrl = function(artifactUrl, applicationName, versionName, apptype){
-
-    var versionHashId = Util.getVersionHashId(applicationName, versionName, modManager.getTenantId());
-    createDestinationDirsForUploadedApps(versionHashId);
-
-    var filePath = "";
-    var versionDirectoryPath = getVersionDirectoryPath(versionHashId);
-
-    if (apptype == "war"){
-        filePath  = versionDirectoryPath + versionHashId + ".war";
-    } else if (apptype == "mss") {
-        filePath  = versionDirectoryPath + versionHashId + ".jar";
-    } else if (apptype == "php") {
-        filePath  = versionDirectoryPath + versionHashId + FILE_EXTENSTION_ALTER;
-    }
-    log.info("apptype: " + apptype);
-    try {
-        CloudUtil.downloadFromUrl(artifactUrl , filePath);
-    } catch (e) {
-        log.error("Error while downloading file from the url : " + artifactUrl);
-        log.error(e);
-        throw e;
-    }
-};
-
 var addEvent = function(name, status, description, versionHashId) {
     try {
         var eventsManager = new EventsManager();
@@ -1533,7 +1283,7 @@ var verifyCustomUrl = function (pointedUrl, customUrl) {
     return success;
 };
 
-var isAplicationVersionExist = function (versionHashId) {
+var isApplicationVersionExist = function (versionHashId) {
     var applicationExists = false;
     var applicationHashId = ApplicationManager.getApplicationHashIdByVersionHashId(versionHashId);
     if (applicationHashId) {

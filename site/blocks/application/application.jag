@@ -84,40 +84,27 @@ var log = new Log('integration/site/blocks/application/application.jag');
         response.message = "Integration is successfully executed for testing !";
 
     } else if (action == "createApplication") {
-        var applicationDescription = request.getParameter("applicationDescription");
-        var replicas = 1;
-        var runtimeId = 6;//request.getParameter("runtime"); //TODO remove runtime
+
+        var runtimeId = 1;// TODO : default runtime is 1 for ESB
         var isNewVersion = request.getParameter("isNewVersion");
         if (!isNewVersion || isNewVersion == "false") {
             isNewVersion = false;
         }
 
-        var unparsedRuntimeProps = request.getParameter("runtimeProperties");
-        var runtimeProperties = [];
-        if(unparsedRuntimeProps){
-            runtimeProperties = parse(unparsedRuntimeProps);
-        }
-
-        var unparsedTags = request.getParameter("tags");
-        var tags = [];
-        if(unparsedTags){
-            tags = parse(unparsedTags);
-        }
-
         var applicationName = request.getParameter("applicationName");
-        var applicationRevision = request.getParameter("applicationRevision");
+        //TODO : defaults to 1.0.0 until versioning aproach is finalized
+        var applicationRevision = "1.0.0" ; //request.getParameter("applicationRevision");
         var appTypeName = request.getParameter("appTypeName");
         var uploadedFileName = request.getParameter("uploadedFileName");
         var appIcon = request.getFile("appIcon");
         var uploadedArtifact = request.getFile("fileupload");
         var isFileAttached = request.getParameter("isFileAttached");
-        var conSpecMemory = request.getParameter("conSpecMemory");
-        var conSpecCpu = request.getParameter("conSpecCpu");
-        var artifactUrl = request.getParameter("artifactUrl");
+        var applicationDescription = request.getParameter("applicationDescription");
 
         // checking whether an application with same name and same version, already exists or not
         var versionHashId = applicationModule.getVersionHashId(applicationName, applicationRevision);
-        if (applicationModule.isAplicationVersionExist(versionHashId)) {
+
+        if (applicationModule.isApplicationVersionExist(versionHashId)) {
             response.status = 400; // bad request
             response.message = "Application with same name and version already exists!";
         } else {
@@ -152,42 +139,16 @@ var log = new Log('integration/site/blocks/application/application.jag');
             }
 
             if (isAppCountLowerThanMax) {
-                //Check for the memory and cpu values of the application creation request
-                if ((conSpecMemory <= 512) && (conSpecCpu <= 300)) {
-                    if (isFileAttached) {
-                        applicationModule.uploadExistingArchive(uploadedArtifact, appTypeName, applicationName,
-                                applicationRevision);
-                    }
-                    if (uploadedFileName) {
-                        applicationModule.addApplication(applicationName, applicationRevision, applicationDescription, replicas,
-                                runtimeId, appTypeName, runtimeProperties, tags, appIcon,
-                                uploadedFileName, isNewVersion, conSpecMemory, conSpecCpu, artifactUrl);
-                                response.status = 200;
-                                response.message = uploadedFileName + "successfully deployed.";
-                                return(response);
-                    } else {
-                        var gitRepoUrl = request.getParameter("gitRepoUrl");
-                        var gitRepoBranch = request.getParameter("gitRepoBranch");
-                        var projectRoot = request.getParameter("projectRoot");
-                        var token = request.getParameter("token");
-                        gitHubAppModule.addApplicationViaGitHub(applicationName, applicationRevision, applicationDescription,
-                                replicas, runtimeId, appTypeName, runtimeProperties, tags,
-                                appIcon, gitRepoUrl, gitRepoBranch, projectRoot, token,
-                                isNewVersion, conSpecMemory, conSpecCpu);
-                    }
-                    response.status = 200;
-                    response.message = uploadedFileName + "successfully deployed.";
-                } else {
-                    if (conSpecMemory > 512) {
-                        log.warn("Application creation request not accepted because the maximum memory limit of " +
-                                "container specification is 512.");
-                    }
-                    if (conSpecCpu > 300) {
-                        log.warn("Application creation request not accepted because the maximum cpu limit of container "
-                                + "specification is 300.");
-                    }
-                    response.status = 400; //bad request
-                    response.message = "Maximum limit of conSpecMemory is 512 and conSpecCpu 300";
+                if (isFileAttached) {
+                    applicationModule.uploadExistingArchive(uploadedArtifact, appTypeName, applicationName,
+                        applicationRevision);
+                }
+                if (uploadedFileName) {
+                    applicationModule.addApplication(applicationName, applicationRevision, applicationDescription,
+                        runtimeId, appTypeName, appIcon, uploadedFileName, isNewVersion);
+                        response.status = 200;
+                        response.message = uploadedFileName + "successfully deployed.";
+                        return(response);
                 }
             } else {
                 response.status = 400; //bad request
