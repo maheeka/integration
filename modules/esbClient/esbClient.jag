@@ -24,24 +24,6 @@ var log = new Log("module/esbClient/esbClient.jag");
 var modManager = jagg.module("manager");
 var site = require("/site/conf/site.json");
 
-//var ApplicationManager = Packages.org.wso2.intcloud.core.ApplicationManager;
-//var Application = Packages.org.wso2.intcloud.core.dto.Application;
-//var Version = Packages.org.wso2.intcloud.core.dto.Version;
-//var KubernetesProvisioningUtils =  Packages.org.wso2.appcloud.provisioning.runtime.Utils.KubernetesProvisioningUtils;
-//var EventsManager = Packages.org.wso2.intcloud.core.EventsManager;
-//var Event = Packages.org.wso2.intcloud.core.dto.Event;
-//var Deployment = Packages.org.wso2.appcloud.core.dto.Deployment;
-//var Container = Packages.org.wso2.appcloud.core.dto.Container;
-//var ServiceProxy = Packages.org.wso2.appcloud.core.dto.ContainerServiceProxy;
-//var CloudUtil = Packages.org.wso2.intcloud.common.util.IntCloudUtil;
-//var RuntimeProperty = Packages.org.wso2.appcloud.core.dto.RuntimeProperty;
-//var CarbonUtils = Packages.org.wso2.carbon.utils.CarbonUtils;
-//var Util = Packages.org.wso2.intcloud.core.Util;
-//var ResourceQuotaLimit = Packages.org.wso2.appcloud.provisioning.runtime.beans.ResourceQuotaLimit;
-//var List = Packages.java.util.List;
-//var File = Packages.java.io.File;
-//var FileUtils = org.apache.commons.io.FileUtils;
-
 var deployCarbonApplication = function (uploadedFileName, uploadedFilePath) {
     log.info("Started deploying carbon app => name : " + uploadedFileName + " file path : " + uploadedFilePath);
 
@@ -79,10 +61,8 @@ var deployCarbonApplication = function (uploadedFileName, uploadedFilePath) {
 
     var currentWaitTime = 0;
 
-    var xx = "car_project_1.0.0.car";
-
     while (currentWaitTime < CAPP_DEPLOYMENT_MAX_WAIT_TIME) {
-        var carbonAppExists = isCarbonAppExists(xx);
+        var carbonAppExists = isCarbonAppExists(uploadedFileName);
 
             if (carbonAppExists) {
                 log.info("Carbon application is deployed in " + currentWaitTime + " milliseconds");
@@ -130,8 +110,6 @@ var deployCarbonApplication = function (uploadedFileName, uploadedFilePath) {
 //                requestESB.send(requestPayload);
 //                var responseESB = requestESB.responseE4X;
 
-    log.info("tenantDomain = " + tenantDomain + " cookie = " + session.get("esb-auth-cookie"));
-
 };
 
 
@@ -162,16 +140,9 @@ var isCarbonAppExists = function (carbonApplicationName) {
                  return false;
              }
          }
-//         var index = applicationList.indexOf(carbonApplicationName);
-//         if (index != -1) {
-//             log.info("Carbon application " + carbonApplicationName + " exists");
-//             return true;
-//         } else {
-//             log.info("Carbon application " + carbonApplicationName + " does not exists");
-//             return false;
-//         }
     }
 
     return false;
-}
+};
+
 %>
