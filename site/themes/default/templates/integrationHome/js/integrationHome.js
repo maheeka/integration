@@ -213,7 +213,7 @@ function generateLunchUrl(appURL) {
 }
 
 function putSelectedRevisionToSession(applicationKey, selectedRevision){
-    jagg.syncPost("../blocks/home/ajax/get.jag", {
+    jagg.syncPost("../blocks/integrationHome/ajax/get.jag", {
         action: "putSelectedRevisionToSession",
         applicationKey: applicationKey,
         selectedRevision: selectedRevision
@@ -331,5 +331,5 @@ function redirectAppListing() {
 }
 
 function redirectAppHome() {
-    window.location.replace("home.jag?applicationKey=" + applicationKey);
+    window.location.replace("integrationHome.jag?applicationKey=" + applicationKey);
 }
