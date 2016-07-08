@@ -161,6 +161,9 @@ button[disabled]{
 .cu-btn-red {
     background-color: #ea6153;
 }
+.cu-btn-green-blue {
+    background-color: #2ecc71;
+}
 .cu-btn-gr-dark {
     background-color: #1f1f1f
 }

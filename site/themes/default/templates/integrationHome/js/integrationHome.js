@@ -7,8 +7,7 @@ $(document).ready(function() {
     initPageView();
     var nextVersion = generateNextPossibleVersion(application.versions);
     var uploadRevisionUrl = appCreationPageBaseUrl+"?appTypeName="+application.applicationType +
-                            "&applicationName="+applicationName + "&encodedLabels="+encodedLabels + "&encodedEnvs="
-                                    + encodedEnvs + "&newVersion=true&nextVersion=" + nextVersion + "&conSpecCpu=" + conSpecCpu + "&conSpecMemory=" + conSpecMemory;
+                            "&applicationName="+applicationName + "&newVersion=true&nextVersion=" + nextVersion;
     $('#upload-revision').attr("href", uploadRevisionUrl);
 
     if(selectedApplicationRevision.status=='inactive'){
@@ -189,8 +188,7 @@ function changeSelectedRevision(newRevision){
 
     // Set upload revision btn
     var uploadRevisionUrl = appCreationPageBaseUrl+"?appTypeName="+application.applicationType + //"&applicationName="+applicationName;
-                            "&applicationName="+applicationName + "&encodedLabels="+encodedLabels + "&encodedEnvs="
-                                    + encodedEnvs + "&newVersion=true&nextVersion=" + nextVersion;
+                            "&applicationName="+applicationName + "&newVersion=true&nextVersion=" + nextVersion;
     $('#upload-revision').attr("href", uploadRevisionUrl);
 
     changeRuntimeProps(selectedApplicationRevision);

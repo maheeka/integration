@@ -90,6 +90,8 @@ var addApplication = function (applicationName, versionName, applicationDescript
     //setTimeout(waitForDeploy, 10000);
     addEvent(ESB_DEPLOY_COMPLETE, EVENT_SUCCEEDED, "Verifying integration deployment", versionHashId);
 
+    ApplicationManager.updateVersionStatus(versionHashId,APPLICATION_RUNNING);
+
 //    addEvent(LOAD_PARAMETERS, EVENT_PENDING, "Loading configuration parameters from deployment", versionHashId);
 //    var paramConfiguration = esbClient.getIntegrationParamConfiguration(uploadedFileName);
 //    addEvent(LOAD_PARAMETERS, EVENT_PENDING, "Loading configuration parameters from deployment", versionHashId);
