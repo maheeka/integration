@@ -170,151 +170,87 @@ jagg.template("integrationHome", function(inputs, outputs, jagg) {
         <div class="row padding-bottom-xlg">
           <div class="col-xs-12 col-md-9 col-lg-9">
               <div class="block-general" style="background-color: #303030;">
-                      <div class="col-xs-12 col-md-12 col-lg-9 hide">
-                          <div class="btn-group pull-left version-number">
-                              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              <span id="selected-version"><%=selectedRevision%> </span><span class="caret"></span>
-                              </button>
-                              <ul id="appVersionList" class="dropdown-menu" >
-                              <%
-                                var versions = application.versions;
-                                var keyArray = Object.keys(versions);
-                                for (var x = 0; x < keyArray.length; x++) {
-                              %>
-                                  <li ><a href="#"><%=versions[keyArray[x]].versionName%></a></li>
-                              <%
-                              }
-                              %>
-                              </ul>
-                          </div>
-                          <div id="version-url-link" class="version-url">
-                          <a href="<%=selectedApplicationRevision.deploymentURL%>" target="_blank"><span>
-                          <b>URL : </b><%=selectedApplicationRevision.deploymentURL%></span></a>
-                          </div>
-                          <div class="sec" id="version-app-launch-block">
-                              <%
-                                if(selectedApplicationRevision.status==APPLICATION_RUNNING){
-                                %>
-                                    <button class="cu-btn cu-btn-md cu-btn-gr-dark btn-launch-app" id="btn-launchApp"
-                                    url="<%=selectedApplicationRevision.deploymentURL%>">Launch App</button>
-                                    <div class="btn-group ctrl-edit-button btn-edit-code">
-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-red" onclick="stopApplication();">Stop
-                                        <span id="stop-in-progress"><span>
-                                      </a>
-                                    </div>
-                                    <div class="btn-group ctrl-edit-button btn-edit-code">
-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-gray" onclick="redeployApplication();">Redeploy
-                                        <span id="redeploy-in-progress"><span>
-                                      </a>
-                                    </div>
-                                <%
-                                } else if(selectedApplicationRevision.status==APPLICATION_STOPPED || selectedApplicationRevision.status==APPLICATION_INACTIVE){
-                                %>
-                                    <button class="cu-btn cu-btn-md cu-btn-gr-dark btn-launch-app" id="btn-launchApp"
-                                    url="<%=selectedApplicationRevision.deploymentURL%>">Launch App</button>
-                                    <div class="btn-group ctrl-edit-button btn-edit-code">
-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue" onclick="startApplication();">Start</a>
-                                    </div>
-                                <%
-                                } else {
-                                %>
-                                    <div class="btn-group ctrl-edit-button btn-edit-code">
-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-red" href="#yourlink">Error has occurred.</a>
-                                    </div>
-                                <%
-                                }
-                               %>
-                          </div>
-                      </div>
-                      <div class="col-xs-12 col-md-12 col-lg-3 hide">
-                          <a id="delete-version" onclick="deleteApplicationPopUp();">
-                              <div class="btn-create-version">
-                                  <span class="fw-stack fw-lg btn-action-ico">
-                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                                    <i class="fw fw-delete fw-stack-1x"></i>
-                                  </span> Delete
-                              </div>
-                          </a>
-                          <a id="upload-revision hide" href="">
-                              <div class="btn-create-version">
-                                  <span class="fw-stack fw-lg btn-action-ico">
-                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
-                                     <i class="fw fw-add fw-stack-1x"></i>
-                                  </span> Upload Version
-                              </div>
-                          </a>
-                      </div>
-                        <div class="col-xs-12 col-md-9 col-lg-9">
-                            <div class="block-replica">
-                                <h3>Replicas</h3>
-                                <div class="block-replicas">
-                                    <figure class="node-cicle" data-percent="100">
-                                        <figcaption>01</figcaption>
+                <div class="col-xs-15 col-md-15 col-lg-12">
+                    <div class="block-replica">
+                        <h3>Artifacts</h3>
+                        <h4>Proxy Services</h4>
+                        <style type="text/css">
+                        .tg  {border-collapse:collapse;border-spacing:0;}
+                        .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+                        .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+                        .tg .tg-yw4l{vertical-align:top}
+                        </style>
+                        <table class="tg">
+                          <tr>
+                            <th class="tg-yw4l">Name</th>
+                            <th class="tg-yw4l">Access URL</th>
+                          </tr>
+                          <tr>
+                            <td>Salesforce_Account_Proxy</td>
+                            <td><a>https:/maheeka-Salesforce_Account.integration.wso2.com/Salesforce_Account_Proxy</a></td>
+                          </tr>
+                        </table>
+                        <br/>
+                        <h4>APIs</h4>
+                        <table class="tg">
+                          <tr>
+                            <th class="tg-yw4l">Name</th>
+                            <th class="tg-yw4l">Context</th>
+                            <th class="tg-yw4l">Method</th>
+                            <th class="tg-yw4l">Access URL</th>
+                          </tr>
+                          <tr>
+                            <td>Salesforce_API</td>
+                            <td>account</td>
+                            <td>GET, POST</td>
+                            <td><a>https:/maheeka-Salesforce_Account.integration.wso2.com/Salesforce_API</a></td>
+                          </tr>
+                        </table>
+                        <div class="block-replicas hide">
+                            <figure class="node-cicle" data-percent="100">
+                                <figcaption>01</figcaption>
 
-                                        <%  if(selectedApplicationRevision.status==APPLICATION_RUNNING){ %>
-                                                <svg width="200" height="200">
-                                                   <circle class="outer" cx="95" cy="95" r="85" transform="rotate(-90, 95, 95)"></circle>
-                                                </svg>
-                                                <a href="/integration/site/pages/runtimeLogs.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><span class="view-log">View Logs</span></a>
-                                        <%  } else { %>
-                                                <svg width="200" height="200">
-                                                    <circle class="outer" style="stroke: #ACAFAD;" cx="95" cy="95" r="85" transform="rotate(-90, 95, 95)"/>
-                                                </svg>
-                                        <%  } %>
-                                    </figure>
-                                </div>
-                                <div class="block-replicas">
-                                    <figure class="node-cicle">
-                                        <figcaption>
-                                          <span class="fw-stack fw-lg ">
-                                              <i class="fw fw-circle-outline fw-stack-2x"></i>
-                                              <i class="fw fw-add fw-stack-1x" data-toggle="tooltip" title="Adding replicas to your application will not support in this release."></i>
-                                          </span>
-                                        </figcaption>
-                                    </figure>
-                                </div>
-                            </div>
+                                <%  if(selectedApplicationRevision.status==APPLICATION_RUNNING){ %>
+                                        <svg width="200" height="200">
+                                           <circle class="outer" cx="95" cy="95" r="85" transform="rotate(-90, 95, 95)"></circle>
+                                        </svg>
+                                        <a href="/integration/site/pages/runtimeLogs.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><span class="view-log">View Logs</span></a>
+                                <%  } else { %>
+                                        <svg width="200" height="200">
+                                            <circle class="outer" style="stroke: #ACAFAD;" cx="95" cy="95" r="85" transform="rotate(-90, 95, 95)"/>
+                                        </svg>
+                                <%  } %>
+                            </figure>
                         </div>
-                        <div class="col-xs-12 col-md-3 col-lg-3" data-toggle="tooltip" title="HTTP Monitoring Dashboard is not supported in this release. It will be available soon!">
-                            <a class="block-anch" href="#" onclick="return false;" target="_blank">
-                                <div class="block-monitoring">
-                                    <h3>HTTP Monitoring Dashboard</h3>
-                                    <div class="block-icon pull-left">
-                                        <i class="fw fw-dashboard demo-dashboard-block"></i>
-                                    </div>
-                                <div class="clearfix"></div>
-                                </div>
-                            </a>
+                        <div class="block-replicas hide">
+                            <figure class="node-cicle">
+                                <figcaption>
+                                  <span class="fw-stack fw-lg ">
+                                      <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                      <i class="fw fw-add fw-stack-1x" data-toggle="tooltip" title="Adding replicas to your application will not support in this release."></i>
+                                  </span>
+                                </figcaption>
+                            </figure>
                         </div>
-                      <div class="clearfix"></div>
                     </div>
-
                 </div>
+              </div>
+          </div>
           <div class="col-xs-12 col-md-3 col-lg-3">
               <div class="block-team pull-left">
-                <a class="block-anch" id="envVars" href="/integration/site/pages/envs.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>">
-                  <h3>Env Variables</h3>
+                <a class="block-anch" id="logViewer" href="">
+                  <h3>Log Viewer</h3>
                   <div class="block-icon pull-left">
-                    <i class="fa fa-wrench fa-5x"></i>
+                    <i class="fa fa-terminal fa-5x"></i>
                   </div>
-                  <div class="block-number pull-right">
-                   <span id="runtimePropCount">0</span>
-                  </div>
-                  <div class="env-list ellipsis" id="env-list"></div>
-                  <div class="clearfix"></div>
                 </a>
               </div>
               <div class="block-database pull-left">
-                <a class="block-anch" id="tagSet" href="/integration/site/pages/tags.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>">
-                  <h3>Tags</h3>
+                <a class="block-anch" id="analytics" href="">
+                  <h3>Analytics</h3>
                   <div class="block-icon pull-left">
-                    <i class="fa fa-tags fa-5x"></i>
+                    <i class="fa fa-area-chart fa-5x"></i>
                   </div>
-                  <div class="block-number pull-right">
-                   <span id="tagCount">0</span>
-                  </div>
-                  <div class="tag-list ellipsis" id="tag-list"></div>
-                  <div class="clearfix"></div>
                 </a>
               </div>
           </div>

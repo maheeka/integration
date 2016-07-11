@@ -38,8 +38,8 @@ var setAuthHeaders = function (options, httpHeaders, username) {
     if(!httpHeaders){
         httpHeaders = [];
     }
-    var AppCloudUtil = Packages.org.wso2.appcloud.common.util.AppCloudUtil;
-    var authHeader = {name : "Authorization", value : String(AppCloudUtil.getAuthHeader(username))};
+    var IntCloudUtil = Packages.org.wso2.intcloud.common.util.IntCloudUtil;
+    var authHeader = {name : "Authorization", value : String(IntCloudUtil.getAuthHeader(username))};
     httpHeaders.push(authHeader);
     options["HTTPHeaders"] = httpHeaders;
 };

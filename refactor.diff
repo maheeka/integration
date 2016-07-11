@@ -1,0 +1,400 @@
+diff --git a/jagg/constants.jag b/jagg/constants.jag
+index 48d09ec..88c77ee 100644
+--- a/jagg/constants.jag
++++ b/jagg/constants.jag
+@@ -67,7 +67,7 @@ var FILE_EXTENSTION_ALTER = ".upload";
+ var FILE_EXTENTION_ZIP = "zip";
+ 
+ var PERMISSION_EXECUTE = "ui.execute";
+-var LOGIN_PERMISSION = "AppCloud.Login.Permission"
++var LOGIN_PERMISSION = "IntCloud.Login.Permission"
+ 
+ //esb admin service names
+ var CAPP_DEPLOYER_SERVICE="CarbonAppUploader";
+diff --git a/modules/admin/admin.jag b/modules/admin/admin.jag
+index 659dffb..adda4b4 100755
+--- a/modules/admin/admin.jag
++++ b/modules/admin/admin.jag
+@@ -23,7 +23,7 @@ include("/jagg/constants.jag");
+ var log = new Log("integration/module/admin/admin.jag");
+ var carbon = require('carbon');
+ var context = carbon.multitenancy.getPrivilegedCarbonContext();
+-var ApplicationManager = Packages.org.wso2.appcloud.core.ApplicationManager;
++var ApplicationManager = Packages.org.wso2.intcloud.core.ApplicationManager;
+ var Util = Packages.org.wso2.intcloud.core.Util;
+ var applicationModule = jagg.module("application");
+ var managerModule = jagg.module("manager");
+diff --git a/modules/application/application.jag b/modules/application/application.jag
+index b353652..2c65d4e 100644
+--- a/modules/application/application.jag
++++ b/modules/application/application.jag
+@@ -26,17 +26,11 @@ var esbClient = jagg.module("esbClient");
+ var ApplicationManager = Packages.org.wso2.intcloud.core.ApplicationManager;
+ var Application = Packages.org.wso2.intcloud.core.dto.Application;
+ var Version = Packages.org.wso2.intcloud.core.dto.Version;
+-var KubernetesProvisioningUtils =  Packages.org.wso2.appcloud.provisioning.runtime.Utils.KubernetesProvisioningUtils;
+ var EventsManager = Packages.org.wso2.intcloud.core.EventsManager;
+ var Event = Packages.org.wso2.intcloud.core.dto.Event;
+-var Deployment = Packages.org.wso2.appcloud.core.dto.Deployment;
+-var Container = Packages.org.wso2.appcloud.core.dto.Container;
+-var ServiceProxy = Packages.org.wso2.appcloud.core.dto.ContainerServiceProxy;
+ var CloudUtil = Packages.org.wso2.intcloud.common.util.IntCloudUtil;
+-var RuntimeProperty = Packages.org.wso2.appcloud.core.dto.RuntimeProperty;
+ var CarbonUtils = Packages.org.wso2.carbon.utils.CarbonUtils;
+ var Util = Packages.org.wso2.intcloud.core.Util;
+-var ResourceQuotaLimit = Packages.org.wso2.appcloud.provisioning.runtime.beans.ResourceQuotaLimit;
+ var List = Packages.java.util.List;
+ var Arrays = Packages.java.util.Arrays;
+ 
+@@ -1253,19 +1247,6 @@ var isApplicationVersionExist = function (versionHashId) {
+     return applicationExists;
+ };
+ 
+-var getNotAllowedEnvVariables = function () {
+-    var notAllowedVariables = [];
+-
+-        var notAllowedVariableString = modManager.getPropertyValue(NOT_ALLOWED_ENV_VARIABLES);
+-        var notAllowedVariableList = notAllowedVariableString.split("\\s*,\\s*");
+-
+-        for (var i = 0; i < notAllowedVariableList.length; i++ ){
+-            notAllowedVariables.push(notAllowedVariableList[i].toLowerCase());
+-        }
+-
+-        return notAllowedVariables;
+-};
+-
+ var getMaxInstanceCount = function () {
+     var tenantId = modManager.getTenantId();
+     var maxAppCount = ApplicationManager.getMaxAppCountForWhiteListedTenants(tenantId);
+diff --git a/modules/application/module.jag b/modules/application/module.jag
+index 310add7..41664c4 100644
+--- a/modules/application/module.jag
++++ b/modules/application/module.jag
+@@ -214,10 +214,6 @@ jagg.module("application", {
+         return jagg.require(jagg.getModulesDir() + "application/application.jag").isApplicationVersionExist.apply(this, arguments);
+     },
+ 
+-    getNotAllowedEnvVariables: function () {
+-        return jagg.require(jagg.getModulesDir() + "application/application.jag").getNotAllowedEnvVariables.apply(this, arguments);
+-    },
+-
+     getMaxInstanceCount: function () {
+         return jagg.require(jagg.getModulesDir() + "application/application.jag").getMaxInstanceCount.apply(this, arguments);
+     },
+diff --git a/modules/manager/manager.jag b/modules/manager/manager.jag
+index c52dbb6..cd9ff68 100755
+--- a/modules/manager/manager.jag
++++ b/modules/manager/manager.jag
+@@ -38,8 +38,8 @@ var setAuthHeaders = function (options, httpHeaders, username) {
+     if(!httpHeaders){
+         httpHeaders = [];
+     }
+-    var AppCloudUtil = Packages.org.wso2.appcloud.common.util.AppCloudUtil;
+-    var authHeader = {name : "Authorization", value : String(AppCloudUtil.getAuthHeader(username))};
++    var IntCloudUtil = Packages.org.wso2.intcloud.common.util.IntCloudUtil;
++    var authHeader = {name : "Authorization", value : String(IntCloudUtil.getAuthHeader(username))};
+     httpHeaders.push(authHeader);
+     options["HTTPHeaders"] = httpHeaders;
+ };
+diff --git a/site/blocks/application/application.jag b/site/blocks/application/application.jag
+index c1d5722..c58963f 100644
+--- a/site/blocks/application/application.jag
++++ b/site/blocks/application/application.jag
+@@ -22,7 +22,6 @@ include('/jagg/constants.jag');
+ 
+ var action = request.getParameter("action");
+ var applicationModule = jagg.module("application");
+-var gitHubAppModule = jagg.module("application/git");
+ var log = new Log('integration/site/blocks/application/application.jag');
+ (function(){
+     if (!jagg.getUser()) {
+diff --git a/site/blocks/application/block.jag b/site/blocks/application/block.jag
+index da48662..5d3cbf7 100644
+--- a/site/blocks/application/block.jag
++++ b/site/blocks/application/block.jag
+@@ -40,7 +40,6 @@ jagg.block("application", {
+         var applicationName = inputs.applicationName;
+         var applicationCount = applicationModule.getApplicationCount();
+         var subscriptionPlanBaseURL = modManager.getPropertyValue("SubscriptionPlanBaseURL");
+-        var notAllowedEnvVariables = applicationModule.getNotAllowedEnvVariables();
+         var maxAppCount = applicationModule.getMaxInstanceCount();
+ 
+         return {
+@@ -49,7 +48,6 @@ jagg.block("application", {
+             "applicationName" : applicationName,
+             "applicationCount" : applicationCount,
+             "subscriptionPlanBaseURL" : subscriptionPlanBaseURL,
+-            "notAllowedEnvVariables" : notAllowedEnvVariables,
+             "maxAppCount" : maxAppCount
+         };
+     }
+diff --git a/site/themes/default/templates/application/template.jag b/site/themes/default/templates/application/template.jag
+index 02f95a0..64f9c9b 100755
+--- a/site/themes/default/templates/application/template.jag
++++ b/site/themes/default/templates/application/template.jag
+@@ -397,7 +397,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
+             },function (jqXHR, textStatus, errorThrown) {
+                  var alert = "<p>Application creation failed. " + errorThrown + "</p>";
+                  var retry_button = "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"redirectAppListing();\">Cancel</button>" +
+-                                    "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"retryAppCreation();\">Back to Upload Integration</button>";
++                                    "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"retryAppCreation();\">Back to Upload Integration Project</button>";
+                  setTimeout(showErrorPopup, 1000);
+                  function showErrorPopup(){
+                      $("#app-creation-model-body").html(alert);
+diff --git a/site/themes/default/templates/index/template.jag b/site/themes/default/templates/index/template.jag
+index 37a89f5..7fccd30 100644
+--- a/site/themes/default/templates/index/template.jag
++++ b/site/themes/default/templates/index/template.jag
+@@ -183,17 +183,11 @@ jagg.template("index", function(inputs, outputs, jagg) {
+     </script>
+ 
+     <div class="action-bar">
+-        <a href="/integration/site/pages/application.jag?appTypeName=car" class="btn-action" data-toggle="tooltip" data-placement="top" title="Add New Application">
++        <a href="/integration/site/pages/application.jag?appTypeName=car" class="btn-action" data-toggle="tooltip" data-placement="top" title="Add New Integration Project">
+             <span class="fw-stack fw-lg btn-action-ico">
+                 <i class="fw fw-circle-outline fw-stack-2x"></i>
+                 <i class="fw fw-add fw-stack-1x"></i>
+-            </span> <span class="hidden-xs">Upload integration</span>
+-        </a>
+-        <a href="<%=jagg.getAbsoluteUrl("/site/pages/newdatabase.jag")%>?isEdit=false" class="btn-action hide" data-toggle="tooltip" data-placement="top" title="Add New Database">
+-            <span class="fw-stack fw-lg btn-action-ico">
+-                <i class="fw fw-circle-outline fw-stack-2x"></i>
+-                <i class="fw fw-add fw-stack-1x"></i>
+-            </span> <span class="hidden-xs hide">Create Database</span>
++            </span> <span class="hidden-xs">Upload Integration Project</span>
+         </a>
+     </div>
+     <div class="container-fluid">
+@@ -203,7 +197,7 @@ jagg.template("index", function(inputs, outputs, jagg) {
+     <% if (applications.length > 0 ) { %>
+         <div class="row row-centered app-sort-bar">
+             <div class="col-centered col-md-5 search">
+-                <input type="text" class="form-control" id="search-apps" placeholder="Search integrations">
++                <input type="text" class="form-control" id="search-apps" placeholder="Search Integrations">
+                 <i class="fa fa-2x fa-search" ></i>
+             </div>
+         </div>
+diff --git a/site/themes/default/templates/integrationHome/template.jag b/site/themes/default/templates/integrationHome/template.jag
+index 84cbdd0..aa979b7 100644
+--- a/site/themes/default/templates/integrationHome/template.jag
++++ b/site/themes/default/templates/integrationHome/template.jag
+@@ -170,151 +170,87 @@ jagg.template("integrationHome", function(inputs, outputs, jagg) {
+         <div class="row padding-bottom-xlg">
+           <div class="col-xs-12 col-md-9 col-lg-9">
+               <div class="block-general" style="background-color: #303030;">
+-                      <div class="col-xs-12 col-md-12 col-lg-9 hide">
+-                          <div class="btn-group pull-left version-number">
+-                              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+-                              <span id="selected-version"><%=selectedRevision%> </span><span class="caret"></span>
+-                              </button>
+-                              <ul id="appVersionList" class="dropdown-menu" >
+-                              <%
+-                                var versions = application.versions;
+-                                var keyArray = Object.keys(versions);
+-                                for (var x = 0; x < keyArray.length; x++) {
+-                              %>
+-                                  <li ><a href="#"><%=versions[keyArray[x]].versionName%></a></li>
+-                              <%
+-                              }
+-                              %>
+-                              </ul>
+-                          </div>
+-                          <div id="version-url-link" class="version-url">
+-                          <a href="<%=selectedApplicationRevision.deploymentURL%>" target="_blank"><span>
+-                          <b>URL : </b><%=selectedApplicationRevision.deploymentURL%></span></a>
+-                          </div>
+-                          <div class="sec" id="version-app-launch-block">
+-                              <%
+-                                if(selectedApplicationRevision.status==APPLICATION_RUNNING){
+-                                %>
+-                                    <button class="cu-btn cu-btn-md cu-btn-gr-dark btn-launch-app" id="btn-launchApp"
+-                                    url="<%=selectedApplicationRevision.deploymentURL%>">Launch App</button>
+-                                    <div class="btn-group ctrl-edit-button btn-edit-code">
+-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-red" onclick="stopApplication();">Stop
+-                                        <span id="stop-in-progress"><span>
+-                                      </a>
+-                                    </div>
+-                                    <div class="btn-group ctrl-edit-button btn-edit-code">
+-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-gray" onclick="redeployApplication();">Redeploy
+-                                        <span id="redeploy-in-progress"><span>
+-                                      </a>
+-                                    </div>
+-                                <%
+-                                } else if(selectedApplicationRevision.status==APPLICATION_STOPPED || selectedApplicationRevision.status==APPLICATION_INACTIVE){
+-                                %>
+-                                    <button class="cu-btn cu-btn-md cu-btn-gr-dark btn-launch-app" id="btn-launchApp"
+-                                    url="<%=selectedApplicationRevision.deploymentURL%>">Launch App</button>
+-                                    <div class="btn-group ctrl-edit-button btn-edit-code">
+-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue" onclick="startApplication();">Start</a>
+-                                    </div>
+-                                <%
+-                                } else {
+-                                %>
+-                                    <div class="btn-group ctrl-edit-button btn-edit-code">
+-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-red" href="#yourlink">Error has occurred.</a>
+-                                    </div>
+-                                <%
+-                                }
+-                               %>
+-                          </div>
+-                      </div>
+-                      <div class="col-xs-12 col-md-12 col-lg-3 hide">
+-                          <a id="delete-version" onclick="deleteApplicationPopUp();">
+-                              <div class="btn-create-version">
+-                                  <span class="fw-stack fw-lg btn-action-ico">
+-                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
+-                                    <i class="fw fw-delete fw-stack-1x"></i>
+-                                  </span> Delete
+-                              </div>
+-                          </a>
+-                          <a id="upload-revision hide" href="">
+-                              <div class="btn-create-version">
+-                                  <span class="fw-stack fw-lg btn-action-ico">
+-                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
+-                                     <i class="fw fw-add fw-stack-1x"></i>
+-                                  </span> Upload Version
+-                              </div>
+-                          </a>
+-                      </div>
+-                        <div class="col-xs-12 col-md-9 col-lg-9">
+-                            <div class="block-replica">
+-                                <h3>Replicas</h3>
+-                                <div class="block-replicas">
+-                                    <figure class="node-cicle" data-percent="100">
+-                                        <figcaption>01</figcaption>
+-
+-                                        <%  if(selectedApplicationRevision.status==APPLICATION_RUNNING){ %>
+-                                                <svg width="200" height="200">
+-                                                   <circle class="outer" cx="95" cy="95" r="85" transform="rotate(-90, 95, 95)"></circle>
+-                                                </svg>
+-                                                <a href="/integration/site/pages/runtimeLogs.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><span class="view-log">View Logs</span></a>
+-                                        <%  } else { %>
+-                                                <svg width="200" height="200">
+-                                                    <circle class="outer" style="stroke: #ACAFAD;" cx="95" cy="95" r="85" transform="rotate(-90, 95, 95)"/>
+-                                                </svg>
+-                                        <%  } %>
+-                                    </figure>
+-                                </div>
+-                                <div class="block-replicas">
+-                                    <figure class="node-cicle">
+-                                        <figcaption>
+-                                          <span class="fw-stack fw-lg ">
+-                                              <i class="fw fw-circle-outline fw-stack-2x"></i>
+-                                              <i class="fw fw-add fw-stack-1x" data-toggle="tooltip" title="Adding replicas to your application will not support in this release."></i>
+-                                          </span>
+-                                        </figcaption>
+-                                    </figure>
+-                                </div>
+-                            </div>
++                <div class="col-xs-15 col-md-15 col-lg-12">
++                    <div class="block-replica">
++                        <h3>Artifacts</h3>
++                        <h4>Proxy Services</h4>
++                        <style type="text/css">
++                        .tg  {border-collapse:collapse;border-spacing:0;}
++                        .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
++                        .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
++                        .tg .tg-yw4l{vertical-align:top}
++                        </style>
++                        <table class="tg">
++                          <tr>
++                            <th class="tg-yw4l">Name</th>
++                            <th class="tg-yw4l">Access URL</th>
++                          </tr>
++                          <tr>
++                            <td>Salesforce_Account_Proxy</td>
++                            <td><a>https:/maheeka-Salesforce_Account.integration.wso2.com/Salesforce_Account_Proxy</a></td>
++                          </tr>
++                        </table>
++                        <br/>
++                        <h4>APIs</h4>
++                        <table class="tg">
++                          <tr>
++                            <th class="tg-yw4l">Name</th>
++                            <th class="tg-yw4l">Context</th>
++                            <th class="tg-yw4l">Method</th>
++                            <th class="tg-yw4l">Access URL</th>
++                          </tr>
++                          <tr>
++                            <td>Salesforce_API</td>
++                            <td>account</td>
++                            <td>GET, POST</td>
++                            <td><a>https:/maheeka-Salesforce_Account.integration.wso2.com/Salesforce_API</a></td>
++                          </tr>
++                        </table>
++                        <div class="block-replicas hide">
++                            <figure class="node-cicle" data-percent="100">
++                                <figcaption>01</figcaption>
++
++                                <%  if(selectedApplicationRevision.status==APPLICATION_RUNNING){ %>
++                                        <svg width="200" height="200">
++                                           <circle class="outer" cx="95" cy="95" r="85" transform="rotate(-90, 95, 95)"></circle>
++                                        </svg>
++                                        <a href="/integration/site/pages/runtimeLogs.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><span class="view-log">View Logs</span></a>
++                                <%  } else { %>
++                                        <svg width="200" height="200">
++                                            <circle class="outer" style="stroke: #ACAFAD;" cx="95" cy="95" r="85" transform="rotate(-90, 95, 95)"/>
++                                        </svg>
++                                <%  } %>
++                            </figure>
+                         </div>
+-                        <div class="col-xs-12 col-md-3 col-lg-3" data-toggle="tooltip" title="HTTP Monitoring Dashboard is not supported in this release. It will be available soon!">
+-                            <a class="block-anch" href="#" onclick="return false;" target="_blank">
+-                                <div class="block-monitoring">
+-                                    <h3>HTTP Monitoring Dashboard</h3>
+-                                    <div class="block-icon pull-left">
+-                                        <i class="fw fw-dashboard demo-dashboard-block"></i>
+-                                    </div>
+-                                <div class="clearfix"></div>
+-                                </div>
+-                            </a>
++                        <div class="block-replicas hide">
++                            <figure class="node-cicle">
++                                <figcaption>
++                                  <span class="fw-stack fw-lg ">
++                                      <i class="fw fw-circle-outline fw-stack-2x"></i>
++                                      <i class="fw fw-add fw-stack-1x" data-toggle="tooltip" title="Adding replicas to your application will not support in this release."></i>
++                                  </span>
++                                </figcaption>
++                            </figure>
+                         </div>
+-                      <div class="clearfix"></div>
+                     </div>
+-
+                 </div>
++              </div>
++          </div>
+           <div class="col-xs-12 col-md-3 col-lg-3">
+               <div class="block-team pull-left">
+-                <a class="block-anch" id="envVars" href="/integration/site/pages/envs.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>">
+-                  <h3>Env Variables</h3>
++                <a class="block-anch" id="logViewer" href="">
++                  <h3>Log Viewer</h3>
+                   <div class="block-icon pull-left">
+-                    <i class="fa fa-wrench fa-5x"></i>
+-                  </div>
+-                  <div class="block-number pull-right">
+-                   <span id="runtimePropCount">0</span>
++                    <i class="fa fa-terminal fa-5x"></i>
+                   </div>
+-                  <div class="env-list ellipsis" id="env-list"></div>
+-                  <div class="clearfix"></div>
+                 </a>
+               </div>
+               <div class="block-database pull-left">
+-                <a class="block-anch" id="tagSet" href="/integration/site/pages/tags.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>">
+-                  <h3>Tags</h3>
++                <a class="block-anch" id="analytics" href="">
++                  <h3>Analytics</h3>
+                   <div class="block-icon pull-left">
+-                    <i class="fa fa-tags fa-5x"></i>
+-                  </div>
+-                  <div class="block-number pull-right">
+-                   <span id="tagCount">0</span>
++                    <i class="fa fa-area-chart fa-5x"></i>
+                   </div>
+-                  <div class="tag-list ellipsis" id="tag-list"></div>
+-                  <div class="clearfix"></div>
+                 </a>
+               </div>
+           </div>

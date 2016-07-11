@@ -67,7 +67,7 @@ var FILE_EXTENSTION_ALTER = ".upload";
 var FILE_EXTENTION_ZIP = "zip";
 
 var PERMISSION_EXECUTE = "ui.execute";
-var LOGIN_PERMISSION = "AppCloud.Login.Permission"
+var LOGIN_PERMISSION = "IntCloud.Login.Permission"
 
 //esb admin service names
 var CAPP_DEPLOYER_SERVICE="CarbonAppUploader";

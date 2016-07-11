@@ -26,17 +26,11 @@ var esbClient = jagg.module("esbClient");
 var ApplicationManager = Packages.org.wso2.intcloud.core.ApplicationManager;
 var Application = Packages.org.wso2.intcloud.core.dto.Application;
 var Version = Packages.org.wso2.intcloud.core.dto.Version;
-var KubernetesProvisioningUtils =  Packages.org.wso2.appcloud.provisioning.runtime.Utils.KubernetesProvisioningUtils;
 var EventsManager = Packages.org.wso2.intcloud.core.EventsManager;
 var Event = Packages.org.wso2.intcloud.core.dto.Event;
-var Deployment = Packages.org.wso2.appcloud.core.dto.Deployment;
-var Container = Packages.org.wso2.appcloud.core.dto.Container;
-var ServiceProxy = Packages.org.wso2.appcloud.core.dto.ContainerServiceProxy;
 var CloudUtil = Packages.org.wso2.intcloud.common.util.IntCloudUtil;
-var RuntimeProperty = Packages.org.wso2.appcloud.core.dto.RuntimeProperty;
 var CarbonUtils = Packages.org.wso2.carbon.utils.CarbonUtils;
 var Util = Packages.org.wso2.intcloud.core.Util;
-var ResourceQuotaLimit = Packages.org.wso2.appcloud.provisioning.runtime.beans.ResourceQuotaLimit;
 var List = Packages.java.util.List;
 var Arrays = Packages.java.util.Arrays;
 
@@ -1251,19 +1245,6 @@ var isApplicationVersionExist = function (versionHashId) {
         applicationExists = true;
     }
     return applicationExists;
-};
-
-var getNotAllowedEnvVariables = function () {
-    var notAllowedVariables = [];
-
-        var notAllowedVariableString = modManager.getPropertyValue(NOT_ALLOWED_ENV_VARIABLES);
-        var notAllowedVariableList = notAllowedVariableString.split("\\s*,\\s*");
-
-        for (var i = 0; i < notAllowedVariableList.length; i++ ){
-            notAllowedVariables.push(notAllowedVariableList[i].toLowerCase());
-        }
-
-        return notAllowedVariables;
 };
 
 var getMaxInstanceCount = function () {

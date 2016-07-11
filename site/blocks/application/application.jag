@@ -22,7 +22,6 @@ include('/jagg/constants.jag');
 
 var action = request.getParameter("action");
 var applicationModule = jagg.module("application");
-var gitHubAppModule = jagg.module("application/git");
 var log = new Log('integration/site/blocks/application/application.jag');
 (function(){
     if (!jagg.getUser()) {

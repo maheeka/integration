@@ -397,7 +397,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
             },function (jqXHR, textStatus, errorThrown) {
                  var alert = "<p>Application creation failed. " + errorThrown + "</p>";
                  var retry_button = "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"redirectAppListing();\">Cancel</button>" +
-                                    "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"retryAppCreation();\">Back to Upload Integration</button>";
+                                    "<button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" onclick=\"retryAppCreation();\">Back to Upload Integration Project</button>";
                  setTimeout(showErrorPopup, 1000);
                  function showErrorPopup(){
                      $("#app-creation-model-body").html(alert);
