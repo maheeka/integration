@@ -79,37 +79,6 @@ var deployCarbonApplication = function (uploadedFileName, uploadedFilePath) {
     } else {
         log.warn("Carbon application deployment failed");
     }
-
-
-
-
-
-
-//    var requestPayload = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:upl=\"http://upload.application.carbon.wso2.org\">"
-//                             +"<soapenv:Header/>"
-//                             +"<soapenv:Body>"
-//                                +"<upl:uploadAppBytes>"
-//                                   +"<upl:fileName>" + uploadedFileName + "</upl:fileName>"
-//                                   +"<upl:fileType>jar</upl:fileType>"
-//                                   +"<upl:bytes>" + byteArray + "</upl:bytes>"
-//                                +"</upl:uploadAppBytes>"
-//                             +"</soapenv:Body>"
-//                          +"</soapenv:Envelope>";
-//
-////authenticate ESB
-//                var ws = require("ws");
-//                var requestESB = new ws.WSRequest();
-//                var options = new Array();
-//                options.useSOAP = 1.2;
-//                options.action = "urn:uploadAppBytes";
-//                options["HTTPHeaders"] = [{name: "cookie", value: session.get("esb-auth-cookie")}];
-////                var endPoint = "https://localhost:9453/services/SAML2SSOAuthenticationService";
-////                var payload = '<sso:login xmlns:sso="http://sso.saml2.authenticator.identity.carbon.wso2.org"><sso:authDto><xsd:response xmlns:xsd="http://dto.sso.saml2.authenticator.identity.carbon.wso2.org/xsd">' + samlResponse + '</xsd:response></sso:authDto></sso:login>';
-//                requestESB.open(options, cAppUploaderUrl, false);
-//
-//                requestESB.send(requestPayload);
-//                var responseESB = requestESB.responseE4X;
-
 };
 
 

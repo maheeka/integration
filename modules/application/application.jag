@@ -35,16 +35,6 @@ var List = Packages.java.util.List;
 var Arrays = Packages.java.util.Arrays;
 
 
-/**
- * Add an application object
- *
- * @param applicationName name of the application
- * @param versionName revision number of the application
- * @param applicationDescription description of the application
- * @param replicas no of replicas
- * @param uploadedArtifact the uploaded artifact file
- * @param runtimeId runtime id of the application
- */
 var addApplication = function (applicationName, versionName, applicationDescription, runtimeId, appTypeName,
                                  appIcon, uploadedFileName, isNewVersion) {
     log.info("Started creating Integration Project => name : " + applicationName + " Version : " + versionName + " Description " +
