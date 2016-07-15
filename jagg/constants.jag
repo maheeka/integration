@@ -50,6 +50,8 @@ var ESB_CONNECT = "Connecting to Integration Server";
 var ESB_DEPLOY = "Deploying Integration";
 var ESB_DEPLOY_COMPLETE = "Verifying Integration Deployment"
 var LOAD_PARAMETERS = "Loading Integration Parameters"
+var LOAD_APIS = "Loading APIs";
+var LOAD_PROXY_SERVICES = "Loading Proxy Services";
 
 var EVENT_SUCCEEDED = "success";
 var EVENT_PENDING = "pending";
@@ -72,6 +74,7 @@ var LOGIN_PERMISSION = "IntCloud.Login.Permission"
 //esb admin service names
 var CAPP_DEPLOYER_SERVICE="CarbonAppUploader";
 var APP_ADMIN_SERVICE = "ApplicationAdmin";
+var REST_API_ADMIN_SERVICE="RestApiAdmin";
 
 var CAPP_DEPLOYMENT_MAX_WAIT_TIME = 20000;
 

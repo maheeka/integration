@@ -114,4 +114,78 @@ var isCarbonAppExists = function (carbonApplicationName) {
     return false;
 };
 
+var getApiListFromCarbonApplication = function (carbonApplicationName) {
+
+    if (carbonApplicationName.match(".car" + "$") == ".car") { //carfile name ends with .car
+        log.info("carbonApplicationName" + carbonApplicationName);
+        carbonApplicationName = carbonApplicationName.substring(0, carbonApplicationName.length - 10);
+    }
+
+    var restApiAdminUrl = site.esb.serverBaseURL + "t/" + tenantDomain + "/services/" + REST_API_ADMIN_SERVICE + "/";
+
+    var requestPayload = "<xsd:getAPIsForListing xmlns:xsd=\"http://org.apache.axis2/xsd\">"
+                          +"  <xsd:pageNumber>0</xsd:pageNumber>"
+                          +"  <xsd:itemsPerPage>100</xsd:itemsPerPage>"
+                          +"</xsd:getAPIsForListing>";
+
+    var ws = require("ws");
+    var request = new ws.WSRequest();
+    var options = new Array();
+    options.useSOAP = 1.2;
+    options.action = "urn:getAPIsForListing";
+    options["HTTPHeaders"] = [{name: "cookie", value: session.get("esb-auth-cookie")}];
+
+    request.open(options, restApiAdminUrl, false);
+    request.send(requestPayload);
+
+    var response = request.responseE4X;
+
+    var apiList = new Array();
+    var Api = Packages.org.wso2.intcloud.core.dto.Api;
+
+    var ns = new Namespace("http://org.apache.axis2/xsd");
+    var ax2482 = new Namespace("http://api.rest.carbon.wso2.org/xsd");
+    var xsi = new Namespace("http://www.w3.org/2001/XMLSchema-instance");
+
+    var containerName = "[ Deployed From Artifact Container: " + carbonApplicationName + " ]";
+
+    var apiArray = response.*::["return"].(ax2482::artifactContainerName == containerName).*::name.text();
+    log.info("apiArray " + apiArray);
+
+    for (var i = 0; i < apiArray.length(); i++) {
+        log.info("Getting API information for : " + apiArray[i]);
+
+        requestAPIPayload = "<xsd:getApiByName xmlns:xsd=\"http://org.apache.axis2/xsd\">"
+                  + "  <xsd:apiName>" + apiArray[i] + "</xsd:apiName>"
+                  + "</xsd:getApiByName>";
+
+        var requestAPI = new ws.WSRequest();
+        var optionsAPI = new Array();
+        optionsAPI.useSOAP = 1.2;
+        optionsAPI.action = "urn:getApiByName";
+        optionsAPI["HTTPHeaders"] = [{name: "cookie", value: session.get("esb-auth-cookie")}];
+
+        requestAPI.open(optionsAPI, restApiAdminUrl, false);
+        requestAPI.send(requestAPIPayload);
+
+        var responseAPI = requestAPI.responseE4X;
+
+        var context = responseAPI.*::["return"].*::context.text();
+        var httpMethods = responseAPI.*::["return"].*::resources.*::methods.text();
+
+        var api = new Api();
+        api.name = apiArray[i];
+        api.context = context;
+        api.httpMethods = httpMethods;
+        api.url = site.esb.apiBaseURL + context;
+
+        log.info("api : " + api);
+        apiList[i] = api;
+    }
+
+    log.info("apiList : " + apiList);
+    return apiList;
+
+};
+
 %>

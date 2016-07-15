@@ -26,6 +26,7 @@ var esbClient = jagg.module("esbClient");
 var ApplicationManager = Packages.org.wso2.intcloud.core.ApplicationManager;
 var Application = Packages.org.wso2.intcloud.core.dto.Application;
 var Version = Packages.org.wso2.intcloud.core.dto.Version;
+var Api = Packages.org.wso2.intcloud.core.dto.Api;
 var EventsManager = Packages.org.wso2.intcloud.core.EventsManager;
 var Event = Packages.org.wso2.intcloud.core.dto.Event;
 var CloudUtil = Packages.org.wso2.intcloud.common.util.IntCloudUtil;
@@ -75,6 +76,12 @@ var addApplication = function (applicationName, versionName, applicationDescript
     addEvent(ESB_DEPLOY_COMPLETE, EVENT_SUCCEEDED, "Verifying integration deployment", versionHashId);
 
     ApplicationManager.updateVersionStatus(versionHashId,APPLICATION_RUNNING);
+
+    addEvent(LOAD_APIS, EVENT_PENDING, "Loading APIs from deployment", versionHashId);
+    var apiList = esbClient.getApiListFromCarbonApplication(uploadedFileName);
+    log.info("UU " + apiList);
+    createApisInDataBase(applicationName, applicationHashId, apiList);
+    addEvent(LOAD_APIS, EVENT_SUCCEEDED, "Loading APIs from deployment", versionHashId);
 
 //    addEvent(LOAD_PARAMETERS, EVENT_PENDING, "Loading configuration parameters from deployment", versionHashId);
 //    var paramConfiguration = esbClient.getIntegrationParamConfiguration(uploadedFileName);
@@ -209,6 +216,29 @@ var createAppInDataBase = function (applicationName, versionName, applicationDes
         throw e;
     }
     return application;
+}
+
+var createApisInDataBase = function (applicationName, applicationHashId, apiList){
+
+    //================================= Adding API to Database =========================================
+
+    for (var i = 0; i < apiList.length; i++) {
+        try {
+
+            ApplicationManager.addAPI(applicationHashId, apiList[i]);
+
+        } catch (e){
+
+            var msg = "Error while adding API to database";
+            addEvent(DATABASE_ADD, EVENT_FAILED, msg, applicationHashId);
+
+            log.error(msg);
+            log.error(e);
+            log.info("API creation failed because initial API metadata persistence failed and roll back process" +
+                     " is started for API : "+ apiList[i].name);
+            throw e;
+        }
+    }
 }
 
 var createAppVersionInDataBase = function( versionName,   runtimeId, runtimePropertiesArray, tagArray, applicationHashId, versionHashId, conSpecMemory, conSpecCpu){

@@ -25,7 +25,8 @@
     "password" : "admin"
   },
   "esb" : {
-    "serverBaseURL" : "https://localhost:9453/"
+    "serverBaseURL" : "https://esb.intcloud.wso2.com:9453/",
+    "apiBaseURL" : "http://esb.intcloud.wso2.com:8290"
   }
 
 }

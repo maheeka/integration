@@ -22,7 +22,6 @@ include("/jagg/constants.jag");
 
 jagg.template("integrationHome", function(inputs, outputs, jagg) {
     var application = outputs.application;
-    var log = new Log();
     var selectedRevision = outputs.selectedRevision;
     var versions = application.versions;
     var defaultVersionName = application.defaultVersionName;
@@ -36,6 +35,24 @@ jagg.template("integrationHome", function(inputs, outputs, jagg) {
     var appCreationPageBaseUrl = jagg.getAbsoluteUrl("/site/pages/application.jag");
     var dashboardBaseUrl = DASHBOARD_BASE_URL;
     var dashboardUrl = dashboardBaseUrl + applicationName + "-" + selectedRevision;
+    var apis = application.apiList;
+
+    var log = new Log();
+    log.info("apis = " + apis);
+    log.info(stringify(application));
+
+//    var log = new Log();
+//    var api = new XML('<ns:getApiByNameResponse xmlns:ns=\"http://org.apache.axis2/xsd\"><ns:return xmlns:ax2482=\"http://api.rest.carbon.wso2.org/xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"ax2482:APIData\"><ax2482:artifactContainerName xsi:nil=\"true\"/><ax2482:context>/t/ws.com/plain</ax2482:context><ax2482:fileName>PlainAPI-1.0.0.xml</ax2482:fileName><ax2482:host xsi:nil=\"true\"/><ax2482:isEdited>false</ax2482:isEdited><ax2482:name>PlainAPI</ax2482:name><ax2482:port>-1</ax2482:port><ax2482:resources xsi:type=\"ax2482:ResourceData\"><ax2482:contentType xsi:nil=\"true\"/><ax2482:faultSeqXml>&lt;faultSequence xmlns="http://ws.apache.org/ns/synapse"/&gt;</ax2482:faultSeqXml><ax2482:faultSequenceKey xsi:nil="true"/><ax2482:inSeqXml>&lt;inSequence xmlns="http://ws.apache.org/ns/synapse"&gt;&lt;payloadFactory media-type="xml"&gt;&lt;format&gt;&lt;response xmlns=""&gt;This is a plain API&lt;/response&gt;&lt;/format&gt;&lt;args/&gt;&lt;/payloadFactory&gt;&lt;respond/&gt;&lt;/inSequence&gt;</ax2482:inSeqXml><ax2482:inSequenceKey xsi:nil=\"true\"/><ax2482:methods>GET</ax2482:methods><ax2482:methods>POST</ax2482:methods><ax2482:outSeqXml>&lt;outSequence xmlns="http://ws.apache.org/ns/synapse"/&gt;</ax2482:outSeqXml><ax2482:outSequenceKey xsi:nil=\"true\"/><ax2482:protocol>0</ax2482:protocol><ax2482:uriTemplate xsi:nil=\"true\"/><ax2482:urlMapping xsi:nil=\"true\"/><ax2482:userAgent xsi:nil=\"true\"/></ax2482:resources><ax2482:statisticsEnable>false</ax2482:statisticsEnable><ax2482:tracingEnable>false</ax2482:tracingEnable></ns:return></ns:getApiByNameResponse>');
+//
+//    log.info(api);
+//
+//    var ns = new Namespace("http://org.apache.axis2/xsd");
+//    var ax2482 = new Namespace("http://api.rest.carbon.wso2.org/xsd");
+//    var xsi = new Namespace("http://www.w3.org/2001/XMLSchema-instance");
+//
+//    log.info(api.*::["return"].*::context.text());
+//    log.info(api.*::["return"].*::resources.*::methods.text());
+
 %>
 
 <script>
@@ -172,7 +189,7 @@ jagg.template("integrationHome", function(inputs, outputs, jagg) {
               <div class="block-general" style="background-color: #303030;">
                 <div class="col-xs-15 col-md-15 col-lg-12">
                     <div class="block-replica">
-                        <h3>Artifacts</h3>
+                        <h3>Endpoints</h3>
                         <h4>Proxy Services</h4>
                         <style type="text/css">
                         .tg  {border-collapse:collapse;border-spacing:0;}

@@ -20,6 +20,9 @@
 jagg.module("esbClient", {
     deployCarbonApplication:function () {
         return jagg.require(jagg.getModulesDir() + "esbClient/esbClient.jag").deployCarbonApplication.apply(this, arguments);
+    },
+    getApiListFromCarbonApplication:function () {
+        return jagg.require(jagg.getModulesDir() + "esbClient/esbClient.jag").getApiListFromCarbonApplication.apply(this, arguments);
     }
 });
 %>
